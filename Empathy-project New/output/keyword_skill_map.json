@@ -1,0 +1,4532 @@
+[
+    {
+        "keyword": "Calming",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0001",
+        "source_node_type": "chapter",
+        "source_node_title": "Skill 1: Calming the Body and Mind",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "Mind",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0001",
+        "source_node_type": "chapter",
+        "source_node_title": "Skill 1: Calming the Body and Mind",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "Body literacy",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0004",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Discuss the importance of Body literacy and recognize the emotional state in a given situation -",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "emotional state",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0004",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Discuss the importance of Body literacy and recognize the emotional state in a given situation -",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "ensations in the body",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0005",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Identify the right vocabulary to name the different sensations in the body",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "resilient zone",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0006",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define the resilient zone and its connection to emotional regulation Recognize when you are out of the resilience zone D",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "emotional regulation",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0006",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define the resilient zone and its connection to emotional regulation Recognize when you are out of the resilience zone D",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "parasympathetic nervous system",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0006",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define the resilient zone and its connection to emotional regulation Recognize when you are out of the resilience zone D",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "angry.",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0009",
+        "source_node_type": "content",
+        "source_node_title": "But then, thirty minutes into your drive, you see smoke coming from your car/bike engine. You have to slow down and stop",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "feeling annoyed",
+        "page": 1,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0009",
+        "source_node_type": "content",
+        "source_node_title": "But then, thirty minutes into your drive, you see smoke coming from your car/bike engine. You have to slow down and stop",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 1
+        }
+    },
+    {
+        "keyword": "Inner calm Self-control Emotional intelligen Self-compassion",
+        "page": 1,
+        "mapping_status": "not_found",
+        "source_node_id": null,
+        "topic": null,
+        "skill_id": null,
+        "skill": null
+    },
+    {
+        "keyword": "inner calm.",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0013",
+        "source_node_type": "content",
+        "source_node_title": "Let’s start with skill 1: Calming Body and Mind, learning how to achieve a greater degree of inner calm.",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "stress, anxiety, fear and depression",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0014",
+        "source_node_type": "content",
+        "source_node_title": "The nervous system reacts to external and internal stimuli very quickly. Difficult emotions or thoughts usually begin as",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "states of joy, calm and clarity.",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0014",
+        "source_node_type": "content",
+        "source_node_title": "The nervous system reacts to external and internal stimuli very quickly. Difficult emotions or thoughts usually begin as",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "tracking, grounding and resourcing",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0016",
+        "source_node_type": "learning_objective",
+        "source_node_title": "1. Learn to recognize the various sensations in the body, therefore developing better body literacy 2. Explore the resil",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "mindfulness, compassion, gratitude, and common humanity.",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0017",
+        "source_node_type": "practice",
+        "source_node_title": "To get started, simply take your time going through this module. Be sure to explore the practices and techniques we’ve o",
+        "topic_id": "node_0007",
+        "topic": "Introduction",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "nner calm, self-control, emotional intelligence, and self-compassion.",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0022",
+        "source_node_type": "content",
+        "source_node_title": "Developing body literacy can improve your self-awareness and enhance your ability to manage emotions effectively. By pay",
+        "topic_id": "node_0019",
+        "topic": "Sensation Words",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "stressful or traumatic experiences.",
+        "page": 2,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0024",
+        "source_node_type": "learning_objective",
+        "source_node_title": "The sensations in our body are an indicator of whether we are in or out of our resilient zone. According to Elaine Mille",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 2
+        }
+    },
+    {
+        "keyword": "not losing your temper",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0026",
+        "source_node_type": "content",
+        "source_node_title": "In everyday life, being in the resilient zone might look like staying calm during a tough exam, not losing your temper i",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "ove",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0025",
+        "source_node_type": "content",
+        "source_node_title": "Being in the resilient zone is closely linked to emotional regulation. When we are in our resilient zone, we can handle ",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "feel overwhelmed/nervous, anxious, or overly stressed,",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0026",
+        "source_node_type": "content",
+        "source_node_title": "In everyday life, being in the resilient zone might look like staying calm during a tough exam, not losing your temper i",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "make good decisions.",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0026",
+        "source_node_type": "content",
+        "source_node_title": "In everyday life, being in the resilient zone might look like staying calm during a tough exam, not losing your temper i",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "harder to think clearly and",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0026",
+        "source_node_type": "content",
+        "source_node_title": "In everyday life, being in the resilient zone might look like staying calm during a tough exam, not losing your temper i",
+        "topic_id": "node_0023",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "calm, strong, and able to make our best decisions.",
+        "page": 3,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0030",
+        "source_node_type": "content",
+        "source_node_title": "As shown in the wave depiction, the Resilient Zone is where we experience the full range of emotions while staying balan",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 3
+        }
+    },
+    {
+        "keyword": "tough exam, an argument with a friend, or even a loud noise can disrupt our inner balance.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0031",
+        "source_node_type": "content",
+        "source_node_title": "Do we always stay in our resilient zone? Not really. We all face various stressful situations every day, and when stress",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "sudden loud noise to a reminder of a past trauma.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0032",
+        "source_node_type": "content",
+        "source_node_title": "It is natural to be bumped out of the Resilient Zone. The graphic demonstrates the natural rhythm of the nervous system ",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "seems to irritate",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "can’t relax.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "tired",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "(\"stuck on low\"",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "lack energy and motivation.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "maintain a sense of normalcy/balance.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "hard to",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "Dysregulation",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0034",
+        "source_node_type": "content",
+        "source_node_title": "Dysregulation can be triggered by almost anything that reminds a person of a traumatic or stressful event, such as a sme",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "smell, sight, sound, touch, or body position.",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0034",
+        "source_node_type": "content",
+        "source_node_title": "Dysregulation can be triggered by almost anything that reminds a person of a traumatic or stressful event, such as a sme",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "hard to mai",
+        "page": 4,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0033",
+        "source_node_type": "content",
+        "source_node_title": "For some of us, especially due to stressful or traumatic experiences, leaving the Resilient Zone may happen regularly. W",
+        "topic_id": "node_0029",
+        "topic": "Resilient Zone",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 4
+        }
+    },
+    {
+        "keyword": "Tracking activity",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0046",
+        "source_node_type": "practice",
+        "source_node_title": "Tracking activity",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "Sympathetic and Parasympathetic Nervous System",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0037",
+        "source_node_type": "topic",
+        "source_node_title": "Sympathetic and Parasympathetic Nervous System",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "fight, flight, or freeze response,",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0038",
+        "source_node_type": "content",
+        "source_node_title": "Our nervous system has two main parts: an alerting, stressed-out part and a calming, relaxing part. When we are stressed",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "heartbeat increases",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0038",
+        "source_node_type": "content",
+        "source_node_title": "Our nervous system has two main parts: an alerting, stressed-out part and a calming, relaxing part. When we are stressed",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "blood flow",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0038",
+        "source_node_type": "content",
+        "source_node_title": "Our nervous system has two main parts: an alerting, stressed-out part and a calming, relaxing part. When we are stressed",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "relax",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0038",
+        "source_node_type": "content",
+        "source_node_title": "Our nervous system has two main parts: an alerting, stressed-out part and a calming, relaxing part. When we are stressed",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "recover.",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0039",
+        "source_node_type": "content",
+        "source_node_title": "On the other hand, our body also has the capacity to calm us down after a stressful incident through the parasympathetic",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "unhealthy,",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0039",
+        "source_node_type": "content",
+        "source_node_title": "On the other hand, our body also has the capacity to calm us down after a stressful incident through the parasympathetic",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "constantly stuck in a state of stress.",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0039",
+        "source_node_type": "content",
+        "source_node_title": "On the other hand, our body also has the capacity to calm us down after a stressful incident through the parasympathetic",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "threats",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0040",
+        "source_node_type": "content",
+        "source_node_title": "A healthy nervous system can use both the activating response and the calming response effectively. An unhealthy nervous",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "tracking, grounding, and resourcing.",
+        "page": 5,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0042",
+        "source_node_type": "practice",
+        "source_node_title": "To help us achieve this, we can practice various exercises. The next section introduces three powerful tools that can as",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 5
+        }
+    },
+    {
+        "keyword": "Grounding",
+        "page": 6,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0051",
+        "source_node_type": "practice",
+        "source_node_title": "Grounding",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 6
+        }
+    },
+    {
+        "keyword": "Practice",
+        "page": 6,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0054",
+        "source_node_type": "practice",
+        "source_node_title": "Grounding Practice",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 6
+        }
+    },
+    {
+        "keyword": "during moments of high stress, anxiety, or when you feel overwhelmed.",
+        "page": 6,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0053",
+        "source_node_type": "practice",
+        "source_node_title": "Grounding can be particularly useful during moments of high stress, anxiety, or when you feel overwhelmed. It helps brin",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 6
+        }
+    },
+    {
+        "keyword": "attention back to the present moment, creating a sense of stability and calm.",
+        "page": 6,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0053",
+        "source_node_type": "practice",
+        "source_node_title": "Grounding can be particularly useful during moments of high stress, anxiety, or when you feel overwhelmed. It helps brin",
+        "topic_id": "node_0037",
+        "topic": "Sympathetic and Parasympathetic Nervous System",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 6
+        }
+    },
+    {
+        "keyword": "Build your own resource",
+        "page": 7,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0060",
+        "source_node_type": "topic",
+        "source_node_title": "Build your own resource",
+        "topic_id": "node_0060",
+        "topic": "Build your own resource",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 7
+        }
+    },
+    {
+        "keyword": "sense of calm and stability",
+        "page": 7,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0062",
+        "source_node_type": "content",
+        "source_node_title": "By visualizing and engaging with your resource, you can create a sense of calm and stability that helps you manage stres",
+        "topic_id": "node_0060",
+        "topic": "Build your own resource",
+        "skill_id": "node_0001",
+        "skill": "Skill 1: Calming the Body and Mind",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 7
+        }
+    },
+    {
+        "keyword": "Ethical Mindfulness",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0073",
+        "source_node_type": "chapter",
+        "source_node_title": "Skill 2: Ethical Mindfulness",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "d core values",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0079",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Ethical Mindfulness is defined as the ability to maintain one's identity and core values while speaking and acting accor",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "impulsively,",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0082",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Scenario 2: Picture a situation where a friend says something hurtful. Instead of reacting impulsively, you pause and re",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "attention stability.",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0076",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define Ethical Mindfulness Identify the three components of ethical mindfulness. Describe the significance of attention ",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "anger,",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0078",
+        "source_node_type": "content",
+        "source_node_title": "Think of a time when you said something in a fit of anger, something you didn't mean. What happened after that incident?",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "feel regret and embarrassment",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0078",
+        "source_node_type": "content",
+        "source_node_title": "Think of a time when you said something in a fit of anger, something you didn't mean. What happened after that incident?",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "wishing we had acted differently.",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0078",
+        "source_node_type": "content",
+        "source_node_title": "Think of a time when you said something in a fit of anger, something you didn't mean. What happened after that incident?",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "act in accordance with our values",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0078",
+        "source_node_type": "content",
+        "source_node_title": "Think of a time when you said something in a fit of anger, something you didn't mean. What happened after that incident?",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "stress",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0079",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Ethical Mindfulness is defined as the ability to maintain one's identity and core values while speaking and acting accor",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "pressure.",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0079",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Ethical Mindfulness is defined as the ability to maintain one's identity and core values while speaking and acting accor",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "take a moment to breathe,",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0081",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 1: Imagine you receive unexpected criticism from your boss. Your initial reaction might be to defend yourself o",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "reflect on your values,",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0081",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 1: Imagine you receive unexpected criticism from your boss. Your initial reaction might be to defend yourself o",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "respond calmly and constructively/positively",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0081",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 1: Imagine you receive unexpected criticism from your boss. Your initial reaction might be to defend yourself o",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "says something hurtful.",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0082",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Scenario 2: Picture a situation where a friend says something hurtful. Instead of reacting impulsively, you pause and re",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "pause and remember your value of maintaining strong relationships.",
+        "page": 8,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0082",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Scenario 2: Picture a situation where a friend says something hurtful. Instead of reacting impulsively, you pause and re",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 8
+        }
+    },
+    {
+        "keyword": "Heedfulness",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0086",
+        "source_node_type": "topic",
+        "source_node_title": "Heedfulness",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "Mindfulness",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0095",
+        "source_node_type": "topic",
+        "source_node_title": "Mindfulness",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "r value of integrity,",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "restraint",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0090",
+        "source_node_type": "learning_objective",
+        "source_node_title": "An ancient Indian metaphor used to teach this level of heedfulness is that of a person who was ordered to carry a bowl f",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "mindfulness",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0095",
+        "source_node_type": "topic",
+        "source_node_title": "Mindfulness",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "under immense pressure",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "exam.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "manage your stress",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "avoid cheating",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "taking unethical shortcuts.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0083",
+        "source_node_type": "reflection",
+        "source_node_title": "Scenario 3: Think about being under immense pressure before an exam. Ethical mindfulness can guide you to manage your st",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": ": a sense of care",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0090",
+        "source_node_type": "learning_objective",
+        "source_node_title": "An ancient Indian metaphor used to teach this level of heedfulness is that of a person who was ordered to carry a bowl f",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "with regard to things we recognize as dangerous.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0090",
+        "source_node_type": "learning_objective",
+        "source_node_title": "An ancient Indian metaphor used to teach this level of heedfulness is that of a person who was ordered to carry a bowl f",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "hindsight.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0090",
+        "source_node_type": "learning_objective",
+        "source_node_title": "An ancient Indian metaphor used to teach this level of heedfulness is that of a person who was ordered to carry a bowl f",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "feel like leaving a harsh comment",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0093",
+        "source_node_type": "content",
+        "source_node_title": "You’re scrolling through social media and see a post that makes you angry. You feel like leaving a harsh comment.",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "social media",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0093",
+        "source_node_type": "content",
+        "source_node_title": "You’re scrolling through social media and see a post that makes you angry. You feel like leaving a harsh comment.",
+        "topic_id": "node_0086",
+        "topic": "Heedfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "focusing your attention on something intentionally to remember it better.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0096",
+        "source_node_type": "learning_objective",
+        "source_node_title": "There are several popular definitions of mindfulness. In SEEK, we define mindfulness focusing your attention on somethin",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "being aware of the values and behaviors we want to adopt or avoid.",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0096",
+        "source_node_type": "learning_objective",
+        "source_node_title": "There are several popular definitions of mindfulness. In SEEK, we define mindfulness focusing your attention on somethin",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "avoid harming others with our words",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0098",
+        "source_node_type": "content",
+        "source_node_title": "For example, through heedfulness we might realize we often say upsetting or critical things to others. Despite heedfulne",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "cultivating mindfulness",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0098",
+        "source_node_type": "content",
+        "source_node_title": "For example, through heedfulness we might realize we often say upsetting or critical things to others. Despite heedfulne",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "remember our values",
+        "page": 9,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0098",
+        "source_node_type": "content",
+        "source_node_title": "For example, through heedfulness we might realize we often say upsetting or critical things to others. Despite heedfulne",
+        "topic_id": "node_0095",
+        "topic": "Mindfulness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 9
+        }
+    },
+    {
+        "keyword": "Attention Stability",
+        "page": 10,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0106",
+        "source_node_type": "topic",
+        "source_node_title": "Attention Stability and Metacognitive Awareness",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 10
+        }
+    },
+    {
+        "keyword": "Metacognitive A",
+        "page": 10,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0106",
+        "source_node_type": "topic",
+        "source_node_title": "Attention Stability and Metacognitive Awareness",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 10
+        }
+    },
+    {
+        "keyword": "Awareness",
+        "page": 10,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0101",
+        "source_node_type": "topic",
+        "source_node_title": "Awareness",
+        "topic_id": "node_0101",
+        "topic": "Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 10
+        }
+    },
+    {
+        "keyword": "Awareness is being conscious of our thoughts and actions in the present moment.",
+        "page": 10,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0102",
+        "source_node_type": "content",
+        "source_node_title": "Awareness is being conscious of our thoughts and actions in the present moment. If we are not aware of how we speak or b",
+        "topic_id": "node_0101",
+        "topic": "Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 10
+        }
+    },
+    {
+        "keyword": "becoming overly aggressive and competitive.",
+        "page": 10,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0105",
+        "source_node_type": "activity",
+        "source_node_title": "You are participating in a team activity and notice that you are suddenly becoming overly aggressive and competitive. Ho",
+        "topic_id": "node_0101",
+        "topic": "Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 10
+        }
+    },
+    {
+        "keyword": "attention stability",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0110",
+        "source_node_type": "content",
+        "source_node_title": "Ethical mindfulness combines heedfulness, mindfulness, and awareness to help us act in ways that are consistent with our",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "metacognitive awareness,",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0107",
+        "source_node_type": "content",
+        "source_node_title": "The significance of attention stability can be understood through the concept of metacognitive awareness, which involves",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "being aware of where our attention is at any given moment",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0107",
+        "source_node_type": "content",
+        "source_node_title": "The significance of attention stability can be understood through the concept of metacognitive awareness, which involves",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "maintain attention stability,",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0109",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Similarly, when our mind starts to wander, we need metacognition (also called introspective awareness) to recognize when",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "stay focused and aligned with our goals and values.",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0109",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Similarly, when our mind starts to wander, we need metacognition (also called introspective awareness) to recognize when",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "Ethical mindfulness combines heedfulness, mindfulness, and awareness",
+        "page": 11,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0110",
+        "source_node_type": "content",
+        "source_node_title": "Ethical mindfulness combines heedfulness, mindfulness, and awareness to help us act in ways that are consistent with our",
+        "topic_id": "node_0106",
+        "topic": "Attention Stability and Metacognitive Awareness",
+        "skill_id": "node_0073",
+        "skill": "Skill 2: Ethical Mindfulness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 11
+        }
+    },
+    {
+        "keyword": "What is Emotional Awareness? Why is it important?",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0120",
+        "source_node_type": "topic",
+        "source_node_title": "What is Emotional Awareness? Why is it important?",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "e emotional awareness",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "mental states",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0121",
+        "source_node_type": "content",
+        "source_node_title": "Emotional Awareness is the ability to be aware of our mental experiences at each moment and differentiate between benefi",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "d beneficial m",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "harmful mental states.",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0121",
+        "source_node_type": "content",
+        "source_node_title": "Emotional Awareness is the ability to be aware of our mental experiences at each moment and differentiate between benefi",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "mental balance a",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "reactive",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "afflictive and be",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "nature of your thoughts",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "practice calmness",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0119",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define emotional awareness Explain the importance of emotional awareness Identify afflictive and beneficial mental state",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "observe our thoughts, feelings, emotions, and sensations with awareness",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0124",
+        "source_node_type": "content",
+        "source_node_title": "Being Emotionally Aware means we are able to observe our thoughts, feelings, emotions, and sensations with awareness as ",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "differentiate between potentially beneficial and harmful states.",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0125",
+        "source_node_type": "content",
+        "source_node_title": "This ability really helps when we need to differentiate between potentially beneficial and harmful states.",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "distort reality",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0126",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and can lead to problems like prejudice or hatred. While, beneficial mental states",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "prejudice or hatred.",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0126",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and can lead to problems like prejudice or hatred. While, beneficial mental states",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "Harmful mental states",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0121",
+        "source_node_type": "content",
+        "source_node_title": "Emotional Awareness is the ability to be aware of our mental experiences at each moment and differentiate between benefi",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "beneficial mental states",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0126",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and can lead to problems like prejudice or hatred. While, beneficial mental states",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "happiness",
+        "page": 12,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0126",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and can lead to problems like prejudice or hatred. While, beneficial mental states",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 12
+        }
+    },
+    {
+        "keyword": "Harmful and Beneficial Mental States",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0132",
+        "source_node_type": "topic",
+        "source_node_title": "Harmful and Beneficial Mental States",
+        "topic_id": "node_0132",
+        "topic": "Harmful and Beneficial Mental States",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "Spark to Forest Fire",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0138",
+        "source_node_type": "topic",
+        "source_node_title": "Spark to Forest Fire",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "resilient.",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0127",
+        "source_node_type": "assessment",
+        "source_node_title": "Emotional Awareness allows us to be less reactive and more resilient. When we are able to make proper assessments of our",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "attachment",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0130",
+        "source_node_type": "content",
+        "source_node_title": "● Observe our mental states with less attachment ● Investigate whether our thoughts and feelings are permanent or tempor",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "follow up with wise and conscious responses.",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0127",
+        "source_node_type": "assessment",
+        "source_node_title": "Emotional Awareness allows us to be less reactive and more resilient. When we are able to make proper assessments of our",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "increasing lack of satisfaction,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0128",
+        "source_node_type": "content",
+        "source_node_title": "For example, both scientific research and common sense suggest that increasing lack of satisfaction, resentment, and sti",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "resentment",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0137",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and lead to suffering for ourselves and others. For example, mental states like an",
+        "topic_id": "node_0136",
+        "topic": "Harmful mental states:",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "stinginess",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0128",
+        "source_node_type": "content",
+        "source_node_title": "For example, both scientific research and common sense suggest that increasing lack of satisfaction, resentment, and sti",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "increase in gratitude,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0128",
+        "source_node_type": "content",
+        "source_node_title": "For example, both scientific research and common sense suggest that increasing lack of satisfaction, resentment, and sti",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "forgiveness,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0128",
+        "source_node_type": "content",
+        "source_node_title": "For example, both scientific research and common sense suggest that increasing lack of satisfaction, resentment, and sti",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "generosity,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0128",
+        "source_node_type": "content",
+        "source_node_title": "For example, both scientific research and common sense suggest that increasing lack of satisfaction, resentment, and sti",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "thoughts and feelings",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0130",
+        "source_node_type": "content",
+        "source_node_title": "● Observe our mental states with less attachment ● Investigate whether our thoughts and feelings are permanent or tempor",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "reactive.",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0130",
+        "source_node_type": "content",
+        "source_node_title": "● Observe our mental states with less attachment ● Investigate whether our thoughts and feelings are permanent or tempor",
+        "topic_id": "node_0120",
+        "topic": "What is Emotional Awareness? Why is it important?",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": ", jealousy",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0137",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and lead to suffering for ourselves and others. For example, mental states like an",
+        "topic_id": "node_0136",
+        "topic": "Harmful mental states:",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "bitterness,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0137",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and lead to suffering for ourselves and others. For example, mental states like an",
+        "topic_id": "node_0136",
+        "topic": "Harmful mental states:",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "unhappiness",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0137",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and lead to suffering for ourselves and others. For example, mental states like an",
+        "topic_id": "node_0136",
+        "topic": "Harmful mental states:",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "relationships with others.",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0137",
+        "source_node_type": "content",
+        "source_node_title": "Harmful mental states distort reality and lead to suffering for ourselves and others. For example, mental states like an",
+        "topic_id": "node_0136",
+        "topic": "Harmful mental states:",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "emotionally aware,",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0139",
+        "source_node_type": "content",
+        "source_node_title": "When we are emotionally aware, we can tell the difference between helpful and harmful thoughts by noticing them more cle",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "irritate",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0140",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you have a difficult conversation with your boss/teacher that upsets you first thing in the morning. Without emo",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "rude",
+        "page": 13,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0140",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you have a difficult conversation with your boss/teacher that upsets you first thing in the morning. Without emo",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 13
+        }
+    },
+    {
+        "keyword": "Precondition",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0146",
+        "source_node_type": "topic",
+        "source_node_title": "Precondition",
+        "topic_id": "node_0146",
+        "topic": "Precondition",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "Spark to Forest Fire",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0143",
+        "source_node_type": "topic",
+        "source_node_title": "Spark to Forest Fire",
+        "topic_id": "node_0143",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "helpful psychological model",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0144",
+        "source_node_type": "learning_objective",
+        "source_node_title": "In this section, we’ll explore a helpful psychological model that explains how a small spark can turn into a wildfire of",
+        "topic_id": "node_0143",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "emotional awareness.",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0144",
+        "source_node_type": "learning_objective",
+        "source_node_title": "In this section, we’ll explore a helpful psychological model that explains how a small spark can turn into a wildfire of",
+        "topic_id": "node_0143",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "Event",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0149",
+        "source_node_type": "topic",
+        "source_node_title": "Event",
+        "topic_id": "node_0149",
+        "topic": "Event",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "emotional wildfire.",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0142",
+        "source_node_type": "content",
+        "source_node_title": "This kind of thought chain happens so quickly that we often don’t realize it’s happening.An angry outburst might be the ",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "thought chain",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0142",
+        "source_node_type": "content",
+        "source_node_title": "This kind of thought chain happens so quickly that we often don’t realize it’s happening.An angry outburst might be the ",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "frustration.",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0142",
+        "source_node_type": "content",
+        "source_node_title": "This kind of thought chain happens so quickly that we often don’t realize it’s happening.An angry outburst might be the ",
+        "topic_id": "node_0138",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "wildfire of emotions.",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0144",
+        "source_node_type": "learning_objective",
+        "source_node_title": "In this section, we’ll explore a helpful psychological model that explains how a small spark can turn into a wildfire of",
+        "topic_id": "node_0143",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "perfect reflection of reality,",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0144",
+        "source_node_type": "learning_objective",
+        "source_node_title": "In this section, we’ll explore a helpful psychological model that explains how a small spark can turn into a wildfire of",
+        "topic_id": "node_0143",
+        "topic": "Spark to Forest Fire",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "feeling tired and stressed",
+        "page": 14,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0148",
+        "source_node_type": "example",
+        "source_node_title": "Imagine waking up late feeling tired and stressed because you didn’t get enough sleep. This tiredness is your preconditi",
+        "topic_id": "node_0146",
+        "topic": "Precondition",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 14
+        }
+    },
+    {
+        "keyword": "Perception Database",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0152",
+        "source_node_type": "topic",
+        "source_node_title": "Perception Database",
+        "topic_id": "node_0152",
+        "topic": "Perception Database",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "Trigger (The Spark)",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0155",
+        "source_node_type": "topic",
+        "source_node_title": "Trigger (The Spark)",
+        "topic_id": "node_0155",
+        "topic": "Trigger (The Spark)",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "automatic emotional response.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0156",
+        "source_node_type": "content",
+        "source_node_title": "The combination of your precondition, the event, and your perception creates a trigger, or spark, which causes an automa",
+        "topic_id": "node_0155",
+        "topic": "Trigger (The Spark)",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "Emotional Response",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0158",
+        "source_node_type": "topic",
+        "source_node_title": "Emotional Response",
+        "topic_id": "node_0158",
+        "topic": "Emotional Response",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "Selective Filtering",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0164",
+        "source_node_type": "topic",
+        "source_node_title": "Selective Filtering (Putting Out the Spark):",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "personal history.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0153",
+        "source_node_type": "content",
+        "source_node_title": "Every event is filtered through your perception database, which is influenced by your past experiences and personal hist",
+        "topic_id": "node_0152",
+        "topic": "Perception Database",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "trigger memories",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0154",
+        "source_node_type": "content",
+        "source_node_title": "Because you’ve had stressful mornings before, spilling tea might trigger memories of similar situations where you were r",
+        "topic_id": "node_0152",
+        "topic": "Perception Database",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "overwhelmed.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0157",
+        "source_node_type": "content",
+        "source_node_title": "The tea spilling incident triggers feelings of frustration and stress, making you feel even more irritated and overwhelm",
+        "topic_id": "node_0155",
+        "topic": "Trigger (The Spark)",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "sweating",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0159",
+        "source_node_type": "content",
+        "source_node_title": "This trigger leads to an emotional response, which can include physical reactions like sweating or trembling, and mental",
+        "topic_id": "node_0158",
+        "topic": "Emotional Response",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "trembling,",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0159",
+        "source_node_type": "content",
+        "source_node_title": "This trigger leads to an emotional response, which can include physical reactions like sweating or trembling, and mental",
+        "topic_id": "node_0158",
+        "topic": "Emotional Response",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "anxiety.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0159",
+        "source_node_type": "content",
+        "source_node_title": "This trigger leads to an emotional response, which can include physical reactions like sweating or trembling, and mental",
+        "topic_id": "node_0158",
+        "topic": "Emotional Response",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "flood your mind.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0160",
+        "source_node_type": "content",
+        "source_node_title": "After spilling your tea, you might feel your heart race, and have thoughts like, “I need to change, but I’m already late",
+        "topic_id": "node_0158",
+        "topic": "Emotional Response",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "suffering.",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0162",
+        "source_node_type": "content",
+        "source_node_title": "Your emotional state then leads to an action, which can be either beneficial or harmful. Beneficial actions lead to well",
+        "topic_id": "node_0161",
+        "topic": "Action (Beneficial or Harmful):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "bad mood",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0163",
+        "source_node_type": "content",
+        "source_node_title": "If you let your frustration control you, you will leave home in a bad mood and might have an argument with a classmate o",
+        "topic_id": "node_0161",
+        "topic": "Action (Beneficial or Harmful):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "argument",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0163",
+        "source_node_type": "content",
+        "source_node_title": "If you let your frustration control you, you will leave home in a bad mood and might have an argument with a classmate o",
+        "topic_id": "node_0161",
+        "topic": "Action (Beneficial or Harmful):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "regulate your emotions",
+        "page": 15,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0163",
+        "source_node_type": "content",
+        "source_node_title": "If you let your frustration control you, you will leave home in a bad mood and might have an argument with a classmate o",
+        "topic_id": "node_0161",
+        "topic": "Action (Beneficial or Harmful):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 15
+        }
+    },
+    {
+        "keyword": "(equanimity)",
+        "page": 16,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0166",
+        "source_node_type": "practice",
+        "source_node_title": "After spilling the tea, you pause and use tools like grounding or resourcing to regulate yourself, change into a fresh p",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 16
+        }
+    },
+    {
+        "keyword": "e grounding",
+        "page": 16,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0166",
+        "source_node_type": "practice",
+        "source_node_title": "After spilling the tea, you pause and use tools like grounding or resourcing to regulate yourself, change into a fresh p",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 16
+        }
+    },
+    {
+        "keyword": "resourcing",
+        "page": 16,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0166",
+        "source_node_type": "practice",
+        "source_node_title": "After spilling the tea, you pause and use tools like grounding or resourcing to regulate yourself, change into a fresh p",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 16
+        }
+    },
+    {
+        "keyword": "regulate yourself,",
+        "page": 16,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0166",
+        "source_node_type": "practice",
+        "source_node_title": "After spilling the tea, you pause and use tools like grounding or resourcing to regulate yourself, change into a fresh p",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 16
+        }
+    },
+    {
+        "keyword": "staying calm",
+        "page": 16,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0166",
+        "source_node_type": "practice",
+        "source_node_title": "After spilling the tea, you pause and use tools like grounding or resourcing to regulate yourself, change into a fresh p",
+        "topic_id": "node_0164",
+        "topic": "Selective Filtering (Putting Out the Spark):",
+        "skill_id": "node_0116",
+        "skill": "Skill 3: Emotional Awareness",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 16
+        }
+    },
+    {
+        "keyword": "Self Compassion",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0172",
+        "source_node_type": "chapter",
+        "source_node_title": "Skill 4: Self Compassion",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "thinking traps",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0178",
+        "source_node_type": "content",
+        "source_node_title": "But it is always easy to be compassionate towards ourselves? Something that often gets in the way of practicing self com",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "cultivate compassion",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0175",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define self compassion Identify the different thinking traps and how they impact well being Recognize the importance of ",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "suffering",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0175",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define self compassion Identify the different thinking traps and how they impact well being Recognize the importance of ",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "happiness",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0180",
+        "source_node_type": "reflection",
+        "source_node_title": "To overcome these thinking traps, it’s important to approach self-reflection with strength and resilience, so we can see",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "suffering and happiness depend on our thoughts and emotions",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0175",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Define self compassion Identify the different thinking traps and how they impact well being Recognize the importance of ",
+        "topic_id": null,
+        "topic": null,
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "recognizing our own worth",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0177",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is about recognizing our own worth, understanding what truly makes us happy or unhappy, and finding ways",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "finding ways to improve our well-being",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0177",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is about recognizing our own worth, understanding what truly makes us happy or unhappy, and finding ways",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "understanding what truly makes us happy or unhappy,",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0177",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is about recognizing our own worth, understanding what truly makes us happy or unhappy, and finding ways",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "compassionate towards ourselves",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0178",
+        "source_node_type": "content",
+        "source_node_title": "But it is always easy to be compassionate towards ourselves? Something that often gets in the way of practicing self com",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "cognitive distortions",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0179",
+        "source_node_type": "content",
+        "source_node_title": "Thinking traps, or cognitive distortions, are ways our mind can trick us into believing things that aren't true. For exa",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "self-reflection",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0180",
+        "source_node_type": "reflection",
+        "source_node_title": "To overcome these thinking traps, it’s important to approach self-reflection with strength and resilience, so we can see",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "resilience",
+        "page": 17,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0180",
+        "source_node_type": "reflection",
+        "source_node_title": "To overcome these thinking traps, it’s important to approach self-reflection with strength and resilience, so we can see",
+        "topic_id": "node_0176",
+        "topic": "What is Self-compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 17
+        }
+    },
+    {
+        "keyword": "Thinking traps",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0182",
+        "source_node_type": "topic",
+        "source_node_title": "Thinking traps",
+        "topic_id": "node_0182",
+        "topic": "Thinking traps",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "perceptual distortion.",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0189",
+        "source_node_type": "content",
+        "source_node_title": "While many people might think the top line is longer, both these lines are the same length. Even if we measure these lin",
+        "topic_id": "node_0182",
+        "topic": "Thinking traps",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": ": Hedonic Treadmill",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0190",
+        "source_node_type": "topic",
+        "source_node_title": "Thinking Trap 1: Hedonic Treadmill",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "contentment",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0192",
+        "source_node_type": "practice",
+        "source_node_title": "To step off the Hedonic Treadmill, it's important to practice realism, contentment, and appreciation. This doesn’t mean ",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "realism",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0192",
+        "source_node_type": "practice",
+        "source_node_title": "To step off the Hedonic Treadmill, it's important to practice realism, contentment, and appreciation. This doesn’t mean ",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "appreciation",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0192",
+        "source_node_type": "practice",
+        "source_node_title": "To step off the Hedonic Treadmill, it's important to practice realism, contentment, and appreciation. This doesn’t mean ",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "twist how we see reality.",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0183",
+        "source_node_type": "content",
+        "source_node_title": "Thinking traps are harmful mental states that twist how we see reality.",
+        "topic_id": "node_0182",
+        "topic": "Thinking traps",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "harmful mental states",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0183",
+        "source_node_type": "content",
+        "source_node_title": "Thinking traps are harmful mental states that twist how we see reality.",
+        "topic_id": "node_0182",
+        "topic": "Thinking traps",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "a persistent perceptual distortio",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0189",
+        "source_node_type": "content",
+        "source_node_title": "While many people might think the top line is longer, both these lines are the same length. Even if we measure these lin",
+        "topic_id": "node_0182",
+        "topic": "Thinking traps",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "chasing things like money, status, pleasure, and praise, but never feel fully satisfied",
+        "page": 18,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0191",
+        "source_node_type": "content",
+        "source_node_title": "The Hedonic Treadmill is a thinking trap where we keep chasing things like money, status, pleasure, and praise, but neve",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 18
+        }
+    },
+    {
+        "keyword": "Unrealistic Expectations activity",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0204",
+        "source_node_type": "activity",
+        "source_node_title": "Unrealistic Expectations activity",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "Unrealistic Expectations",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0198",
+        "source_node_type": "topic",
+        "source_node_title": "Unrealistic Expectations.",
+        "topic_id": "node_0198",
+        "topic": "Unrealistic Expectations.",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "aspiration or an expectation",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0205",
+        "source_node_type": "reflection",
+        "source_node_title": "Over the next one week, notice how you talk to yourself. Everytime you feel the pressure within yourself to achieve some",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "Work towards your goals",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0193",
+        "source_node_type": "learning_objective",
+        "source_node_title": "what truly brings happiness and what doesn’t. Work towards your goals, but also learn to appreciate what you have in the",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "contentment",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0194",
+        "source_node_type": "content",
+        "source_node_title": "For example, instead of always wanting the latest gadget, you can find contentment in the things you already own. By doi",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "frustration",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0194",
+        "source_node_type": "content",
+        "source_node_title": "For example, instead of always wanting the latest gadget, you can find contentment in the things you already own. By doi",
+        "topic_id": "node_0190",
+        "topic": "Thinking Trap 1: Hedonic Treadmill",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "see the lives of the rich, famous, beautiful, and talented as the ultimate success",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0196",
+        "source_node_type": "content",
+        "source_node_title": "In our society, we often see the lives of the rich, famous, beautiful, and talented as the ultimate success. We are surr",
+        "topic_id": "node_0195",
+        "topic": "Thinking Trap 2: Unrealistic Expectations",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "fearing things like financial loss, insignificance, blame, and pain",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0196",
+        "source_node_type": "content",
+        "source_node_title": "In our society, we often see the lives of the rich, famous, beautiful, and talented as the ultimate success. We are surr",
+        "topic_id": "node_0195",
+        "topic": "Thinking Trap 2: Unrealistic Expectations",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "set goals that are meaningful to you and that align with your values",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0203",
+        "source_node_type": "content",
+        "source_node_title": "For example, instead of aiming to be like someone else, set goals that are meaningful to you and that align with your va",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "stay grounded and satisfied",
+        "page": 19,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0203",
+        "source_node_type": "content",
+        "source_node_title": "For example, instead of aiming to be like someone else, set goals that are meaningful to you and that align with your va",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 19
+        }
+    },
+    {
+        "keyword": "Superiority Bias",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0211",
+        "source_node_type": "topic",
+        "source_node_title": "Superiority Bias",
+        "topic_id": "node_0211",
+        "topic": "Superiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "Inferiority Bias",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0214",
+        "source_node_type": "topic",
+        "source_node_title": "Inferiority Bias",
+        "topic_id": "node_0214",
+        "topic": "Inferiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "sensations you felt",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0206",
+        "source_node_type": "reflection",
+        "source_node_title": "1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 2. Was that press",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "felt in your body",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0206",
+        "source_node_type": "reflection",
+        "source_node_title": "1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 2. Was that press",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "pressure external or internal",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0206",
+        "source_node_type": "reflection",
+        "source_node_title": "1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 2. Was that press",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "thought was an aspiration or an expectation",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0206",
+        "source_node_type": "reflection",
+        "source_node_title": "1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 2. Was that press",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "realistic expectation",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0210",
+        "source_node_type": "topic",
+        "source_node_title": "Types of Unrealistic Expectations",
+        "topic_id": "node_0210",
+        "topic": "Types of Unrealistic Expectations",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "a goal that is achievable and considers your abilities and circumstances",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0207",
+        "source_node_type": "content",
+        "source_node_title": "Read each scenario below and decide whether it represents a realistic expectation (a goal that is achievable and conside",
+        "topic_id": "node_0200",
+        "topic": "How to fix this?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "perfect physical shape",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "new language fluently",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "buy a new laptop within a year.",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "never make mistakes at work",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "improve your grades",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "balance a full-time job, school, and social life perfectly",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "improve your public speaking skills",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0209",
+        "source_node_type": "practice",
+        "source_node_title": "1. You expect to learn a new language fluently in just one month without any prior experience. 2. You plan to save a sma",
+        "topic_id": "node_0208",
+        "topic": "Scenarios:",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "self-hatred",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0212",
+        "source_node_type": "content",
+        "source_node_title": "Superiority Bias Superiority Bias is when we think we are better, more unique, or overly optimistic about ourselves. Thi",
+        "topic_id": "node_0211",
+        "topic": "Superiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "low self-esteem",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0212",
+        "source_node_type": "content",
+        "source_node_title": "Superiority Bias Superiority Bias is when we think we are better, more unique, or overly optimistic about ourselves. Thi",
+        "topic_id": "node_0211",
+        "topic": "Superiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "you're always right and others are wrong",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0213",
+        "source_node_type": "content",
+        "source_node_title": "For example, you might think you're always right and others are wrong, but when things don’t go your way, it can make yo",
+        "topic_id": "node_0211",
+        "topic": "Superiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "make you feel really down",
+        "page": 20,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0213",
+        "source_node_type": "content",
+        "source_node_title": "For example, you might think you're always right and others are wrong, but when things don’t go your way, it can make yo",
+        "topic_id": "node_0211",
+        "topic": "Superiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 20
+        }
+    },
+    {
+        "keyword": "Perfectionism",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0217",
+        "source_node_type": "topic",
+        "source_node_title": "Perfectionism",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "underestimate our abilities or worth",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0215",
+        "source_node_type": "content",
+        "source_node_title": "Inferiority Bias happens when we underestimate our abilities or worth. This can make us set goals that are too hard to p",
+        "topic_id": "node_0214",
+        "topic": "Inferiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "leading to burnout",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0216",
+        "source_node_type": "content",
+        "source_node_title": "For example, you might avoid trying new things because you’re convinced you’ll fail, or you might push yourself too hard",
+        "topic_id": "node_0214",
+        "topic": "Inferiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "setting goals that are neither too high nor too low but match what we can realistically achieve",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0216",
+        "source_node_type": "content",
+        "source_node_title": "For example, you might avoid trying new things because you’re convinced you’ll fail, or you might push yourself too hard",
+        "topic_id": "node_0214",
+        "topic": "Inferiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "Realistic expectations",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0216",
+        "source_node_type": "content",
+        "source_node_title": "For example, you might avoid trying new things because you’re convinced you’ll fail, or you might push yourself too hard",
+        "topic_id": "node_0214",
+        "topic": "Inferiority Bias",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "disappointment",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0218",
+        "source_node_type": "content",
+        "source_node_title": "Perfectionism is when we expect ourselves (or others) to be perfect all the time. When we make even small mistakes, we j",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "frustration.",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0218",
+        "source_node_type": "content",
+        "source_node_title": "Perfectionism is when we expect ourselves (or others) to be perfect all the time. When we make even small mistakes, we j",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "judge ourselves harshly,",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0218",
+        "source_node_type": "content",
+        "source_node_title": "Perfectionism is when we expect ourselves (or others) to be perfect all the time. When we make even small mistakes, we j",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "overly critical of others",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0218",
+        "source_node_type": "content",
+        "source_node_title": "Perfectionism is when we expect ourselves (or others) to be perfect all the time. When we make even small mistakes, we j",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "normal part of learning",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0219",
+        "source_node_type": "content",
+        "source_node_title": "For example, if you expect to get perfect grades all the time, a single low mark can be very disappointing, even though ",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "strain our relationships and make life more stressful.",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0219",
+        "source_node_type": "content",
+        "source_node_title": "For example, if you expect to get perfect grades all the time, a single low mark can be very disappointing, even though ",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "unnecessary stress",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0220",
+        "source_node_type": "content",
+        "source_node_title": "In summary, having unrealistic expectations—whether thinking too highly or too poorly of ourselves—can lead to unnecessa",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "dissatisfaction.",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0220",
+        "source_node_type": "content",
+        "source_node_title": "In summary, having unrealistic expectations—whether thinking too highly or too poorly of ourselves—can lead to unnecessa",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "thinking too highly or too poorly of ourselves",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0220",
+        "source_node_type": "content",
+        "source_node_title": "In summary, having unrealistic expectations—whether thinking too highly or too poorly of ourselves—can lead to unnecessa",
+        "topic_id": "node_0217",
+        "topic": "Perfectionism",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "feels overwhelming",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0222",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you’re having a tough day where everything feels overwhelming and stressful. What if, instead of letting the str",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "paused and thought about how you’re feeling?",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0222",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you’re having a tough day where everything feels overwhelming and stressful. What if, instead of letting the str",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "feeling helping or hurting",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0222",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you’re having a tough day where everything feels overwhelming and stressful. What if, instead of letting the str",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "truly happy",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0222",
+        "source_node_type": "example",
+        "source_node_title": "Imagine you’re having a tough day where everything feels overwhelming and stressful. What if, instead of letting the str",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "temporary satisfaction",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0223",
+        "source_node_type": "content",
+        "source_node_title": "Sometimes, we mistakenly believe that material things or short-term pleasures will make us happy, but they only bring te",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "material things or short-term pleasures",
+        "page": 21,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0223",
+        "source_node_type": "content",
+        "source_node_title": "Sometimes, we mistakenly believe that material things or short-term pleasures will make us happy, but they only bring te",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 21
+        }
+    },
+    {
+        "keyword": "Do you practice Self-Compassion? Write a letter to a friend activity",
+        "page": 22,
+        "mapping_status": "not_found",
+        "source_node_id": null,
+        "topic": null,
+        "skill_id": null,
+        "skill": null
+    },
+    {
+        "keyword": "Eight Worldly concern",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0236",
+        "source_node_type": "topic",
+        "source_node_title": "Eight Worldly concerns",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "e lasting happiness,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": ", resilience,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "d inner peace",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "change by understanding yourself better,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "developing new skills",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "adopting positive attitudes",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "build confidence in your ability",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "being kinder",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "compassionate to yourself,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "forgiveness",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "gratitude",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "empathy,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "compassion to others",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0225",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, ",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "Self-compassion is understanding your own worth,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0226",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is understanding your own worth, knowing what makes you happy or unhappy, and finding ways to improve yo",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "knowing what makes you happy or unhappy,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0226",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is understanding your own worth, knowing what makes you happy or unhappy, and finding ways to improve yo",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "finding ways to improve your well-being",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0226",
+        "source_node_type": "learning_objective",
+        "source_node_title": "Self-compassion is understanding your own worth, knowing what makes you happy or unhappy, and finding ways to improve yo",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "words of encouragement to help",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0230",
+        "source_node_type": "content",
+        "source_node_title": "Write a letter to a friend who is going through a difficult time. In this letter, give your friend your support and incl",
+        "topic_id": "node_0221",
+        "topic": "Why is Self-compassion important?",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "Cultivate Compassion",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0233",
+        "source_node_type": "topic",
+        "source_node_title": "Three steps to Cultivate Compassion",
+        "topic_id": "node_0233",
+        "topic": "Three steps to Cultivate Compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "you have value regardless of your external circumstances",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0235",
+        "source_node_type": "learning_objective",
+        "source_node_title": "1. Remind yourself of that you have value regardless of your external circumstances 2. Understand and define what happin",
+        "topic_id": "node_0233",
+        "topic": "Three steps to Cultivate Compassion",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "material wealth,",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0237",
+        "source_node_type": "learning_objective",
+        "source_node_title": "We all want to be happy, but the problem is with our understanding of what might bring us true happiness. For some of us",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "happy relationship",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0237",
+        "source_node_type": "learning_objective",
+        "source_node_title": "We all want to be happy, but the problem is with our understanding of what might bring us true happiness. For some of us",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "new career",
+        "page": 22,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0237",
+        "source_node_type": "learning_objective",
+        "source_node_title": "We all want to be happy, but the problem is with our understanding of what might bring us true happiness. For some of us",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 22
+        }
+    },
+    {
+        "keyword": "External sources do not lead to happiness",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0238",
+        "source_node_type": "content",
+        "source_node_title": "External sources do not lead to happiness because they are not permanent and not in our sole control. Instead, we need t",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "not permanent and not in our sole control.",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0238",
+        "source_node_type": "content",
+        "source_node_title": "External sources do not lead to happiness because they are not permanent and not in our sole control. Instead, we need t",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "shift our focus to internal qualities",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0238",
+        "source_node_type": "content",
+        "source_node_title": "External sources do not lead to happiness because they are not permanent and not in our sole control. Instead, we need t",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Eight Worldly Concerns",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0240",
+        "source_node_type": "content",
+        "source_node_title": "In the next section, we will discuss the eight worldly concerns and how they impact us.",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Wealth, pleasure, praise or status are not inherently bad, and there is no harm in seeking them",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0239",
+        "source_node_type": "content",
+        "source_node_title": "One useful model for helping us think of the things we strive for and try to avoid that often lead to harmful mental sta",
+        "topic_id": "node_0236",
+        "topic": "Eight Worldly concerns",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Status vs Insignificance",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0243",
+        "source_node_type": "topic",
+        "source_node_title": "Status vs Insignificance",
+        "topic_id": "node_0243",
+        "topic": "Status vs Insignificance",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "e considered valuable by society.",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0244",
+        "source_node_type": "content",
+        "source_node_title": "When we are too focused on these two worldly concerns, we want to be known as someone important and powerful and constan",
+        "topic_id": "node_0243",
+        "topic": "Status vs Insignificance",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Financial loss vs Financial gain",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0245",
+        "source_node_type": "topic",
+        "source_node_title": "Financial loss vs Financial gain",
+        "topic_id": "node_0245",
+        "topic": "Financial loss vs Financial gain",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "money and material possessions will bring us lasting happiness",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0246",
+        "source_node_type": "content",
+        "source_node_title": "When caught up in these two worldly concerns, we think money and material possessions will bring us lasting happiness bu",
+        "topic_id": "node_0245",
+        "topic": "Financial loss vs Financial gain",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Blame vs Praise",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0247",
+        "source_node_type": "topic",
+        "source_node_title": "Blame vs Praise",
+        "topic_id": "node_0247",
+        "topic": "Blame vs Praise",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "seek people’s compliments and approval",
+        "page": 23,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0248",
+        "source_node_type": "content",
+        "source_node_title": "When we get caught by these two worldly concerns we seek people’s compliments and approval of what we do or say and feel",
+        "topic_id": "node_0247",
+        "topic": "Blame vs Praise",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 23
+        }
+    },
+    {
+        "keyword": "Pain vs Pleasure",
+        "page": 24,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0250",
+        "source_node_type": "topic",
+        "source_node_title": "Pain vs Pleasure",
+        "topic_id": "node_0250",
+        "topic": "Pain vs Pleasure",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 24
+        }
+    },
+    {
+        "keyword": "constantly miserable.",
+        "page": 24,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0251",
+        "source_node_type": "content",
+        "source_node_title": "When too focused on these two worldly concerns, we’re constantly striving for pleasure through external means and moving",
+        "topic_id": "node_0250",
+        "topic": "Pain vs Pleasure",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 24
+        }
+    },
+    {
+        "keyword": "The more we focus on a source of real or potential pain, the more suffering it causes us",
+        "page": 24,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0251",
+        "source_node_type": "content",
+        "source_node_title": "When too focused on these two worldly concerns, we’re constantly striving for pleasure through external means and moving",
+        "topic_id": "node_0250",
+        "topic": "Pain vs Pleasure",
+        "skill_id": "node_0172",
+        "skill": "Skill 4: Self Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 24
+        }
+    },
+    {
+        "keyword": "Who are you Activity",
+        "page": 27,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0284",
+        "source_node_type": "activity",
+        "source_node_title": "Who are you Activity",
+        "topic_id": "node_0278",
+        "topic": "Impartiality",
+        "skill_id": "node_0255",
+        "skill": "Skill 5: Impartiality and Common Humanity",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 27
+        }
+    },
+    {
+        "keyword": "Activity",
+        "page": 30,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0335",
+        "source_node_type": "activity",
+        "source_node_title": "Activity",
+        "topic_id": "node_0332",
+        "topic": "negativity bias",
+        "skill_id": "node_0292",
+        "skill": "Skill 6:Forgiveness and Gratitude",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 30
+        }
+    },
+    {
+        "keyword": "Naikan Practice",
+        "page": 32,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0362",
+        "source_node_type": "practice",
+        "source_node_title": "Naikan Practice",
+        "topic_id": "node_0353",
+        "topic": "Slide 4",
+        "skill_id": "node_0292",
+        "skill": "Skill 6:Forgiveness and Gratitude",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 32
+        }
+    },
+    {
+        "keyword": "How to Cultivate Sympathetic Joy",
+        "page": 38,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0450",
+        "source_node_type": "topic",
+        "source_node_title": "How to Cultivate Sympathetic Joy:",
+        "topic_id": "node_0450",
+        "topic": "How to Cultivate Sympathetic Joy:",
+        "skill_id": "node_0379",
+        "skill": "Skill 7:Empathic Concern",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 38
+        }
+    },
+    {
+        "keyword": "Reflection",
+        "page": 43,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0531",
+        "source_node_type": "reflection",
+        "source_node_title": "Reflection",
+        "topic_id": "node_0529",
+        "topic": "Example:",
+        "skill_id": "node_0478",
+        "skill": "Skill 8: Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 43
+        }
+    },
+    {
+        "keyword": "Engaged Compassion",
+        "page": 43,
+        "mapping_status": "mapped",
+        "source_node_id": "node_0546",
+        "source_node_type": "topic",
+        "source_node_title": "Engaged Compassion",
+        "topic_id": "node_0546",
+        "topic": "Engaged Compassion",
+        "skill_id": "node_0478",
+        "skill": "Skill 8: Compassion",
+        "source": {
+            "document": "SEEK Learning",
+            "page": 43
+        }
+    }
+]
