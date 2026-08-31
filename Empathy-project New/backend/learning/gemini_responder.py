@@ -7,8 +7,8 @@ from google import genai
 from google.genai import types
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(BASE_DIR / ".env")
+BASE_DIR = Path(__file__).resolve().parents[2]
+load_dotenv(BASE_DIR / "backend" / ".env")
 
 SYSTEM_INSTRUCTION = """
 You are the language-response component of an educational empathy application.
