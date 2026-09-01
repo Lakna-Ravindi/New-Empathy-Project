@@ -476,30 +476,17 @@ if __name__ == "__main__":
 
     highlighted_keywords = extract_highlighted_keywords(PDF_PATH)
 
-with open(KEYWORDS_OUTPUT_PATH, "w", encoding="utf-8") as file:
-    json.dump(
-        highlighted_keywords,
-        file,
-        indent=4,
-        ensure_ascii=False
-    )
-
-print("Highlighted keywords:", len(highlighted_keywords))
-print("Saved:", KEYWORDS_OUTPUT_PATH)
-
-highlighted_keywords = extract_highlighted_keywords(PDF_PATH)
-
-with open(
-    HIGHLIGHTED_KEYWORDS_PATH,
-    "w",
-    encoding="utf-8"
-) as file:
-    json.dump(
-        highlighted_keywords,
-        file,
-        indent=4,
-        ensure_ascii=False
-    )
+    with open(
+        HIGHLIGHTED_KEYWORDS_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            highlighted_keywords,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
 
 keyword_skill_map = map_keywords_to_skills(
     highlighted_keywords,

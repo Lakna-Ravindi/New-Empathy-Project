@@ -10,7 +10,7 @@ def classify(block):
 
     try:
         font_size = float(block.get("font_size", 0))
-    except:
+    except (ValueError, TypeError):
         font_size = 0
 
 
@@ -161,14 +161,12 @@ def classify(block):
             "type": "activity",
             "confidence": 0.80
         }
-    if text.startswith(
-      "imagine"
-):
 
-     return {
-        "type":"example",
-        "confidence":0.85
-    }
+    if text.startswith("imagine"):
+        return {
+            "type": "example",
+            "confidence": 0.85
+        }
 
 
 

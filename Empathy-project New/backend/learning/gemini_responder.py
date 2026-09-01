@@ -36,7 +36,7 @@ def generate_educational_response(learning_context: dict) -> str:
         return learning_context["message"]
 
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    model_name = os.getenv("GEMINI_MODEL") or "gemini-3.6-flash"
 
     prompt = {
         "student_question": learning_context["student_question"],
@@ -53,7 +53,7 @@ def generate_educational_response(learning_context: dict) -> str:
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_INSTRUCTION,
             temperature=0.3,
-            max_output_tokens=700,
+            max_output_tokens=2048,
         ),
     )
 
