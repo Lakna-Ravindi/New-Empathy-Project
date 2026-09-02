@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.*.local
+*.env
 
 # Python
 __pycache__/
@@ -9,9 +10,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
 build/
 develop-eggs/
 dist/
@@ -24,9 +22,19 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # IDE
 .vscode/
@@ -34,11 +42,32 @@ wheels/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Project
+# Project specific
 output/
 data/
+*.log
+*.sqlite
+*.db
+
+# MacOS
+.AppleDouble
+.LSOverride
