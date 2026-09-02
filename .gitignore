@@ -8,3 +8,8 @@ Empathy-project New/backend/.env
 *.pyc
 *.pyc
 *.pyc
+*.pyc
+*.pyc
+*.pyc
+/Empathy-project New/backend
+*.pyc

@@ -16,6 +16,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
 
+from app.core.security import verify_password, create_access_token, hash_password
+from datetime import timedelta
+
 
 
 app = Flask(__name__)
@@ -89,7 +92,39 @@ def public_user(user):
         "username": user["username"],
         "age_group": user["age_group"],
         "gender": user["gender"],
+        "role": user["role"],
     }
+# Since you're using Flask, use this decorator instead of FastAPI's Depends:
+def require_jwt(view_function):
+    """Decorator to require valid JWT token."""
+    @wraps(view_function)
+    def wrapped(*args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        
+        if not auth_header.startswith("Bearer "):
+            return jsonify({"error": "Missing or invalid Authorization header"}), 401
+        
+        token = auth_header[7:]  # Remove "Bearer " prefix
+        
+        from app.core.security import get_user_id_from_token
+        from bson import ObjectId
+        
+        user_id = get_user_id_from_token(token)
+        if not user_id:
+            return jsonify({"error": "Invalid or expired token"}), 401
+        
+        try:
+            user = users.find_one({"_id": ObjectId(user_id)})
+        except:
+            user = None
+        
+        if not user:
+            return jsonify({"error": "User not found"}), 401
+        
+        return view_function(user, *args, **kwargs)
+    
+    return wrapped
+
 
 @app.post("/api/auth/register")
 def register():
@@ -117,7 +152,9 @@ def register():
         }), 400
 
     if len(password) < 8:
-        return jsonify({"error": "Password must contain at least 8 characters."}), 400
+        return jsonify({
+            "error": "Password must contain at least 8 characters."
+        }), 400
 
     allowed_age_groups = {
         "under_16",
@@ -125,7 +162,6 @@ def register():
         "19_21",
         "22_25",
         "26_plus"
-        
     }
 
     if age_group not in allowed_age_groups:
@@ -135,9 +171,10 @@ def register():
         "name": name,
         "email": email,
         "username": username,
-        "password_hash": generate_password_hash(password),
+        "password_hash": hash_password(password),
         "age_group": age_group,
         "gender": gender,
+        "role": "student",
         "created_at": current_time(),
     }
 
@@ -160,11 +197,11 @@ def register():
 
 @app.post("/api/auth/login")
 def login():
+    """Login with username/password, return JWT token."""
     if users is None:
         return jsonify({"error": "User database is unavailable."}), 503
 
     body = request.get_json(silent=True) or {}
-
     username = (body.get("username") or "").strip().lower()
     password = body.get("password") or ""
 
@@ -173,24 +210,84 @@ def login():
 
     user = users.find_one({"username": username})
 
-    if user is None or not check_password_hash(
-        user["password_hash"],
-        password
-    ):
+    # Use JWT-compatible verification
+    if user is None or not verify_password(password, user["password_hash"]):
         return jsonify({"error": "Invalid username or password."}), 401
 
-    session["user_id"] = str(user["_id"])
-    session["username"] = user["username"]
+    # Create JWT token with user ID in 'sub'
+    access_token = create_access_token(
+        data={"sub": str(user["_id"])},
+        expires_delta=timedelta(minutes=30)
+    )
 
     return jsonify({
         "message": "Login successful.",
+        "access_token": access_token,
+        "token_type": "Bearer",
         "user": public_user(user),
     }), 200
 
+# @app.post("/api/auth/login")
+# def login():
+#     if users is None:
+#         return jsonify({"error": "User database is unavailable."}), 503
+
+#     body = request.get_json(silent=True) or {}
+
+#     username = (body.get("username") or "").strip().lower()
+#     password = body.get("password") or ""
+
+#     if not username or not password:
+#         return jsonify({"error": "Username and password are required."}), 400
+
+#     user = users.find_one({"username": username})
+
+#     if user is None or not check_password_hash(
+#         user["password_hash"],
+#         password
+#     ):
+#         return jsonify({"error": "Invalid username or password."}), 401
+
+#     session["user_id"] = str(user["_id"])
+#     session["username"] = user["username"]
+
+#     return jsonify({
+#         "message": "Login successful.",
+#         "user": public_user(user),
+#     }), 200
+
 @app.post("/api/auth/logout")
 def logout():
-    session.clear()
+    """
+    Client-side logout (optional).
+    In JWT, logout is typically handled by client deleting the token.
+    This endpoint can be used to blacklist tokens if needed.
+    """
     return jsonify({"message": "Logged out successfully."}), 200
+
+# @app.post("/api/auth/logout")
+# def logout():
+#     session.clear()
+#     return jsonify({"message": "Logged out successfully."}), 200
+
+# Protected endpoint example
+@app.get("/api/me/profile")
+@require_jwt
+def get_me_profile(current_user):
+    """Get current user's profile."""
+    return jsonify(public_user(current_user)), 200
+
+
+@app.get("/api/me/progress/<skill_id>")
+@require_jwt
+def get_user_progress(current_user, skill_id):
+    """Get current user's progress in a skill."""
+    user_id = str(current_user["_id"])
+    
+    # Fetch progress from your learning store
+    progress = learning_store.get_user_progress(user_id, skill_id)
+    
+    return jsonify(progress), 200
 
 @app.post("/api/learning-response")
 def learning_response():
