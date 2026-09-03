@@ -1,10 +1,12 @@
 import json
 import os
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from google.genai.errors import ServerError
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -47,16 +49,26 @@ def generate_educational_response(learning_context: dict) -> str:
         "source_page": learning_context["source_page"],
     }
 
-    response = client.models.generate_content(
-        model=model_name,
-        contents=json.dumps(prompt, ensure_ascii=False),
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            temperature=0.3,
-            max_output_tokens=2048,
-        ),
-    )
+    for attempt in range(3):
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=json.dumps(prompt, ensure_ascii=False),
+                config=types.GenerateContentConfig(
+                    system_instruction=SYSTEM_INSTRUCTION,
+                    max_output_tokens=2048,
+                ),
+            )
 
-    print("Gemini finish reason:", response.candidates[0].finish_reason)
+            print("Gemini finish reason:", response.candidates[0].finish_reason)
+            return response.text
 
-    return response.text
+        except ServerError as e:
+            print(f"Gemini 503 error - attempt {attempt + 1}/3")
+
+            if attempt < 2:
+                wait_time = 2 ** attempt
+                print(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                raise e

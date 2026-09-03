@@ -13,3 +13,4 @@ Empathy-project New/backend/.env
 *.pyc
 /Empathy-project New/backend
 *.pyc
+*.pyc
