@@ -1,0 +1,511 @@
+from pathlib import Path
+import json
+from collections import Counter
+
+from classifier.rule_classifier import classify
+from knowledge.node_builder import build_node
+from parser.block_merger import merge_spans
+from parser.metadata_extractor import extract_blocks
+from parser.highlight_extractor import extract_highlighted_keywords
+from knowledge.keyword_skill_mapper import map_keywords_to_skills
+
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+PDF_PATH = BASE_DIR / "data" / "SEEK_Learning.pdf"
+OUTPUT_PATH = BASE_DIR / "output" / "knowledge_base.json"
+REPORT_PATH = BASE_DIR / "output" / "validation_report.json"
+HIGHLIGHTED_KEYWORDS_PATH = BASE_DIR / "output" / "highlighted_keywords.json"
+KEYWORD_SKILL_MAP_PATH = BASE_DIR / "output" / "keyword_skill_map.json"
+
+
+def build_knowledge_base():
+
+    print("Reading PDF...")
+
+    if not PDF_PATH.exists():
+        print("PDF not found:", PDF_PATH)
+        return []
+
+
+    # -------------------------------
+    # 1. Extract PDF blocks
+    # -------------------------------
+    blocks = extract_blocks(PDF_PATH)
+
+    print("Total extracted blocks:", len(blocks))
+
+
+    # -------------------------------
+    # 2. Merge related spans
+    # -------------------------------
+    merged_blocks = merge_spans(blocks)
+
+    print("Merged blocks:", len(merged_blocks))
+
+
+    nodes = []
+
+
+    stack = {
+        "chapter": None,
+        "module": None,
+        "topic": None,
+        "practice": None,
+        "activity": None,
+        "reflection": None,
+        "assessment": None,
+    }
+
+
+    # -------------------------------
+    # 3. Create knowledge nodes
+    # -------------------------------
+    for index, block in enumerate(merged_blocks, start=1):
+
+
+        # Classification with confidence
+        classification = classify(block)
+
+
+        # Backward compatibility
+        if isinstance(classification, dict):
+
+            node_type = classification.get(
+                "type",
+                "content"
+            )
+
+            confidence = classification.get(
+                "confidence",
+                0.5
+            )
+
+        else:
+
+            node_type = classification
+            confidence = 0.5
+
+
+
+        parent_id = resolve_parent_id(
+            node_type,
+            stack
+        )
+
+
+        node_id = f"node_{index:04d}"
+
+
+        node = build_node(
+            block,
+            node_type,
+            node_id,
+            parent_id=parent_id
+        )
+
+
+        # -------------------------------
+        # Add enriched metadata
+        # -------------------------------
+
+        node["classification_confidence"] = confidence
+
+
+        node["learning_objectives"] = generate_learning_objectives(
+            node
+        )
+
+
+        node["prerequisites"] = []
+
+        node["next_nodes"] = []
+
+
+        node["tags"] = generate_tags(
+            node
+        )
+
+
+        # Source citation
+        node["source"] = {
+
+            "document": "SEEK Learning",
+
+            "page": block.get(
+                "page",
+                None
+            )
+
+        }
+
+
+        node["validation_status"] = "pending"
+
+
+        nodes.append(node)
+
+
+        update_stack(
+            stack,
+            node_type,
+            node_id
+        )
+
+
+    return nodes
+
+
+
+# --------------------------------------------------
+# Parent-child hierarchy handling
+# --------------------------------------------------
+
+def resolve_parent_id(node_type, stack):
+
+    if node_type == "chapter":
+        return None
+
+
+    if node_type == "module":
+        return stack["chapter"]
+
+
+    if node_type == "topic":
+        return (
+            stack["module"]
+            or stack["chapter"]
+        )
+
+
+    if node_type in {
+        "practice",
+        "activity",
+        "reflection",
+        "assessment"
+    }:
+
+        return (
+            stack["topic"]
+            or stack["module"]
+            or stack["chapter"]
+        )
+
+
+    return (
+        stack["topic"]
+        or stack["module"]
+        or stack["chapter"]
+    )
+
+
+
+# --------------------------------------------------
+# Update hierarchy stack
+# --------------------------------------------------
+
+def update_stack(stack, node_type, node_id):
+
+
+    if node_type == "chapter":
+
+        stack.update({
+
+            "chapter": node_id,
+            "module": None,
+            "topic": None,
+            "practice": None,
+            "activity": None,
+            "reflection": None,
+            "assessment": None,
+
+        })
+
+        return
+
+
+
+    if node_type == "module":
+
+        stack.update({
+
+            "module": node_id,
+            "topic": None,
+            "practice": None,
+            "activity": None,
+            "reflection": None,
+            "assessment": None,
+
+        })
+
+        return
+
+
+
+    if node_type == "topic":
+
+        stack.update({
+
+            "topic": node_id,
+            "practice": None,
+            "activity": None,
+            "reflection": None,
+            "assessment": None,
+
+        })
+
+        return
+
+
+
+    if node_type in {
+
+        "practice",
+        "activity",
+        "reflection",
+        "assessment"
+
+    }:
+
+        stack[node_type] = node_id
+
+
+
+# --------------------------------------------------
+# Metadata generation helpers
+# --------------------------------------------------
+
+def generate_learning_objectives(node):
+
+    """
+    Placeholder function.
+    Later can be replaced with LLM-based objective generation.
+    """
+
+    title = node.get(
+        "title",
+        ""
+    )
+
+
+    return [
+
+        f"Understand concepts related to {title}",
+
+        f"Apply learning activities related to {title}"
+
+    ]
+
+
+
+def generate_tags(node):
+
+    title = node.get(
+        "title",
+        ""
+    )
+
+
+    words = title.lower().split()
+
+
+    return words[:5]
+
+
+
+# --------------------------------------------------
+# Validation
+# --------------------------------------------------
+
+def validate_nodes(nodes):
+
+    report = {
+
+        "total_nodes": len(nodes),
+
+        "approved": 0,
+
+        "requires_review": 0,
+
+        "issues": []
+
+    }
+
+
+    for node in nodes:
+
+
+        issues = []
+
+
+        if not node.get("content"):
+
+            issues.append(
+                "Missing content"
+            )
+
+
+        if node.get(
+            "classification_confidence",
+            0
+        ) < 0.6:
+
+            issues.append(
+                "Low classification confidence"
+            )
+
+
+        if issues:
+
+
+            node["validation_status"] = "review"
+
+
+            report["requires_review"] += 1
+
+
+            report["issues"].append({
+
+                "node_id": node["id"],
+
+                "issues": issues
+
+            })
+
+
+        else:
+
+            node["validation_status"] = "approved"
+
+            report["approved"] += 1
+
+
+
+    return nodes, report
+from parser.highlight_extractor import extract_highlighted_keywords
+
+KEYWORDS_OUTPUT_PATH = BASE_DIR / "output" / "highlighted_keywords.json"
+
+
+# --------------------------------------------------
+# Main execution
+# --------------------------------------------------
+
+if __name__ == "__main__":
+
+
+    knowledge_base = build_knowledge_base()
+
+
+    print(
+        "\nRunning validation..."
+    )
+
+
+    knowledge_base, report = validate_nodes(
+        knowledge_base
+    )
+
+
+    OUTPUT_PATH.parent.mkdir(
+        exist_ok=True
+    )
+
+
+    with open(
+        OUTPUT_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+
+        json.dump(
+            knowledge_base,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+
+    with open(
+        REPORT_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+
+        json.dump(
+            report,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+
+    print("\nCompleted!")
+
+    print(
+        "Total Nodes:",
+        len(knowledge_base)
+    )
+
+
+    print(
+        "Saved:",
+        OUTPUT_PATH
+    )
+
+
+    print(
+        "Validation Report:",
+        REPORT_PATH
+    )
+
+
+    print(
+        "\nNode Distribution:"
+    )
+
+
+    print(
+        Counter(
+            node["type"]
+            for node in knowledge_base
+        )
+    )
+
+    highlighted_keywords = extract_highlighted_keywords(PDF_PATH)
+
+    with open(
+        HIGHLIGHTED_KEYWORDS_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            highlighted_keywords,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+    keyword_skill_map = map_keywords_to_skills(
+        highlighted_keywords,
+        knowledge_base
+    )
+
+    with open(
+        KEYWORD_SKILL_MAP_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            keyword_skill_map,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+print("Highlighted keywords:", len(highlighted_keywords))
+print("Saved:", HIGHLIGHTED_KEYWORDS_PATH)
+print("Saved:", KEYWORD_SKILL_MAP_PATH)
+
