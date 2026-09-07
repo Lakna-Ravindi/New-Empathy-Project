@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import bcrypt
@@ -11,8 +12,25 @@ from auth import StudentStore, create_access_token, require_auth
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
 
+from flask_cors import CORS
+
 
 app = Flask(__name__)
+
+CORS(
+    app,
+    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    allow_headers=["Content-Type", "Authorization"],
+)
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    return response
+
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(BASE_DIR / "backend" / ".env")
@@ -62,12 +80,18 @@ def register_student():
     body = request.get_json(silent=True) or {}
 
     name = (body.get("name") or "").strip()
+    username = (body.get("username") or "").strip().lower()
     email = (body.get("email") or "").strip().lower()
     password = body.get("password") or ""
 
-    if not name or not email or not password:
+    if not name or not username or not email or not password:
         return jsonify({
-            "error": "Name, email, and password are required."
+            "error": "Name, username, email, and password are required."
+        }), 400
+
+    if not re.fullmatch(r"[a-z0-9_]{3,30}", username):
+        return jsonify({
+            "error": "Username must be 3-30 characters and use only letters, numbers, or underscores."
         }), 400
 
     if "@" not in email:
@@ -81,10 +105,10 @@ def register_student():
         }), 400
 
     try:
-        student = student_store.create_student(name, email, password)
+        student = student_store.create_student(name, username, email, password)
 
         # Login token is returned immediately after registration.
-        stored_student = student_store.find_by_email(email)
+        stored_student = student_store.find_by_username(username)
         token = create_access_token(stored_student)
 
         return jsonify({
@@ -95,7 +119,7 @@ def register_student():
 
     except DuplicateKeyError:
         return jsonify({
-            "error": "An account already exists with this email."
+            "error": "That email address or username is already registered."
         }), 409
 
     except PyMongoError:
@@ -108,20 +132,20 @@ def register_student():
 def login_student():
     body = request.get_json(silent=True) or {}
 
-    email = (body.get("email") or "").strip().lower()
+    username = (body.get("username") or "").strip().lower()
     password = body.get("password") or ""
 
-    if not email or not password:
+    if not username or not password:
         return jsonify({
-            "error": "Email and password are required."
+            "error": "Username and password are required."
         }), 400
 
     try:
-        student = student_store.find_by_email(email)
+        student = student_store.find_by_username(username)
 
         if not student:
             return jsonify({
-                "error": "Invalid email or password."
+                "error": "Invalid username or password."
             }), 401
 
         valid_password = bcrypt.checkpw(
@@ -131,7 +155,7 @@ def login_student():
 
         if not valid_password:
             return jsonify({
-                "error": "Invalid email or password."
+                "error": "Invalid username or password."
             }), 401
 
         token = create_access_token(student)
@@ -142,6 +166,7 @@ def login_student():
             "student": {
                 "id": str(student["_id"]),
                 "name": student["name"],
+                "username": student["username"],
                 "email": student["email"],
             },
         }), 200
@@ -167,6 +192,7 @@ def get_current_student():
             "student": {
                 "id": str(student["_id"]),
                 "name": student["name"],
+                "username": student["username"],
                 "email": student["email"],
             }
         }), 200

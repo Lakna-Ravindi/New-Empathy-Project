@@ -32,10 +32,11 @@ class StudentStore:
         self.db = self.client[database_name]
         self.students = self.db["students"]
 
-        # Same email cannot be registered twice.
+        # Usernames and emails must both be unique.
         self.students.create_index("email", unique=True)
+        self.students.create_index("username", unique=True, sparse=True)
 
-    def create_student(self, name, email, password):
+    def create_student(self, name, username, email, password):
         password_hash = bcrypt.hashpw(
             password.encode("utf-8"),
             bcrypt.gensalt(),
@@ -43,6 +44,7 @@ class StudentStore:
 
         student = {
             "name": name,
+            "username": username.lower(),
             "email": email.lower(),
             "password_hash": password_hash,
             "created_at": datetime.now(timezone.utc),
@@ -53,8 +55,12 @@ class StudentStore:
         return {
             "id": str(result.inserted_id),
             "name": name,
+            "username": username.lower(),
             "email": email.lower(),
         }
+
+    def find_by_username(self, username):
+        return self.students.find_one({"username": username.lower()})
 
     def find_by_email(self, email):
         return self.students.find_one({"email": email.lower()})
@@ -74,6 +80,7 @@ def create_access_token(student):
 
     payload = {
         "sub": str(student["_id"]),
+        "username": student["username"],
         "email": student["email"],
         "iat": now,
         "exp": now + timedelta(hours=JWT_EXPIRY_HOURS),
