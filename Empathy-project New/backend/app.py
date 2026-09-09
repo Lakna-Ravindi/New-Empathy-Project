@@ -1,5 +1,6 @@
 from pathlib import Path
 import json
+import re
 from collections import Counter
 
 from classifier.rule_classifier import classify
@@ -63,6 +64,25 @@ def build_knowledge_base():
     # -------------------------------
     for index, block in enumerate(merged_blocks, start=1):
 
+        # Clean extracted PDF text before classification and node creation.
+        if "text" in block:
+            block["text"] = clean_text(block["text"])
+
+        if "title" in block:
+            block["title"] = clean_text(block["title"])
+
+        if "content" in block:
+            block["content"] = clean_text(block["content"])
+
+        title = block.get("title", "")
+        content = block.get("content", "")
+        text = block.get("text", "")
+
+        if not title and not content and not text:
+            continue
+
+        if not is_valid_block(block):
+            continue
 
         # Classification with confidence
         classification = classify(block)
@@ -103,6 +123,9 @@ def build_knowledge_base():
             node_id,
             parent_id=parent_id
         )
+
+        if node is None:
+            continue
 
 
         # -------------------------------
@@ -276,26 +299,57 @@ def update_stack(stack, node_type, node_id):
 # --------------------------------------------------
 
 def generate_learning_objectives(node):
-
     """
-    Placeholder function.
-    Later can be replaced with LLM-based objective generation.
+    Do not generate artificial learning objectives.
+    Only learning objectives explicitly extracted from the SEEK PDF
+    should be stored as learning objective nodes.
     """
 
-    title = node.get(
-        "title",
-        ""
-    )
+    if node.get("type") == "learning_objective":
+        title = node.get("title", "").strip()
+        content = node.get("content", "").strip()
+
+        objective = content or title
+
+        if objective:
+            return [objective]
+
+    return []
+
+def clean_text(text):
+    """
+    Clean common PDF extraction artifacts.
+    """
+
+    if not text:
+        return ""
+
+    text = str(text)
+
+    # Remove common PDF bullet symbols
+    text = text.replace("\u2022", " ")
+    text = text.replace("\u25cf", " ")
+    text = text.replace("\uf0b7", " ")
+
+    # Normalize whitespace
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
 
 
-    return [
+def is_valid_block(block):
+    """Reject blocks that contain only symbols or meaningless text."""
 
-        f"Understand concepts related to {title}",
+    title = block.get("title", "")
+    content = block.get("content", "")
+    text = block.get("text", "")
+    combined = f"{title} {content} {text}".strip()
 
-        f"Apply learning activities related to {title}"
+    if not combined:
+        return False
 
-    ]
-
+    meaningful = re.sub(r"[^\w\s]", "", combined, flags=re.UNICODE)
+    return len(meaningful.strip()) >= 2
 
 
 def generate_tags(node):
@@ -338,7 +392,13 @@ def validate_nodes(nodes):
         issues = []
 
 
-        if not node.get("content"):
+        if (
+            not node.get("content")
+            and node.get("type") not in {
+                "learning_objective",
+                "objective_heading"
+            }
+        ):
 
             issues.append(
                 "Missing content"
@@ -488,24 +548,24 @@ if __name__ == "__main__":
             ensure_ascii=False
         )
 
-keyword_skill_map = map_keywords_to_skills(
-    highlighted_keywords,
-    knowledge_base
-)
-
-with open(
-    KEYWORD_SKILL_MAP_PATH,
-    "w",
-    encoding="utf-8"
-) as file:
-    json.dump(
-        keyword_skill_map,
-        file,
-        indent=4,
-        ensure_ascii=False
+    keyword_skill_map = map_keywords_to_skills(
+        highlighted_keywords,
+        knowledge_base
     )
 
-print("Highlighted keywords:", len(highlighted_keywords))
-print("Saved:", HIGHLIGHTED_KEYWORDS_PATH)
-print("Saved:", KEYWORD_SKILL_MAP_PATH)
+    with open(
+        KEYWORD_SKILL_MAP_PATH,
+        "w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            keyword_skill_map,
+            file,
+            indent=4,
+            ensure_ascii=False
+        )
+
+    print("Highlighted keywords:", len(highlighted_keywords))
+    print("Saved:", HIGHLIGHTED_KEYWORDS_PATH)
+    print("Saved:", KEYWORD_SKILL_MAP_PATH)
 
