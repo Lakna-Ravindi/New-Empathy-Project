@@ -15,4 +15,3 @@ Empathy-project New/backend/.env
 *.pyc
 *.pyc
 Empathy-project New/backend/learning/__pycache__/gemini_responder.cpython-313.pyc
-
