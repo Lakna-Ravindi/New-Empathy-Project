@@ -399,9 +399,10 @@ def learning_response():
     )
 
     learning_context = result.get("learning_context", result)
+    steps = result.get("steps", [])
     educational_response = result.get(
         "educational_response",
-        learning_context.get("message", ""),
+        steps if steps else learning_context.get("message", ""),
     )
 
     try:

@@ -45,7 +45,7 @@ result = answer_student_question(test_question, kb, km)
 if 'learning_context' in result:
     status = result['learning_context'].get('status')
     emotion = result['learning_context'].get('detected_emotion')
-    has_response = 'educational_response' in result
+    has_response = len(result.get('steps', [])) == 4
     print(f'OK: Controller status: {status}')
     print(f'OK: Emotion detected: {emotion}')
     print(f'OK: Response generated: {has_response}\n')
