@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from auth import VALID_AGE_GROUPS, VALID_GENDERS, create_access_token, get_user_store, require_auth, require_role
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
+from learning.progress_service import ProgressService
 
 from flask_cors import CORS
 
@@ -45,6 +46,7 @@ nodes_by_id = {node["id"]: node for node in knowledge_base}
 
 learning_store = LearningStore()
 student_store = get_user_store()
+progress_service = ProgressService()
 
 
 def get_skill_objectives(skill_id):
@@ -443,6 +445,72 @@ def student_progress(skill_id):
         return jsonify({
             "error": "Could not load student progress."
         }), 503
+
+
+@app.post("/api/progress/item-complete")
+@require_auth
+def complete_learning_item():
+    body = request.get_json(silent=True) or {}
+    skill_id = (body.get("skill_id") or "").strip()
+    item_id = (body.get("item_id") or "").strip()
+
+    chapter = next(
+        (
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if chapter.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    assigned_item = next(
+        (
+            item
+            for objective in (chapter or {}).get("objectives", [])
+            for item in objective.get("items", [])
+            if item.get("item_id") == item_id
+        ),
+        None,
+    )
+
+    if not chapter or not assigned_item:
+        return jsonify({
+            "error": "A valid assigned skill_id and item_id are required."
+        }), 400
+
+    try:
+        progress = learning_store.complete_item(
+            g.student_id,
+            skill_id,
+            item_id,
+        )
+        return jsonify(progress), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not update student progress."
+        }), 503
+
+
+@app.get("/api/progress")
+@require_auth
+def all_student_progress():
+    try:
+        progress = learning_store.get_all_progress(g.student_id)
+        return jsonify(progress_service.calculate(progress)), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not load student progress."
+        }), 503
+
+
+@app.get("/api/progress/structure")
+@require_auth
+def progress_structure():
+    try:
+        return jsonify(progress_service.get_structure()), 200
+    except Exception:
+        return jsonify({
+            "error": "Could not load progress structure."
+        }), 500
 
 
 @app.post("/api/objectives/<objective_id>/complete")
