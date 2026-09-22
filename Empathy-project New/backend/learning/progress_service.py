@@ -107,5 +107,7 @@ class ProgressService:
                 overall_completed,
                 overall_total,
             ),
+            "completed_items": overall_completed,
+            "total_learning_items": overall_total,
             "skills": skills,
         }

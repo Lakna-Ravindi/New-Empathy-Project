@@ -201,7 +201,12 @@ def require_auth(view_function):
                 "error": "Your session has expired. Please log in again."
             }), 401
 
-        except (jwt.InvalidTokenError, KeyError, InvalidId, PyMongoError):
+        except PyMongoError:
+            return jsonify({
+                "error": "Authentication service is unavailable."
+            }), 503
+
+        except (jwt.InvalidTokenError, KeyError, InvalidId):
             return jsonify({
                 "error": "Invalid authentication token."
             }), 401

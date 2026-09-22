@@ -423,6 +423,19 @@ def learning_response():
         }), 503
 
 
+@app.get("/api/learning-history")
+@require_auth
+def learning_history():
+    try:
+        return jsonify({
+            "interactions": learning_store.list_interactions(g.student_id),
+        }), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not load learning history."
+        }), 503
+
+
 @app.get("/api/progress/<skill_id>")
 @require_auth
 def student_progress(skill_id):
@@ -439,7 +452,16 @@ def student_progress(skill_id):
                 )
             )
 
-        return jsonify(progress), 200
+        calculated = progress_service.calculate([progress])
+        skill = next(
+            (item for item in calculated["skills"] if item["skill_id"] == skill_id),
+            None,
+        )
+        return jsonify({
+            **progress,
+            "skill": skill,
+            "objectives": skill["objectives"] if skill else [],
+        }), 200
 
     except PyMongoError:
         return jsonify({
@@ -453,6 +475,19 @@ def complete_learning_item():
     body = request.get_json(silent=True) or {}
     skill_id = (body.get("skill_id") or "").strip()
     item_id = (body.get("item_id") or "").strip()
+
+    if not skill_id and item_id:
+        matching_chapters = [
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if any(
+                item.get("item_id") == item_id
+                for objective in chapter.get("objectives", [])
+                for item in objective.get("items", [])
+            )
+        ]
+        if len(matching_chapters) == 1:
+            skill_id = matching_chapters[0].get("chapter_id", "")
 
     chapter = next(
         (
@@ -471,6 +506,14 @@ def complete_learning_item():
         ),
         None,
     )
+    assigned_objective = next(
+        (
+            objective
+            for objective in (chapter or {}).get("objectives", [])
+            if any(item.get("item_id") == item_id for item in objective.get("items", []))
+        ),
+        None,
+    )
 
     if not chapter or not assigned_item:
         return jsonify({
@@ -478,10 +521,24 @@ def complete_learning_item():
         }), 400
 
     try:
+        current = learning_store.get_progress(g.student_id, skill_id)
+        completed_item_ids = set(current.get("completed_item_ids", []))
+        completed_item_ids.add(item_id)
+        required_item_ids = {
+            item.get("item_id")
+            for item in (assigned_objective or {}).get("items", [])
+        }
+        completed_objective_ids = set(current.get("completed_objective_ids", []))
+        if required_item_ids.issubset(completed_item_ids) and assigned_objective:
+            completed_objective_ids.add(assigned_objective["objective_id"])
+
         progress = learning_store.complete_item(
             g.student_id,
             skill_id,
             item_id,
+            objective_id=(assigned_objective or {}).get("objective_id"),
+            next_objective=next_uncompleted_objective(skill_id, completed_objective_ids),
+            required_item_ids=required_item_ids,
         )
         return jsonify(progress), 200
     except PyMongoError:

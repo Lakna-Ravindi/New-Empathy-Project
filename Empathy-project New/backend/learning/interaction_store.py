@@ -93,6 +93,26 @@ class LearningStore:
 
         return str(result.inserted_id)
 
+    def list_interactions(self, student_id, limit=100):
+        """Return the authenticated student's most recent interactions."""
+
+        if not self.is_available:
+            interactions = [
+                interaction
+                for interaction in self.local_storage["interactions"]
+                if interaction.get("student_id") == student_id
+            ]
+            return list(reversed(interactions[-limit:]))
+
+        return list(
+            self.interactions.find(
+                {"student_id": student_id},
+                {"_id": 0},
+            )
+            .sort("timestamp", -1)
+            .limit(limit)
+        )
+
     # ---------------------------------------------------------
     # Progress helpers
     # ---------------------------------------------------------
@@ -186,6 +206,7 @@ class LearningStore:
         item_id,
         objective_id=None,
         next_objective=None,
+        required_item_ids=None,
     ):
         """
         Mark a learning item as completed.
@@ -216,7 +237,10 @@ class LearningStore:
             if item_id not in progress["completed_item_ids"]:
                 progress["completed_item_ids"].append(item_id)
 
-            if objective_id:
+            required_item_ids = set(required_item_ids or [])
+            if objective_id and required_item_ids.issubset(
+                progress["completed_item_ids"]
+            ):
                 if objective_id not in progress[
                     "completed_objective_ids"
                 ]:
@@ -244,7 +268,12 @@ class LearningStore:
             },
         }
 
-        if objective_id:
+        required_item_ids = set(required_item_ids or [])
+        current = self.get_progress(student_id, skill_id)
+        completed_item_ids = set(current.get("completed_item_ids", []))
+        completed_item_ids.add(item_id)
+
+        if objective_id and required_item_ids.issubset(completed_item_ids):
             update["$addToSet"][
                 "completed_objective_ids"
             ] = objective_id
