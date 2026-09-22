@@ -94,6 +94,7 @@ def classify(block):
         r"^(define|identify|recognize|describe|explain|apply|"
         r"demonstrate|understand|list|compare|distinguish|use|"
         r"develop|practice|discuss|explore|evaluate|reflect|"
+        r"analyze|create|examine|"
         r"describe|differentiate|summarize|identify|name)\b",
         re.IGNORECASE
     )

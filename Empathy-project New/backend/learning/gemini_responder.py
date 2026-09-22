@@ -153,6 +153,52 @@ def _parse_steps(response_text: str) -> list:
     return steps
 
 
+def _fallback_steps(learning_context: dict) -> list:
+    """Keep the learning flow usable when Gemini is temporarily unavailable."""
+
+    objective = learning_context.get("learning_objective") or {}
+    activity = learning_context.get("recommended_activity") or {}
+    skill = learning_context.get("skill") or {}
+    question = learning_context.get("student_question", "")
+    objective_title = objective.get("title") or "emotional regulation"
+    activity_title = activity.get("title") or "a short grounding practice"
+    activity_type = activity.get("type") or "activity"
+    activity_id = activity.get("id") or "activity_unassigned"
+
+    return [
+        {
+            "step": 1,
+            "type": "direct_answer",
+            "content": (
+                f"You asked: {question} A useful first step is to pause, "
+                "notice what you are feeling, and take two slow breaths before deciding what to do next."
+            ),
+        },
+        {
+            "step": 2,
+            "type": "learning_objective",
+            "content": f"This connects to {skill.get('title') or 'your empathy skill'}: {objective_title}.",
+        },
+        {
+            "step": 3,
+            "type": "activity",
+            "content": f"Try the recommended {activity_type}: {activity_title}.",
+            "activity": {
+                "id": activity_id,
+                "title": activity_title,
+                "type": activity_type,
+            },
+        },
+        {
+            "step": 4,
+            "type": "practice_check",
+            "content": "Before continuing, check in with yourself.",
+            "question_type": "true_false",
+            "question": "Taking a short pause can help you notice your emotional state.",
+        },
+    ]
+
+
 def generate_educational_response(learning_context: dict) -> list:
     """Turn a controller decision into student-facing language."""
 
@@ -160,7 +206,7 @@ def generate_educational_response(learning_context: dict) -> list:
         return learning_context["message"]
 
     client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    model_name = os.getenv("GEMINI_MODEL") or "gemini-3.6-flash"
 
     prompt = {
         "student_question": learning_context["student_question"],
@@ -198,7 +244,8 @@ def generate_educational_response(learning_context: dict) -> list:
                 print(f"Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
             else:
-                raise e
+                print(f"Gemini unavailable after retries: {e}")
+                return _fallback_steps(learning_context)
 
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Gemini JSON/validation error - attempt {attempt + 1}/3")

@@ -34,10 +34,11 @@ def merge_spans(spans):
 
         same_page = current["page"] == span["page"]
         same_block = current.get("block_index") == span.get("block_index")
+        same_line = current.get("line_index") == span.get("line_index")
         same_font = current["font_name"] == span["font_name"]
         same_size = current["font_size"] == span["font_size"]
 
-        if same_page and same_block and same_font and same_size:
+        if same_page and same_block and same_line and same_font and same_size:
             current["text"] = join_text(current["text"], text)
         else:
             merged.append(current)
