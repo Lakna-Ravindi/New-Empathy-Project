@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from pathlib import Path
 
@@ -42,7 +43,116 @@ with open(BASE_DIR / "output" / "knowledge_base.json", "r", encoding="utf-8") as
 with open(BASE_DIR / "output" / "keyword_skill_map.json", "r", encoding="utf-8") as file:
     keyword_skill_map = json.load(file)
 
+
+def _item_with_id(item, item_id, title_key="title"):
+    """Add a stable ID without changing the source content shape."""
+    if isinstance(item, dict):
+        return {**item, "id": item_id}
+    return {"id": item_id, title_key: item, "content": item}
+
+
+def _normalize_skill(skill, index):
+    skill_id = skill.get("skill_id") or f"skill_{index:02d}"
+    skill_number = skill_id.rsplit("_", 1)[-1]
+
+    objectives = [
+        _item_with_id(item, f"objective_{skill_number}_{item_index:02d}", "title")
+        for item_index, item in enumerate(
+            skill.get("objectives", skill.get("learning_objectives", [])), 1
+        )
+    ]
+    activities = [
+        _item_with_id(item, f"activity_{skill_number}_{item_index:02d}")
+        for item_index, item in enumerate(skill.get("activities", []), 1)
+    ]
+    videos = [
+        _item_with_id(item, f"video_{skill_number}_{item_index:02d}")
+        for item_index, item in enumerate(skill.get("videos", []), 1)
+    ]
+    quizzes = [
+        _item_with_id(item, f"quiz_{skill_number}_{item_index:02d}")
+        for item_index, item in enumerate(
+            skill.get("quizzes", skill.get("quiz", [])), 1
+        )
+    ]
+
+    for item in objectives:
+        item["objective_id"] = item["id"]
+    for item in activities:
+        item["activity_id"] = item["id"]
+    for item in videos:
+        item["video_id"] = item["id"]
+    for item in quizzes:
+        item["quiz_id"] = item["id"]
+
+    return {
+        **skill,
+        "skill_id": skill_id,
+        "title": re.sub(
+            r"^Skill\s+\d+\s*:\s*",
+            "",
+            skill.get("title") or skill.get("skill_title", ""),
+            flags=re.IGNORECASE,
+        ),
+        "objectives": objectives,
+        "learning_objectives": objectives,
+        "activities": activities,
+        "videos": videos,
+        "quizzes": quizzes,
+    }
+
+
+def load_content_skills():
+    configured_path = os.getenv("CONTENT_KB_PATH")
+    source_paths = [
+        Path(configured_path)
+        if configured_path
+        else BASE_DIR / "output" / "knowledge_base.json"
+    ]
+    if not configured_path:
+        source_paths.append(Path.home() / "Downloads" / "knowledge_base.json")
+
+    for source_path in source_paths:
+        if not source_path.exists():
+            continue
+        with source_path.open("r", encoding="utf-8") as file:
+            source = json.load(file)
+        if isinstance(source, dict):
+            source = source.get("skills", [])
+        if isinstance(source, list) and all(isinstance(item, dict) for item in source):
+            if not source or any(item.get("skill_id") for item in source):
+                return [_normalize_skill(skill, index) for index, skill in enumerate(source, 1)]
+
+    return []
+
+
+content_skills = load_content_skills()
+
 nodes_by_id = {node["id"]: node for node in knowledge_base}
+
+
+def _skill_summary(skill):
+    return {
+        "skill_id": skill["skill_id"],
+        "title": skill["title"],
+        "description": skill.get("description", ""),
+    }
+
+
+@app.get("/api/content/skills")
+def list_content_skills():
+    return jsonify({"skills": [_skill_summary(skill) for skill in content_skills]}), 200
+
+
+@app.get("/api/content/skills/<skill_id>")
+def get_content_skill(skill_id):
+    skill = next(
+        (item for item in content_skills if item["skill_id"] == skill_id),
+        None,
+    )
+    if skill is None:
+        return jsonify({"error": "Skill was not found."}), 404
+    return jsonify(skill), 200
 
 learning_store = LearningStore()
 student_store = get_user_store()
