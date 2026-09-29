@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from auth import VALID_AGE_GROUPS, VALID_GENDERS, create_access_token, get_user_store, require_auth, require_role
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
+from learning.progress_service import ProgressService
 
 from flask_cors import CORS
 
@@ -45,6 +46,7 @@ nodes_by_id = {node["id"]: node for node in knowledge_base}
 
 learning_store = LearningStore()
 student_store = get_user_store()
+progress_service = ProgressService()
 
 
 def get_skill_objectives(skill_id):
@@ -79,14 +81,12 @@ def next_uncompleted_objective(skill_id, completed_ids):
 def register_student():
     body = request.get_json(silent=True) or {}
 
-    name = (body.get("name") or "").strip()
     username = (body.get("username") or "").strip().lower()
     email = (body.get("email") or "").strip().lower()
     gender = (body.get("gender") or "").strip()
-    age_group = (body.get("age_group") or "").strip()
     password = body.get("password") or ""
 
-    for field, value in (("Name", name), ("Email", email), ("Gender", gender), ("Age group", age_group), ("Username", username), ("Password", password)):
+    for field, value in (("Email", email), ("Gender", gender), ("Username", username), ("Password", password)):
         if not value:
             return jsonify({"error": f"{field} is required"}), 400
 
@@ -107,11 +107,8 @@ def register_student():
 
     if gender not in VALID_GENDERS:
         return jsonify({"error": "Invalid gender"}), 400
-    if age_group not in VALID_AGE_GROUPS:
-        return jsonify({"error": "Invalid age group"}), 400
-
     try:
-        student = student_store.create_student(name, username, email, password, gender, age_group)
+        student = student_store.create_student(username, email, password, gender)
 
         # Login token is returned immediately after registration.
         stored_student = student_store.find_by_username(username)
@@ -175,11 +172,12 @@ def login_student():
             "access_token": token,
             "student": {
                 "id": str(student["_id"]),
-                "name": student["name"],
                 "username": student["username"],
                 "email": student["email"],
                 "role": student.get("role", "student"),
-                **({"gender": student.get("gender"), "age_group": student.get("age_group")} if student.get("role", "student") == "student" else {}),
+                **({"gender": student.get("gender")} if student.get("role", "student") == "student" else {}),
+                **({"name": student["name"]} if student.get("name") else {}),
+                **({"age_group": student["age_group"]} if student.get("age_group") else {}),
             },
         }), 200
 
@@ -222,13 +220,16 @@ def logout():
 def public_user(student):
     user = {
         "id": str(student["_id"]),
-        "name": student["name"],
         "username": student["username"],
         "email": student["email"],
         "role": student.get("role", "student"),
     }
+    if student.get("name"):
+        user["name"] = student["name"]
     if user["role"] == "student":
-        user.update({"gender": student.get("gender"), "age_group": student.get("age_group")})
+        user["gender"] = student.get("gender")
+        if student.get("age_group"):
+            user["age_group"] = student["age_group"]
     return user
 
 
@@ -399,9 +400,10 @@ def learning_response():
     )
 
     learning_context = result.get("learning_context", result)
+    steps = result.get("steps", [])
     educational_response = result.get(
         "educational_response",
-        learning_context.get("message", ""),
+        steps if steps else learning_context.get("message", ""),
     )
 
     try:
@@ -417,6 +419,19 @@ def learning_response():
     except PyMongoError:
         return jsonify({
             "error": "Could not save the learning interaction."
+        }), 503
+
+
+@app.get("/api/learning-history")
+@require_auth
+def learning_history():
+    try:
+        return jsonify({
+            "interactions": learning_store.list_interactions(g.student_id),
+        }), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not load learning history."
         }), 503
 
 
@@ -436,12 +451,122 @@ def student_progress(skill_id):
                 )
             )
 
-        return jsonify(progress), 200
+        calculated = progress_service.calculate([progress])
+        skill = next(
+            (item for item in calculated["skills"] if item["skill_id"] == skill_id),
+            None,
+        )
+        return jsonify({
+            **progress,
+            "skill": skill,
+            "objectives": skill["objectives"] if skill else [],
+        }), 200
 
     except PyMongoError:
         return jsonify({
             "error": "Could not load student progress."
         }), 503
+
+
+@app.post("/api/progress/item-complete")
+@require_auth
+def complete_learning_item():
+    body = request.get_json(silent=True) or {}
+    skill_id = (body.get("skill_id") or "").strip()
+    item_id = (body.get("item_id") or "").strip()
+
+    if not skill_id and item_id:
+        matching_chapters = [
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if any(
+                item.get("item_id") == item_id
+                for objective in chapter.get("objectives", [])
+                for item in objective.get("items", [])
+            )
+        ]
+        if len(matching_chapters) == 1:
+            skill_id = matching_chapters[0].get("chapter_id", "")
+
+    chapter = next(
+        (
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if chapter.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    assigned_item = next(
+        (
+            item
+            for objective in (chapter or {}).get("objectives", [])
+            for item in objective.get("items", [])
+            if item.get("item_id") == item_id
+        ),
+        None,
+    )
+    assigned_objective = next(
+        (
+            objective
+            for objective in (chapter or {}).get("objectives", [])
+            if any(item.get("item_id") == item_id for item in objective.get("items", []))
+        ),
+        None,
+    )
+
+    if not chapter or not assigned_item:
+        return jsonify({
+            "error": "A valid assigned skill_id and item_id are required."
+        }), 400
+
+    try:
+        current = learning_store.get_progress(g.student_id, skill_id)
+        completed_item_ids = set(current.get("completed_item_ids", []))
+        completed_item_ids.add(item_id)
+        required_item_ids = {
+            item.get("item_id")
+            for item in (assigned_objective or {}).get("items", [])
+        }
+        completed_objective_ids = set(current.get("completed_objective_ids", []))
+        if required_item_ids.issubset(completed_item_ids) and assigned_objective:
+            completed_objective_ids.add(assigned_objective["objective_id"])
+
+        progress = learning_store.complete_item(
+            g.student_id,
+            skill_id,
+            item_id,
+            objective_id=(assigned_objective or {}).get("objective_id"),
+            next_objective=next_uncompleted_objective(skill_id, completed_objective_ids),
+            required_item_ids=required_item_ids,
+        )
+        return jsonify(progress), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not update student progress."
+        }), 503
+
+
+@app.get("/api/progress")
+@require_auth
+def all_student_progress():
+    try:
+        progress = learning_store.get_all_progress(g.student_id)
+        return jsonify(progress_service.calculate(progress)), 200
+    except PyMongoError:
+        return jsonify({
+            "error": "Could not load student progress."
+        }), 503
+
+
+@app.get("/api/progress/structure")
+@require_auth
+def progress_structure():
+    try:
+        return jsonify(progress_service.get_structure()), 200
+    except Exception:
+        return jsonify({
+            "error": "Could not load progress structure."
+        }), 500
 
 
 @app.post("/api/objectives/<objective_id>/complete")

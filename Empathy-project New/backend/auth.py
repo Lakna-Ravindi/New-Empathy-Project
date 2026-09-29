@@ -76,30 +76,37 @@ class UserStore:
         ).decode("utf-8")
 
         user = {
-            "name": name,
             "username": username.lower(),
             "email": email.lower(),
             "password_hash": password_hash,
             "role": role,
             "created_at": datetime.now(timezone.utc),
         }
+        if name is not None:
+            user["name"] = name
         if role == "student":
             user["gender"] = gender
-            user["age_group"] = age_group
+            if age_group is not None:
+                user["age_group"] = age_group
 
         result = self.users.insert_one(user)
 
-        return {
+        created_user = {
             "id": str(result.inserted_id),
-            "name": name,
             "username": username.lower(),
             "email": email.lower(),
             "role": role,
-            **({"gender": gender, "age_group": age_group} if role == "student" else {}),
         }
+        if name is not None:
+            created_user["name"] = name
+        if role == "student":
+            created_user["gender"] = gender
+            if age_group is not None:
+                created_user["age_group"] = age_group
+        return created_user
 
-    def create_student(self, name, username, email, password, gender, age_group):
-        return self.create_user(name, username, email, password, "student", gender, age_group)
+    def create_student(self, username, email, password, gender):
+        return self.create_user(None, username, email, password, "student", gender)
 
     def create_admin(self, name, username, email, password):
         return self.create_user(name, username, email, password, "admin")
@@ -201,7 +208,12 @@ def require_auth(view_function):
                 "error": "Your session has expired. Please log in again."
             }), 401
 
-        except (jwt.InvalidTokenError, KeyError, InvalidId, PyMongoError):
+        except PyMongoError:
+            return jsonify({
+                "error": "Authentication service is unavailable."
+            }), 503
+
+        except (jwt.InvalidTokenError, KeyError, InvalidId):
             return jsonify({
                 "error": "Invalid authentication token."
             }), 401

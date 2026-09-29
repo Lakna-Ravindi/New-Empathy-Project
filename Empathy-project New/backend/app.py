@@ -58,6 +58,8 @@ def build_knowledge_base():
         "assessment": None,
     }
 
+    objective_section = False
+
 
     # -------------------------------
     # 3. Create knowledge nodes
@@ -105,6 +107,22 @@ def build_knowledge_base():
 
             node_type = classification
             confidence = 0.5
+
+        is_bold_heading = "bold" in block.get("font_name", "").lower()
+
+        if node_type == "objective_heading":
+            objective_section = True
+        elif objective_section and (
+            node_type in {"chapter", "topic"}
+            or (
+                is_bold_heading
+                and not text.lower().startswith("by the end")
+            )
+        ):
+            objective_section = False
+        elif not objective_section and node_type == "learning_objective":
+            node_type = "content"
+            confidence = 0.70
 
 
 
