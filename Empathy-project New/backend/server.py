@@ -215,14 +215,12 @@ def next_uncompleted_objective(skill_id, completed_ids):
 def register_student():
     body = request.get_json(silent=True) or {}
 
-    name = (body.get("name") or "").strip()
     username = (body.get("username") or "").strip().lower()
     email = (body.get("email") or "").strip().lower()
     gender = (body.get("gender") or "").strip()
-    age_group = (body.get("age_group") or "").strip()
     password = body.get("password") or ""
 
-    for field, value in (("Name", name), ("Email", email), ("Gender", gender), ("Age group", age_group), ("Username", username), ("Password", password)):
+    for field, value in (("Email", email), ("Gender", gender), ("Username", username), ("Password", password)):
         if not value:
             return jsonify({"error": f"{field} is required"}), 400
 
@@ -243,11 +241,8 @@ def register_student():
 
     if gender not in VALID_GENDERS:
         return jsonify({"error": "Invalid gender"}), 400
-    if age_group not in VALID_AGE_GROUPS:
-        return jsonify({"error": "Invalid age group"}), 400
-
     try:
-        student = student_store.create_student(name, username, email, password, gender, age_group)
+        student = student_store.create_student(username, email, password, gender)
 
         # Login token is returned immediately after registration.
         stored_student = student_store.find_by_username(username)
@@ -318,7 +313,9 @@ def login_student():
                 "username": student["username"],
                 "email": student["email"],
                 "role": student.get("role", "student"),
-                **({"gender": student.get("gender"), "age_group": student.get("age_group")} if student.get("role", "student") == "student" else {}),
+                **({"gender": student.get("gender")} if student.get("role", "student") == "student" else {}),
+                **({"name": student["name"]} if student.get("name") else {}),
+                **({"age_group": student["age_group"]} if student.get("age_group") else {}),
             },
         }), 200
 
@@ -361,14 +358,17 @@ def logout():
 def public_user(student):
     user = {
         "id": str(student["_id"]),
-        "student_id": student.get("student_id", str(student["_id"])),
         "name": student["name"],
         "username": student["username"],
         "email": student["email"],
         "role": student.get("role", "student"),
     }
+    if student.get("name"):
+        user["name"] = student["name"]
     if user["role"] == "student":
-        user.update({"gender": student.get("gender"), "age_group": student.get("age_group")})
+        user["gender"] = student.get("gender")
+        if student.get("age_group"):
+            user["age_group"] = student["age_group"]
     return user
 
 
