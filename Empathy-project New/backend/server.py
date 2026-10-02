@@ -309,7 +309,6 @@ def login_student():
             "student": {
                 "id": str(student["_id"]),
                 "student_id": student.get("student_id", str(student["_id"])),
-                "name": student["name"],
                 "username": student["username"],
                 "email": student["email"],
                 "role": student.get("role", "student"),
@@ -358,7 +357,6 @@ def logout():
 def public_user(student):
     user = {
         "id": str(student["_id"]),
-        "name": student["name"],
         "username": student["username"],
         "email": student["email"],
         "role": student.get("role", "student"),
