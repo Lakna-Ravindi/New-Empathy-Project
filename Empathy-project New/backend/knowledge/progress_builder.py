@@ -11,6 +11,7 @@ from typing import Any, Iterable
 
 ACTIONABLE_TYPES = {"activity", "practice", "assessment", "reflection"}
 DEFAULT_KB_PATH = Path(__file__).resolve().parents[2] / "output" / "knowledge_base.json"
+DEFAULT_CONTENT_PATH = Path(__file__).resolve().parents[2] / "output" / "content_skills.json"
 DEFAULT_OUTPUT_PATH = Path(__file__).resolve().parents[2] / "output" / "progress_structure.json"
 
 STOP_WORDS = {
@@ -76,18 +77,29 @@ def _best_objective(
     item: dict[str, Any],
     objectives: list[dict[str, Any]],
 ) -> tuple[dict[str, Any] | None, int]:
+    if not objectives:
+        return None, 0
+
     item_tokens = _tokens(_text(item))
     if not item_tokens:
-        return None, 0
+         return objectives[-1], 0
 
     scored = []
     for objective in objectives:
         overlap = len(item_tokens & _tokens(_text(objective)))
-        scored.append((overlap, objective.get("page", 0), objective.get("id", ""), objective))
+        scored.append((
+            overlap,
+            objective.get("page", 0),
+            objective.get("id", ""),
+            objective,
+        ))
 
-    best_overlap, _, _, best = max(scored, key=lambda entry: (entry[0], -entry[1], entry[2]))
+    best_overlap, _, _, best = max(
+        scored,
+        key=lambda entry: (entry[0], -entry[1], entry[2]),
+    )
     if best_overlap == 0:
-        return None, 0
+        return objectives[-1], 0
     return best, best_overlap
 
 
@@ -136,6 +148,101 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
         for objective in chapter["objectives"]
     }
 
+
+def _content_item(item: dict[str, Any], item_type: str) -> dict[str, Any] | None:
+    item_id = item.get("item_id")
+    if not item_id:
+        return None
+
+    title = item.get("title") or item.get("question") or item_type.title()
+    content = (
+        item.get("content")
+        or item.get("description")
+        or item.get("question")
+        or ""
+    )
+    return {
+        **item,
+        "item_id": item_id,
+        "type": item_type,
+        "title": title,
+        "content": content,
+    }
+
+
+def build_content_progress_structure(skills: Iterable[dict[str, Any]]) -> dict[str, Any]:
+    """Build progress directly from the authored content-skills hierarchy."""
+    chapters: list[dict[str, Any]] = []
+    item_types: set[str] = set()
+
+    for skill in skills:
+        objectives = []
+        for objective in skill.get("objectives", []):
+            items: list[dict[str, Any]] = []
+            sources = [
+                ("text", objective.get("learning_content", [])),
+                ("activity", objective.get("activities", [])),
+                ("video", objective.get("videos", [])),
+            ]
+            quiz = objective.get("quiz")
+            if isinstance(quiz, dict):
+                sources.append(("quiz", [quiz]))
+            reflection = objective.get("reflection")
+            if isinstance(reflection, dict):
+                sources.append(("reflection", [reflection]))
+
+            for item_type, source_items in sources:
+                for source_item in source_items or []:
+                    if not isinstance(source_item, dict):
+                        continue
+                    item = _content_item(source_item, item_type)
+                    if item is not None:
+                        items.append(item)
+                        item_types.add(item_type)
+
+            item_ids = {item["item_id"] for item in items}
+            required_item_ids = [
+                item_id
+                for item_id in objective.get("required_items", [])
+                if item_id in item_ids
+            ]
+            objectives.append({
+                "objective_id": objective.get("objective_id"),
+                "title": objective.get("objective_title", ""),
+                "content": objective.get("objective_title", ""),
+                "items": items,
+                "required_item_ids": required_item_ids,
+            })
+
+        chapters.append({
+            "chapter_id": skill.get("skill_id"),
+            "title": skill.get("skill_title", ""),
+            "description": skill.get("description", ""),
+            "objectives": objectives,
+            "unassigned_items": [],
+        })
+
+    actionable_item_count = sum(
+        len(objective["items"])
+        for chapter in chapters
+        for objective in chapter["objectives"]
+    )
+    return {
+        "version": 2,
+        "source": "output/content_skills.json",
+        "item_types": sorted(item_types),
+        "chapters": chapters,
+        "summary": {
+            "chapter_count": len(chapters),
+            "objective_count": sum(
+                len(chapter["objectives"]) for chapter in chapters
+            ),
+            "actionable_item_count": actionable_item_count,
+            "assigned_item_count": actionable_item_count,
+            "unassigned_item_count": 0,
+        },
+    }
+
     for item in actionable:
         chapter = _chapter_for(item, nodes_by_id)
         if chapter is None or chapter["id"] not in chapter_by_id:
@@ -157,13 +264,15 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
             and _chapter_for(node, nodes_by_id)
             and _chapter_for(node, nodes_by_id).get("id") == chapter["id"]
         ]
-        objective, overlap = _best_objective(item, objective_nodes)
-        if objective is not None:
-            objective_entries[objective["id"]]["items"].append(
-                {**item_entry, "objective_match_tokens": overlap}
+        if not objective_nodes:
+            raise ValueError(
+                f"Actionable item {item['id']} belongs to chapter "
+                f"{chapter['id']} without learning objectives"
             )
-        else:
-            chapter_entry["unassigned_items"].append(item_entry)
+        objective, overlap = _best_objective(item, objective_nodes)
+        objective_entries[objective["id"]]["items"].append(
+            {**item_entry, "objective_match_tokens": overlap}
+        )
 
     return {
         "version": 1,
@@ -195,10 +304,19 @@ def load_nodes(path: Path = DEFAULT_KB_PATH) -> list[dict[str, Any]]:
 
 
 def write_progress_structure(
-    input_path: Path = DEFAULT_KB_PATH,
+    input_path: Path = DEFAULT_CONTENT_PATH,
     output_path: Path = DEFAULT_OUTPUT_PATH,
 ) -> dict[str, Any]:
-    structure = build_progress_structure(load_nodes(input_path))
+    data = load_nodes(input_path)
+    if data and all(
+        isinstance(item, dict)
+        and item.get("skill_id")
+        and "objectives" in item
+        for item in data
+    ):
+        structure = build_content_progress_structure(data)
+    else:
+        structure = build_progress_structure(data)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as handle:
         json.dump(structure, handle, indent=2, ensure_ascii=False)
@@ -208,7 +326,7 @@ def write_progress_structure(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", type=Path, default=DEFAULT_KB_PATH)
+    parser.add_argument("--input", type=Path, default=DEFAULT_CONTENT_PATH)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
     args = parser.parse_args()
 

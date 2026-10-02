@@ -55,12 +55,18 @@ def _normalize_skill(skill, index):
     skill_id = skill.get("skill_id") or f"skill_{index:02d}"
     skill_number = skill_id.rsplit("_", 1)[-1]
 
-    objectives = [
-        _item_with_id(item, f"objective_{skill_number}_{item_index:02d}", "title")
-        for item_index, item in enumerate(
-            skill.get("objectives", skill.get("learning_objectives", [])), 1
+    objectives = []
+    for item_index, item in enumerate(
+        skill.get("objectives", skill.get("learning_objectives", [])), 1
+    ):
+        authored_id = item.get("objective_id") if isinstance(item, dict) else None
+        objectives.append(
+            _item_with_id(
+                item,
+                authored_id or f"objective_{skill_number}_{item_index:02d}",
+                "title",
+            )
         )
-    ]
     activities = [
         _item_with_id(item, f"activity_{skill_number}_{item_index:02d}")
         for item_index, item in enumerate(skill.get("activities", []), 1)
@@ -77,7 +83,7 @@ def _normalize_skill(skill, index):
     ]
 
     for item in objectives:
-        item["objective_id"] = item["id"]
+        item["objective_id"] = item.get("objective_id") or item["id"]
     for item in activities:
         item["activity_id"] = item["id"]
     for item in videos:
@@ -160,6 +166,24 @@ progress_service = ProgressService()
 
 
 def get_skill_objectives(skill_id):
+    chapter = next(
+        (
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if chapter.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    if chapter is not None:
+        return [
+            {
+                "id": objective["objective_id"],
+                "title": objective["title"],
+                "content": objective.get("content", ""),
+            }
+            for objective in chapter.get("objectives", [])
+        ]
+
     return [
         {
             "id": node["id"],
@@ -270,6 +294,8 @@ def login_student():
                 "error": "Invalid username or password."
             }), 401
 
+        student = student_store.ensure_student_id(student)
+
         valid_password = bcrypt.checkpw(
             password.encode("utf-8"),
             student["password_hash"].encode("utf-8"),
@@ -287,6 +313,7 @@ def login_student():
             "access_token": token,
             "student": {
                 "id": str(student["_id"]),
+                "student_id": student.get("student_id", str(student["_id"])),
                 "name": student["name"],
                 "username": student["username"],
                 "email": student["email"],
@@ -305,7 +332,7 @@ def login_student():
 @require_auth
 def get_current_student():
     try:
-        student = student_store.find_by_id(g.student_id)
+        student = g.current_user
 
         if not student:
             return jsonify({
@@ -334,6 +361,7 @@ def logout():
 def public_user(student):
     user = {
         "id": str(student["_id"]),
+        "student_id": student.get("student_id", str(student["_id"])),
         "name": student["name"],
         "username": student["username"],
         "email": student["email"],
@@ -356,7 +384,7 @@ def list_users():
 @app.get("/api/users/<user_id>")
 @require_auth
 def get_user(user_id):
-    if user_id != g.student_id and g.user_role != "admin":
+    if user_id != g.user_id and g.user_role != "admin":
         return jsonify({"error": "You do not have permission to view this user."}), 403
 
     try:
@@ -425,7 +453,7 @@ def update_user_profile(user_id):
 @app.put("/api/users/<user_id>")
 @require_auth
 def update_user(user_id):
-    if user_id != g.student_id and g.user_role != "admin":
+    if user_id != g.user_id and g.user_role != "admin":
         return jsonify({"error": "You do not have permission to update this user."}), 403
     return update_user_profile(user_id)
 
@@ -433,7 +461,7 @@ def update_user(user_id):
 @app.put("/api/profile")
 @require_auth
 def update_profile():
-    return update_user_profile(g.student_id)
+    return update_user_profile(g.user_id)
 
 
 @app.get("/api/profile")
@@ -585,6 +613,7 @@ def complete_learning_item():
     body = request.get_json(silent=True) or {}
     skill_id = (body.get("skill_id") or "").strip()
     item_id = (body.get("item_id") or "").strip()
+    quiz_score = body.get("quiz_score")
 
     if not skill_id and item_id:
         matching_chapters = [
@@ -630,14 +659,32 @@ def complete_learning_item():
             "error": "A valid assigned skill_id and item_id are required."
         }), 400
 
+    if quiz_score is not None:
+        if isinstance(quiz_score, bool) or not isinstance(quiz_score, (int, float)):
+            return jsonify({"error": "quiz_score must be a number."}), 400
+        if quiz_score < 0 or quiz_score > 100:
+            return jsonify({"error": "quiz_score must be between 0 and 100."}), 400
+
+    is_quiz = assigned_item.get("type", "").lower() in {"quiz", "assessment"}
+    if is_quiz and (quiz_score is None or quiz_score < 80):
+        return jsonify({
+            "error": "A quiz requires a score of at least 80% to be completed.",
+            "completed": False,
+            "quiz_score": quiz_score,
+        }), 422
+
     try:
         current = learning_store.get_progress(g.student_id, skill_id)
         completed_item_ids = set(current.get("completed_item_ids", []))
         completed_item_ids.add(item_id)
-        required_item_ids = {
-            item.get("item_id")
-            for item in (assigned_objective or {}).get("items", [])
-        }
+        required_item_ids = set(
+            (assigned_objective or {}).get("required_item_ids", [])
+        )
+        if not required_item_ids and assigned_objective:
+            required_item_ids = {
+                item.get("item_id")
+                for item in assigned_objective.get("items", [])
+            }
         completed_objective_ids = set(current.get("completed_objective_ids", []))
         if required_item_ids.issubset(completed_item_ids) and assigned_objective:
             completed_objective_ids.add(assigned_objective["objective_id"])
@@ -649,6 +696,7 @@ def complete_learning_item():
             objective_id=(assigned_objective or {}).get("objective_id"),
             next_objective=next_uncompleted_objective(skill_id, completed_objective_ids),
             required_item_ids=required_item_ids,
+            quiz_score=quiz_score,
         )
         return jsonify(progress), 200
     except PyMongoError:
@@ -687,21 +735,26 @@ def complete_objective(objective_id):
 
     body = request.get_json(silent=True) or {}
     skill_id = (body.get("skill_id") or "").strip()
-    objective = nodes_by_id.get(objective_id)
+    chapter = next(
+        (
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if chapter.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    objective = next(
+        (
+            objective
+            for objective in (chapter or {}).get("objectives", [])
+            if objective.get("objective_id") == objective_id
+        ),
+        None,
+    )
 
     if not skill_id or not objective:
         return jsonify({
             "error": "A valid skill_id and learning objective are required."
-        }), 400
-
-    if objective.get("type") != "learning_objective":
-        return jsonify({
-            "error": "This item is not a learning objective."
-        }), 400
-
-    if not belongs_to_skill(objective, skill_id, nodes_by_id):
-        return jsonify({
-            "error": "This objective does not belong to the selected skill."
         }), 400
 
     try:
@@ -709,11 +762,16 @@ def complete_objective(objective_id):
 
         completed = set(current["completed_objective_ids"])
         completed.add(objective_id)
+        objective_record = {
+            "id": objective["objective_id"],
+            "title": objective.get("title", ""),
+            "content": objective.get("content", ""),
+        }
 
         progress = learning_store.complete_objective(
             student_id,
             skill_id,
-            objective,
+            objective_record,
             next_uncompleted_objective(skill_id, completed),
         )
 

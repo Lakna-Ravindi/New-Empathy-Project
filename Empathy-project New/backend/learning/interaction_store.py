@@ -34,6 +34,7 @@ class LearningStore:
             self.interactions = self.db["learning_interactions"]
             self.progress = self.db["student_progress"]
             self.evaluations = self.db["controller_evaluations"]
+            self.client.admin.command("ping")
 
         except Exception as e:
             self.is_available = False
@@ -123,6 +124,7 @@ class LearningStore:
             "skill_id": skill_id,
             "completed_item_ids": [],
             "completed_objective_ids": [],
+            "quiz_scores": {},
             "next_recommended_learning_objective": None,
         }
 
@@ -161,6 +163,7 @@ class LearningStore:
         # Backward compatibility with old documents.
         document.setdefault("completed_item_ids", [])
         document.setdefault("completed_objective_ids", [])
+        document.setdefault("quiz_scores", {})
         document.setdefault(
             "next_recommended_learning_objective",
             None,
@@ -187,6 +190,7 @@ class LearningStore:
         for document in documents:
             document.setdefault("completed_item_ids", [])
             document.setdefault("completed_objective_ids", [])
+            document.setdefault("quiz_scores", {})
             document.setdefault(
                 "next_recommended_learning_objective",
                 None,
@@ -207,6 +211,7 @@ class LearningStore:
         objective_id=None,
         next_objective=None,
         required_item_ids=None,
+        quiz_score=None,
     ):
         """
         Mark a learning item as completed.
@@ -233,6 +238,9 @@ class LearningStore:
                 }
 
             progress = self.local_storage["progress"][key]
+
+            if quiz_score is not None:
+                progress.setdefault("quiz_scores", {})[item_id] = quiz_score
 
             if item_id not in progress["completed_item_ids"]:
                 progress["completed_item_ids"].append(item_id)
@@ -282,6 +290,9 @@ class LearningStore:
             update["$set"][
                 "next_recommended_learning_objective"
             ] = next_objective
+
+        if quiz_score is not None:
+            update["$set"][f"quiz_scores.{item_id}"] = quiz_score
 
         self.progress.update_one(
             {

@@ -30,17 +30,28 @@ class ProgressService:
             return 0.0
         return round(completed / total * 100, 1)
 
+    @staticmethod
+    def _average(values):
+        if not values:
+            return 0.0
+        return round(sum(values) / len(values), 1)
+
+    @staticmethod
+    def _required_item_ids(objective):
+        item_ids = {
+            item["item_id"]
+            for item in objective.get("items", [])
+            if item.get("item_id")
+        }
+        required_item_ids = set(objective.get("required_item_ids", []))
+        return required_item_ids & item_ids if required_item_ids else item_ids
+
     def calculate(self, progress_documents):
-        """Return progress for all assigned items in the curriculum."""
+        """Return objective-based progress for the curriculum."""
 
         progress_documents = list(progress_documents)
-        progress_by_skill = {
-            document.get("skill_id"): set(document.get("completed_item_ids", []))
-            for document in progress_documents
-        }
-        skills = []
-        overall_total = 0
-        overall_completed = 0
+        skills = [] 
+        skill_percentages = []
 
         for chapter in self.structure.get("chapters", []):
             skill_id = chapter["chapter_id"]
@@ -57,30 +68,26 @@ class ProgressService:
                 progress.get("completed_objective_ids", [])
             )
             objectives = []
-            skill_total = 0
-            skill_completed = 0
+            objective_percentages = []
 
             for objective in chapter.get("objectives", []):
-                item_ids = {
-                    item["item_id"]
-                    for item in objective.get("items", [])
-                }
+                item_ids = self._required_item_ids(objective)
                 completed_count = len(item_ids & completed_ids)
                 total_count = len(item_ids)
 
-                if total_count:
+                if objective["objective_id"] in completed_objective_ids:
+                    objective_progress = 100.0
+                elif total_count:
                     objective_progress = self._percentage(
                         completed_count,
                         total_count,
                     )
-                    skill_total += total_count
-                    skill_completed += completed_count
                 else:
                     objective_progress = 100.0 if (
                         objective["objective_id"] in completed_objective_ids
                     ) else 0.0
-                    skill_total += 1
-                    skill_completed += int(objective_progress == 100.0)
+
+                objective_percentages.append(objective_progress)
 
                 objectives.append({
                     "objective_id": objective["objective_id"],
@@ -91,23 +98,26 @@ class ProgressService:
                     "completed": objective_progress == 100.0,
                 })
 
-            overall_total += skill_total
-            overall_completed += skill_completed
+            skill_progress = self._average(objective_percentages)
+            skill_percentages.append(skill_progress)
             skills.append({
                 "skill_id": skill_id,
                 "title": chapter["title"],
-                "progress": self._percentage(skill_completed, skill_total),
-                "completed_items": skill_completed,
-                "total_items": skill_total,
+                "progress": skill_progress,
+                "completed_items": sum(
+                    objective_progress == 100.0
+                    for objective_progress in objective_percentages
+                ),
+                "total_items": len(objective_percentages),
                 "objectives": objectives,
             })
 
         return {
-            "overall_progress": self._percentage(
-                overall_completed,
-                overall_total,
+            "overall_progress": self._average(skill_percentages),
+            "completed_items": sum(
+                skill_progress == 100.0
+                for skill_progress in skill_percentages
             ),
-            "completed_items": overall_completed,
-            "total_learning_items": overall_total,
+            "total_learning_items": len(skill_percentages),
             "skills": skills,
         }

@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
+import secrets
 import bcrypt
 import jwt
 from bson import ObjectId
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 from flask import g, jsonify, request
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError, PyMongoError
+
 
 
 load_dotenv()
@@ -55,6 +57,8 @@ class UserStore:
             # Usernames and emails must both be unique.
             self.users.create_index("email", unique=True)
             self.users.create_index("username", unique=True)
+             # Keep the application-facing student identity separate from MongoDB _id.
+            self.users.create_index("student_id", unique=True, sparse=True)
             self.is_available = True
         except PyMongoError as error:
             self.is_available = False
@@ -84,12 +88,13 @@ class UserStore:
             "created_at": datetime.now(timezone.utc),
         }
         if role == "student":
+            user["student_id"] = f"STU-{secrets.token_hex(4).upper()}"
             user["gender"] = gender
             user["age_group"] = age_group
 
         result = self.users.insert_one(user)
 
-        return {
+        public_user = {
             "id": str(result.inserted_id),
             "name": name,
             "username": username.lower(),
@@ -97,12 +102,25 @@ class UserStore:
             "role": role,
             **({"gender": gender, "age_group": age_group} if role == "student" else {}),
         }
+        if role == "student":
+            public_user["student_id"] = user["student_id"]
+        return public_user
 
     def create_student(self, name, username, email, password, gender, age_group):
         return self.create_user(name, username, email, password, "student", gender, age_group)
 
     def create_admin(self, name, username, email, password):
         return self.create_user(name, username, email, password, "admin")
+
+    def ensure_student_id(self, user):
+        if user.get("role", "student") != "student" or user.get("student_id"):
+            return user
+
+        self.users.update_one(
+            {"_id": user["_id"], "student_id": {"$exists": False}},
+            {"$set": {"student_id": f"STU-{secrets.token_hex(4).upper()}"}},
+        )
+        return self.users.find_one({"_id": user["_id"]})
 
     def find_by_username(self, username):
         self._require_database()
@@ -155,6 +173,7 @@ def create_access_token(student):
 
     payload = {
         "sub": str(student["_id"]),
+        "student_id": student.get("student_id", str(student["_id"])),
         "username": student["username"],
         "email": student["email"],
         "role": student.get("role", "student"),
@@ -188,12 +207,14 @@ def require_auth(view_function):
                 algorithms=[JWT_ALGORITHM],
             )
 
-            # The authenticated user's identity is available to protected routes.
-            g.student_id = payload["sub"]
-            user = get_user_store().find_by_id(g.student_id)
+            # MongoDB _id authenticates the account; student_id identifies learning data.
+            g.user_id = payload["sub"]
+            user = get_user_store().find_by_id(g.user_id)
             if not user:
                 return jsonify({"error": "User account was not found."}), 401
+            user = get_user_store().ensure_student_id(user)
             g.current_user = user
+            g.student_id = user.get("student_id") or payload.get("student_id") or g.user_id
             g.user_role = user.get("role")
 
         except jwt.ExpiredSignatureError:
