@@ -84,6 +84,12 @@ def classify(block):
             "confidence": 0.98
         }
 
+    if text_lower.startswith("reflect on"):
+        return {
+            "type": "reflection",
+            "confidence": 0.92
+        }
+
     # ============================================================
     # 4. LEARNING OBJECTIVE DETECTION
     # ============================================================

@@ -5,10 +5,10 @@ from collections import Counter
 
 from classifier.rule_classifier import classify
 from knowledge.node_builder import build_node
-from parser.block_merger import merge_spans
 from parser.metadata_extractor import extract_blocks
 from parser.highlight_extractor import extract_highlighted_keywords
 from knowledge.keyword_skill_mapper import map_keywords_to_skills
+from knowledge.objective_mapper import map_nodes_to_objectives
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -18,6 +18,7 @@ OUTPUT_PATH = BASE_DIR / "output" / "knowledge_base.json"
 REPORT_PATH = BASE_DIR / "output" / "validation_report.json"
 HIGHLIGHTED_KEYWORDS_PATH = BASE_DIR / "output" / "highlighted_keywords.json"
 KEYWORD_SKILL_MAP_PATH = BASE_DIR / "output" / "keyword_skill_map.json"
+CONTENT_SKILLS_PATH = BASE_DIR / "output" / "content_skills.json"
 
 
 def build_knowledge_base():
@@ -38,9 +39,9 @@ def build_knowledge_base():
 
 
     # -------------------------------
-    # 2. Merge related spans
+    # 2. Extractor already returns paragraph/list-item blocks.
     # -------------------------------
-    merged_blocks = merge_spans(blocks)
+    merged_blocks = blocks
 
     print("Merged blocks:", len(merged_blocks))
 
@@ -112,6 +113,7 @@ def build_knowledge_base():
 
         if node_type == "objective_heading":
             objective_section = True
+            continue
         elif objective_section and (
             node_type in {"chapter", "topic"}
             or (
@@ -194,6 +196,10 @@ def build_knowledge_base():
         )
 
 
+    with open(CONTENT_SKILLS_PATH, "r", encoding="utf-8") as file:
+        content_skills = json.load(file)
+
+    nodes, _ = map_nodes_to_objectives(nodes, content_skills)
     return nodes
 
 
@@ -389,7 +395,7 @@ def generate_tags(node):
 # Validation
 # --------------------------------------------------
 
-def validate_nodes(nodes):
+def validate_nodes(nodes, content_skills=None):
 
     report = {
 
@@ -399,9 +405,55 @@ def validate_nodes(nodes):
 
         "requires_review": 0,
 
-        "issues": []
+        "issues": [],
+        "duplicate_ids": [],
+        "duplicate_content": [],
+        "invalid_objective_ids": [],
+        "mapping_review": [],
+        "possible_split_nodes": []
 
     }
+
+    valid_objectives = {
+        objective.get("objective_id")
+        for skill in (content_skills or [])
+        for objective in skill.get("objectives", [])
+    }
+    seen_ids = set()
+    seen_content = {}
+
+    for node in nodes:
+        node_id = node.get("id")
+        normalized_content = re.sub(r"\s+", " ", node.get("content", "").lower()).strip()
+        if node_id in seen_ids:
+            report["duplicate_ids"].append(node_id)
+        seen_ids.add(node_id)
+        if normalized_content:
+            if node.get("type") not in {"topic", "reflection"}:
+                seen_content.setdefault(normalized_content, []).append(node_id)
+
+        objective_id = node.get("objective_id")
+        if objective_id and objective_id not in valid_objectives:
+            report["invalid_objective_ids"].append(node_id)
+        if node.get("type") not in {"chapter", "module", "topic", "objective_heading"} and node.get("match_status") in {"review", "unassigned"}:
+            report["mapping_review"].append({"node_id": node_id, "status": node.get("match_status")})
+
+    report["duplicate_content"] = [
+        node_ids for node_ids in seen_content.values() if len(node_ids) > 1
+    ]
+
+    for previous, current in zip(nodes, nodes[1:]):
+        previous_text = previous.get("content", "").strip()
+        current_text = current.get("content", "").strip()
+        if (
+            previous.get("parent_id") == current.get("parent_id")
+            and previous.get("type") == current.get("type") == "content"
+            and previous_text
+            and current_text
+            and previous_text[-1].isalnum()
+            and current_text[0].islower()
+        ):
+            report["possible_split_nodes"].append([previous["id"], current["id"]])
 
 
     for node in nodes:
@@ -459,6 +511,19 @@ def validate_nodes(nodes):
 
 
 
+    if report["duplicate_ids"] or report["duplicate_content"]:
+        report["requires_review"] += len(report["duplicate_ids"]) + len(report["duplicate_content"])
+    if report["invalid_objective_ids"]:
+        report["requires_review"] += len(report["invalid_objective_ids"])
+    report["issues"].extend(
+        {"node_id": node_id, "issues": ["Invalid objective_id"]}
+        for node_id in report["invalid_objective_ids"]
+    )
+    report["issues"].extend(
+        {"node_id": pair[0], "issues": ["Possible paragraph split before node"]}
+        for pair in report["possible_split_nodes"]
+    )
+
     return nodes, report
 from parser.highlight_extractor import extract_highlighted_keywords
 
@@ -480,9 +545,10 @@ if __name__ == "__main__":
     )
 
 
-    knowledge_base, report = validate_nodes(
-        knowledge_base
-    )
+    with open(CONTENT_SKILLS_PATH, "r", encoding="utf-8") as file:
+        content_skills = json.load(file)
+
+    knowledge_base, report = validate_nodes(knowledge_base, content_skills)
 
 
     OUTPUT_PATH.parent.mkdir(
