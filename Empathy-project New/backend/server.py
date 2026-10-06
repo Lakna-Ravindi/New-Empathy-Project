@@ -113,9 +113,10 @@ def load_content_skills():
     source_paths = [
         Path(configured_path)
         if configured_path
-        else BASE_DIR / "output" / "knowledge_base.json"
+        else BASE_DIR / "output" / "content_skills.json"
     ]
     if not configured_path:
+        source_paths.append(BASE_DIR / "output" / "knowledge_base.json")
         source_paths.append(Path.home() / "Downloads" / "knowledge_base.json")
 
     for source_path in source_paths:
@@ -135,6 +136,150 @@ def load_content_skills():
 content_skills = load_content_skills()
 
 nodes_by_id = {node["id"]: node for node in knowledge_base}
+
+
+def attach_progress_item_id(learning_context):
+    activity = learning_context.get("recommended_activity")
+    skill = learning_context.get("skill") or {}
+    if not isinstance(activity, dict) or not activity.get("id"):
+        return
+
+    skill_id = skill.get("id") or skill.get("skill_id")
+    skill_id, _ = resolve_legacy_progress_ids(skill_id, "")
+    if skill.get("id"):
+        skill["id"] = skill_id
+    if skill.get("skill_id"):
+        skill["skill_id"] = skill_id
+    chapter = next(
+        (
+            item
+            for item in progress_service.structure.get("chapters", [])
+            if item.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    if chapter is None:
+        return
+
+    type_aliases = {"practice": "activity", "assessment": "quiz"}
+    activity_type = str(activity.get("type") or "").lower()
+    activity_type = type_aliases.get(activity_type, activity_type)
+    activity_text = " ".join(
+        str(activity.get(field) or "")
+        for field in ("title", "content")
+    ).lower()
+    activity_terms = set(re.findall(r"[a-z0-9]+", activity_text))
+    candidates = [
+        item
+        for objective in chapter.get("objectives", [])
+        for item in objective.get("items", [])
+        if item.get("item_id") and (
+            not activity_type or item.get("type") == activity_type
+        )
+    ]
+    if not candidates:
+        return
+
+    def match_score(item):
+        item_text = " ".join(
+            str(item.get(field) or "")
+            for field in ("title", "content")
+        ).lower()
+        return len(activity_terms & set(re.findall(r"[a-z0-9]+", item_text)))
+
+    selected_item = max(candidates, key=match_score)
+    activity["progress_item_id"] = selected_item["item_id"]
+    activity["progress_item_type"] = selected_item.get("type")
+    activity["progress_objective_id"] = next(
+        (
+            objective.get("objective_id")
+            for objective in chapter.get("objectives", [])
+            if any(
+                item.get("item_id") == selected_item["item_id"]
+                for item in objective.get("items", [])
+            )
+        ),
+        None,
+    )
+
+
+def resolve_legacy_progress_ids(skill_id, item_id):
+    """Translate older knowledge-base node IDs to progress structure IDs."""
+    chapter_ids = {
+        chapter.get("chapter_id")
+        for chapter in progress_service.structure.get("chapters", [])
+    }
+    if skill_id not in chapter_ids:
+        skill_node = nodes_by_id.get(skill_id)
+        if skill_node:
+            skill_id = skill_node.get("skill_id") or skill_id
+            if skill_id not in chapter_ids and skill_node.get("type") == "chapter":
+                chapter_nodes = [
+                    node
+                    for node in knowledge_base
+                    if node.get("type") == "chapter"
+                ]
+                chapter_index = next(
+                    (
+                        index
+                        for index, node in enumerate(chapter_nodes)
+                        if node.get("id") == skill_node.get("id")
+                    ),
+                    None,
+                )
+                if chapter_index is not None:
+                    ordered_chapters = progress_service.structure.get("chapters", [])
+                    if chapter_index < len(ordered_chapters):
+                        skill_id = ordered_chapters[chapter_index].get("chapter_id")
+
+    if item_id in {
+        item.get("item_id")
+        for chapter in progress_service.structure.get("chapters", [])
+        for objective in chapter.get("objectives", [])
+        for item in objective.get("items", [])
+    }:
+        return skill_id, item_id
+
+    item_node = nodes_by_id.get(item_id)
+    if not item_node:
+        return skill_id, item_id
+
+    chapter = next(
+        (
+            chapter
+            for chapter in progress_service.structure.get("chapters", [])
+            if chapter.get("chapter_id") == skill_id
+        ),
+        None,
+    )
+    if chapter is None:
+        return skill_id, item_id
+
+    item_text = " ".join(
+        str(item_node.get(field) or "")
+        for field in ("title", "content")
+    ).lower()
+    item_terms = set(re.findall(r"[a-z0-9]+", item_text))
+    candidates = [
+        item
+        for objective in chapter.get("objectives", [])
+        for item in objective.get("items", [])
+        if item.get("item_id")
+    ]
+    if candidates:
+        selected_item = max(
+            candidates,
+            key=lambda item: len(
+                item_terms
+                & set(re.findall(
+                    r"[a-z0-9]+",
+                    " ".join(str(item.get(field) or "") for field in ("title", "content")).lower(),
+                ))
+            ),
+        )
+        return skill_id, selected_item["item_id"]
+
+    return skill_id, item_id
 
 
 def _skill_summary(skill):
@@ -539,6 +684,13 @@ def learning_response():
     )
 
     learning_context = result.get("learning_context", result)
+    attach_progress_item_id(learning_context)
+    app.logger.info(
+        "learning-response recommendation student_id=%s skill=%s activity=%s",
+        g.student_id,
+        (learning_context.get("skill") or {}).get("id"),
+        learning_context.get("recommended_activity"),
+    )
     steps = result.get("steps", [])
     educational_response = result.get(
         "educational_response",
@@ -553,6 +705,17 @@ def learning_response():
         )
 
         result["interaction_id"] = interaction_id
+        recommended_activity = learning_context.get("recommended_activity") or {}
+        progress_item_id = recommended_activity.get("progress_item_id")
+        if progress_item_id:
+            learning_store.record_learning_event(
+                student_id,
+                learning_context["skill"]["id"],
+                progress_item_id,
+                objective_id=recommended_activity.get("progress_objective_id"),
+                source="chatbot",
+                status="introduced",
+            )
         return jsonify(result), 200
 
     except PyMongoError:
@@ -611,9 +774,38 @@ def student_progress(skill_id):
 @require_auth
 def complete_learning_item():
     body = request.get_json(silent=True) or {}
-    skill_id = (body.get("skill_id") or "").strip()
-    item_id = (body.get("item_id") or "").strip()
+    skill_value = (
+        body.get("skill_id")
+        or body.get("skillId")
+        or body.get("chapter_id")
+        or body.get("chapterId")
+    )
+    item_value = (
+        body.get("item_id")
+        or body.get("itemId")
+        or body.get("activity_id")
+        or body.get("activityId")
+        or body.get("video_id")
+        or body.get("videoId")
+        or body.get("quiz_id")
+        or body.get("quizId")
+    )
+    skill_id = str(skill_value).strip() if skill_value is not None else ""
+    item_id = str(item_value).strip() if item_value is not None else ""
+    skill_id, item_id = resolve_legacy_progress_ids(skill_id, item_id)
     quiz_score = body.get("quiz_score")
+    source = str(body.get("source") or "skills_page").strip().lower()
+    app.logger.info(
+        "progress item-complete request student_id=%s body=%s parsed_skill_id=%s parsed_item_id=%s item_type=%s source=%s",
+        g.student_id,
+        body,
+        skill_id,
+        item_id,
+        body.get("item_type"),
+        source,
+    )
+    if source not in {"skills_page", "chatbot"}:
+        return jsonify({"error": "source must be skills_page or chatbot."}), 400
 
     if not skill_id and item_id:
         matching_chapters = [
@@ -655,8 +847,16 @@ def complete_learning_item():
     )
 
     if not chapter or not assigned_item:
+        app.logger.warning(
+            "progress item-complete rejected student_id=%s skill_id=%s item_id=%s",
+            g.student_id,
+            skill_id,
+            item_id,
+        )
         return jsonify({
-            "error": "A valid assigned skill_id and item_id are required."
+            "error": "A valid assigned skill_id and item_id are required.",
+            "received_skill_id": skill_id,
+            "received_item_id": item_id,
         }), 400
 
     if quiz_score is not None:
@@ -697,6 +897,15 @@ def complete_learning_item():
             next_objective=next_uncompleted_objective(skill_id, completed_objective_ids),
             required_item_ids=required_item_ids,
             quiz_score=quiz_score,
+            source=source,
+        )
+        app.logger.info(
+            "progress item-complete persisted student_id=%s skill_id=%s item_id=%s source=%s completed_item_ids=%s",
+            g.student_id,
+            skill_id,
+            item_id,
+            source,
+            progress.get("completed_item_ids"),
         )
         return jsonify(progress), 200
     except PyMongoError:
@@ -760,7 +969,31 @@ def complete_objective(objective_id):
     try:
         current = learning_store.get_progress(student_id, skill_id)
 
-        completed = set(current["completed_objective_ids"])
+        required_item_ids = {
+            item_id
+            for item_id in objective.get("required_item_ids", [])
+            if item_id
+        }
+        if not required_item_ids:
+            required_item_ids = {
+                item.get("item_id")
+                for item in objective.get("items", [])
+                if item.get("item_id")
+            }
+
+        completed_item_ids = set(current.get("completed_item_ids", []))
+        missing_item_ids = sorted(required_item_ids - completed_item_ids)
+        if missing_item_ids:
+            return jsonify({
+                "error": "Complete all required learning items before completing this objective.",
+                "completed": False,
+                "objective_id": objective_id,
+                "required_item_ids": sorted(required_item_ids),
+                "completed_item_ids": sorted(completed_item_ids & required_item_ids),
+                "missing_item_ids": missing_item_ids,
+            }), 422
+
+        completed = set(current.get("completed_objective_ids", []))
         completed.add(objective_id)
         objective_record = {
             "id": objective["objective_id"],
@@ -836,4 +1069,6 @@ def evaluation_summary():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # The Werkzeug reloader can close the listening socket while its serving
+    # thread is still polling it on Windows, producing WinError 10038.
+    app.run(debug=True, port=5000, use_reloader=False)

@@ -124,9 +124,24 @@ class LearningStore:
             "skill_id": skill_id,
             "completed_item_ids": [],
             "completed_objective_ids": [],
+            "learning_events": [],
             "quiz_scores": {},
             "next_recommended_learning_objective": None,
         }
+
+    @staticmethod
+    def _normalize_progress_document(document):
+        """Keep legacy progress documents compatible with update operations."""
+        if not isinstance(document.get("completed_item_ids"), list):
+            document["completed_item_ids"] = []
+        if not isinstance(document.get("completed_objective_ids"), list):
+            document["completed_objective_ids"] = []
+        if not isinstance(document.get("learning_events"), list):
+            document["learning_events"] = []
+        if not isinstance(document.get("quiz_scores"), dict):
+            document["quiz_scores"] = {}
+        document.setdefault("next_recommended_learning_objective", None)
+        return document
 
     def get_progress(self, student_id, skill_id):
         """
@@ -160,16 +175,7 @@ class LearningStore:
                 skill_id,
             )
 
-        # Backward compatibility with old documents.
-        document.setdefault("completed_item_ids", [])
-        document.setdefault("completed_objective_ids", [])
-        document.setdefault("quiz_scores", {})
-        document.setdefault(
-            "next_recommended_learning_objective",
-            None,
-        )
-
-        return document
+        return self._normalize_progress_document(document)
 
     def get_all_progress(self, student_id):
         """Return progress documents for every skill owned by a student."""
@@ -188,20 +194,113 @@ class LearningStore:
 
         result = []
         for document in documents:
-            document.setdefault("completed_item_ids", [])
-            document.setdefault("completed_objective_ids", [])
-            document.setdefault("quiz_scores", {})
-            document.setdefault(
-                "next_recommended_learning_objective",
-                None,
-            )
-            result.append(document)
+            result.append(self._normalize_progress_document(document))
 
         return result
 
     # ---------------------------------------------------------
     # Complete learning item
     # ---------------------------------------------------------
+
+    @staticmethod
+    def _merge_learning_event(
+        progress,
+        skill_id,
+        item_id,
+        objective_id,
+        source,
+        status,
+        timestamp,
+    ):
+        events = progress.setdefault("learning_events", [])
+        event = next(
+            (item for item in events if item.get("content_item_id") == item_id),
+            None,
+        )
+        if event is None:
+            event = {
+                "skill_id": skill_id,
+                "objective_id": objective_id,
+                "content_item_id": item_id,
+                "source": source,
+                "sources": [source],
+                "status": status,
+                "introduced_at": timestamp,
+            }
+            events.append(event)
+        else:
+            if objective_id and not event.get("objective_id"):
+                event["objective_id"] = objective_id
+            event.setdefault("sources", [])
+            if source not in event["sources"]:
+                event["sources"].append(source)
+            if status == "completed":
+                event["status"] = "completed"
+
+        if status == "completed":
+            event["status"] = "completed"
+            event["completed_at"] = timestamp
+
+    def record_learning_event(
+        self,
+        student_id,
+        skill_id,
+        item_id,
+        objective_id=None,
+        source="skills_page",
+        status="completed",
+    ):
+        """Record one deduplicated learning event for a curriculum item."""
+
+        timestamp = self._now()
+        key = f"{student_id}:{skill_id}"
+
+        if not self.is_available:
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(student_id, skill_id),
+                    "created_at": timestamp,
+                }
+            progress = self.local_storage["progress"][key]
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                status,
+                timestamp,
+            )
+            if status == "completed" and item_id not in progress["completed_item_ids"]:
+                progress["completed_item_ids"].append(item_id)
+            progress["updated_at"] = timestamp
+            return progress
+
+        current = self.get_progress(student_id, skill_id)
+        self._merge_learning_event(
+            current,
+            skill_id,
+            item_id,
+            objective_id,
+            source,
+            status,
+            timestamp,
+        )
+        update = {
+            "$set": {
+                "learning_events": current["learning_events"],
+                "updated_at": timestamp,
+            },
+            "$setOnInsert": {"created_at": timestamp},
+        }
+        if status == "completed":
+            update["$addToSet"] = {"completed_item_ids": item_id}
+        self.progress.update_one(
+            {"student_id": student_id, "skill_id": skill_id},
+            update,
+            upsert=True,
+        )
+        return self.get_progress(student_id, skill_id)
 
     def complete_item(
         self,
@@ -212,6 +311,7 @@ class LearningStore:
         next_objective=None,
         required_item_ids=None,
         quiz_score=None,
+        source="skills_page",
     ):
         """
         Mark a learning item as completed.
@@ -244,6 +344,16 @@ class LearningStore:
 
             if item_id not in progress["completed_item_ids"]:
                 progress["completed_item_ids"].append(item_id)
+
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "completed",
+                now,
+            )
 
             required_item_ids = set(required_item_ids or [])
             if objective_id and required_item_ids.issubset(
@@ -281,6 +391,33 @@ class LearningStore:
         completed_item_ids = set(current.get("completed_item_ids", []))
         completed_item_ids.add(item_id)
 
+        # Older documents may contain null progress fields. Repair those
+        # fields before using array/map update operators below.
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+                "$or": [
+                    {"completed_item_ids": {"$exists": False}},
+                    {"completed_item_ids": None},
+                    {"completed_objective_ids": {"$exists": False}},
+                    {"completed_objective_ids": None},
+                    {"learning_events": {"$exists": False}},
+                    {"learning_events": None},
+                    {"quiz_scores": {"$exists": False}},
+                    {"quiz_scores": None},
+                ],
+            },
+            {
+                "$set": {
+                    "completed_item_ids": current["completed_item_ids"],
+                    "completed_objective_ids": current["completed_objective_ids"],
+                    "learning_events": current["learning_events"],
+                    "quiz_scores": current["quiz_scores"],
+                }
+            },
+        )
+
         if objective_id and required_item_ids.issubset(completed_item_ids):
             update["$addToSet"][
                 "completed_objective_ids"
@@ -301,6 +438,15 @@ class LearningStore:
             },
             update,
             upsert=True,
+        )
+
+        self.record_learning_event(
+            student_id,
+            skill_id,
+            item_id,
+            objective_id=objective_id,
+            source=source,
+            status="completed",
         )
 
         return self.get_progress(

@@ -75,7 +75,11 @@ class ProgressService:
                 completed_count = len(item_ids & completed_ids)
                 total_count = len(item_ids)
 
-                if objective["objective_id"] in completed_objective_ids:
+                is_item_complete = item_ids.issubset(completed_ids)
+                if (
+                    objective["objective_id"] in completed_objective_ids
+                    and is_item_complete
+                ):
                     objective_progress = 100.0
                 elif total_count:
                     objective_progress = self._percentage(
