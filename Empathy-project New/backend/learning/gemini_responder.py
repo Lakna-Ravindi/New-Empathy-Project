@@ -7,7 +7,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from google.genai.errors import ServerError
+from google.genai.errors import ClientError, ServerError
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -246,6 +246,12 @@ def generate_educational_response(learning_context: dict) -> list:
             else:
                 print(f"Gemini unavailable after retries: {e}")
                 return _fallback_steps(learning_context)
+
+        except ClientError as e:
+            if getattr(e, "code", None) == 429:
+                print(f"Gemini quota exhausted; using fallback response: {e}")
+                return _fallback_steps(learning_context)
+            raise
 
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Gemini JSON/validation error - attempt {attempt + 1}/3")

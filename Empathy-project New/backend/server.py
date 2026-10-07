@@ -17,6 +17,27 @@ from learning.progress_service import ProgressService
 from flask_cors import CORS
 
 
+def is_greeting(text: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9\s]", " ", text.lower())
+    normalized = " ".join(normalized.split())
+
+    greetings = {
+        "hi",
+        "hii",
+        "hiii",
+        "hello",
+        "helloo",
+        "hey",
+        "heyy",
+        "hiya",
+        "good morning",
+        "good afternoon",
+        "good evening",
+    }
+
+    return normalized in greetings
+
+
 app = Flask(__name__)
 
 CORS(
@@ -667,6 +688,25 @@ def create_admin():
 def learning_response():
     body = request.get_json(silent=True) or {}
     question = (body.get("question") or "").strip()
+
+    if is_greeting(question):
+        return jsonify({
+            "educational_response": (
+                "Hey! 👋 I'm here to help you explore empathy and build your skills. "
+                "What would you like to learn about today?"
+            ),
+            "learning_context": {
+                "message": (
+                    "Hey! 👋 I'm here to help you explore empathy and build your skills. "
+                    "What would you like to learn about today?"
+                ),
+                "detected_emotion": "calm",
+                "status": "greeting",
+                "skill": None,
+                "topic": None,
+            },
+            "steps": [],
+        })
 
     if not question:
         return jsonify({
