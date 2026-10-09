@@ -1,6 +1,688 @@
 {
-    "total_nodes": 561,
-    "approved": 561,
+    "total_nodes": 451,
+    "approved": 451,
     "requires_review": 0,
-    "issues": []
+    "issues": [],
+    "duplicate_ids": [],
+    "duplicate_content": [],
+    "invalid_objective_ids": [],
+    "mapping_review": [
+        {
+            "node_id": "node_0009",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0011",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0012",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0013",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0014",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0015",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0016",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0017",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0018",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0019",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0021",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0022",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0024",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0026",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0030",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0031",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0033",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0037",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0038",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0041",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0045",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0048",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0052",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0053",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0055",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0060",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0069",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0070",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0075",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0076",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0077",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0078",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0079",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0083",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0087",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0090",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0091",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0092",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0093",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0096",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0097",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0105",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0106",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0109",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0110",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0111",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0113",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0115",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0117",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0118",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0124",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0126",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0127",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0134",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0136",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0139",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0140",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0146",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0163",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0164",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0166",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0167",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0169",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0172",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0175",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0178",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0180",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0184",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0186",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0190",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0191",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0192",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0193",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0194",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0199",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0203",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0204",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0206",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0207",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0208",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0209",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0213",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0215",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0217",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0218",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0219",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0220",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0222",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0224",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0226",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0228",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0229",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0232",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0237",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0239",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0240",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0241",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0243",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0244",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0247",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0249",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0261",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0263",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0267",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0272",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0283",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0287",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0291",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0292",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0293",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0297",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0304",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0307",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0311",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0318",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0319",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0321",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0322",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0323",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0324",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0325",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0326",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0328",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0335",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0336",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0338",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0339",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0343",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0344",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0346",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0350",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0351",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0354",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0355",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0356",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0372",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0373",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0374",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0377",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0380",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0382",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0389",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0393",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0408",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0412",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0413",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0415",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0419",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0420",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0423",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0424",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0425",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0426",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0427",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0429",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0430",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0431",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0433",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0434",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0437",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0438",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0443",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0444",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0451",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0452",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0456",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0461",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0465",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0467",
+            "status": "review"
+        }
+    ],
+    "possible_split_nodes": []
 }

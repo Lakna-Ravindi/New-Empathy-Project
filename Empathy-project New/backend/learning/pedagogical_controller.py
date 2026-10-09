@@ -282,10 +282,10 @@ def answer_student_question(question, knowledge_base, keyword_skill_map):
     # 3. Gemini receives only the controller's selected lesson.
     gemini_response = generate_educational_response(learning_context)
 
-    # 4. Return both the decision and the friendly response.
+    # 4. Return the decision and the four separately-presented learning steps.
     return {
         "learning_context": learning_context,
-        "educational_response": gemini_response
+        "steps": gemini_response,
     }
 
 

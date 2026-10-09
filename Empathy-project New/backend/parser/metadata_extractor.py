@@ -4,6 +4,13 @@ import fitz
 
 
 def extract_blocks(pdf_path):
+    """Extract logical paragraphs and activities from PDF text blocks.
+
+    PyMuPDF exposes spans and visual lines, but a visual line is not a
+    knowledge-base unit. PDF blocks are the closest paragraph boundary. The
+    small bullet parser below also preserves separate list items when a block
+    contains an objectives or activity list.
+    """
     pdf_path = Path(pdf_path)
 
     blocks = []
@@ -13,81 +20,134 @@ def extract_blocks(pdf_path):
             page_data = page.get_text("dict")
 
             for block_index, block in enumerate(page_data["blocks"]):
-                if "lines" in block:
-                    for line_index, line in enumerate(block["lines"]):
-                        for span_index, span in enumerate(line["spans"]):
-                            text = span["text"].strip()
-                            if text == "":
-                                continue
+                if "lines" not in block:
+                    continue
 
-                            blocks.append({
-                                "page": page_number + 1,
-                                "block_index": block_index,
-                                "line_index": line_index,
-                                "span_index": span_index,
-                                "text": text,
-                                "font_size": span["size"],
-                                "font_name": span["font"],
-                            })
+                lines = []
+                for line_index, line in enumerate(block["lines"]):
+                    spans = [span for span in line["spans"] if span["text"].strip()]
+                    if not spans:
+                        continue
 
-    return blocks
+                    lines.append({
+                        "line_index": line_index,
+                        "text": _join_spans(spans),
+                        "font_size": spans[0]["size"],
+                        "font_name": spans[0]["font"],
+                    })
+
+                for item_index, item in enumerate(_logical_items(lines)):
+                    blocks.append({
+                        "page": page_number + 1,
+                        "block_index": block_index,
+                        "item_index": item_index,
+                        "line_index": item["line_index"],
+                        "text": item["text"],
+                        "font_size": item["font_size"],
+                        "font_name": item["font_name"],
+                    })
+
+    return _merge_continuations(blocks)
 
 
-def merge_spans(spans):
-    merged = []
-    current = None
-
-    def _join_text(left, right):
-        left = left.rstrip()
-        right = right.lstrip()
-
-        if not left:
-            return right
-
-        if not right:
-            return left
-
-        if left.endswith("-"):
-            return left[:-1] + right
-
-        if right[0] in ",.;:!?)]}":
-            separator = ""
-        else:
-            separator = " "
-
-        return f"{left}{separator}{right}"
-
+def _join_spans(spans):
+    text = ""
     for span in spans:
-        text = span["text"].strip()
-        if text == "":
+        value = span["text"].strip()
+        if not value:
             continue
+        if text and not value[0] in ",.;:!?)]}":
+            text += " "
+        text += value
+    return text.strip()
+
+
+def _logical_items(lines):
+    """Join wrapped lines, while keeping bullet items as separate blocks."""
+    items = []
+    current = None
+    bullet_pending = False
+
+    def flush():
+        nonlocal current
+        if current and current["text"].strip():
+            items.append(current)
+        current = None
+
+    for line in lines:
+        text = line["text"].strip()
+        if _is_bullet(text):
+            flush()
+            bullet_pending = True
+            continue
+
+        bullet_text = _strip_bullet(text)
+        starts_bullet = bullet_text != text
+        if starts_bullet:
+            flush()
+            text = bullet_text
+            bullet_pending = True
 
         if current is None:
-            current = span.copy()
-            continue
-
-        same_page = current["page"] == span["page"]
-        same_block = current.get("block_index") == span.get("block_index")
-        same_font = current["font_name"] == span["font_name"]
-        same_size = current["font_size"] == span["font_size"]
-
-        if same_page and same_block and same_font and same_size:
-            current["text"] = _join_text(current["text"], text)
+            current = {
+                "line_index": line["line_index"],
+                "text": text,
+                "font_size": line["font_size"],
+                "font_name": line["font_name"],
+            }
         else:
-            merged.append(current)
-            current = span.copy()
+            current["text"] = _join_text(current["text"], text)
+        bullet_pending = False
 
-    if current:
-        merged.append(current)
+    flush()
+    return items
 
+
+def _is_bullet(text):
+    return text in {"-", "•", "●", "\uf0b7"}
+
+
+def _strip_bullet(text):
+    return text.lstrip("-•●\uf0b7 ").strip()
+
+
+def _join_text(left, right):
+    if not left:
+        return right
+    if not right:
+        return left
+    if left.endswith("-"):
+        return left[:-1] + right
+    if right[0] in ",.;:!?)]}":
+        return left + right
+    return f"{left} {right}"
+
+
+def _merge_continuations(blocks):
+    """Join paragraphs split by a page break when the next block continues a sentence."""
+    merged = []
+    for block in blocks:
+        if merged and _is_continuation(merged[-1]["text"], block["text"]):
+            merged[-1]["text"] = _join_text(merged[-1]["text"], block["text"])
+            continue
+        merged.append(block)
     return merged
+
+
+def _is_continuation(previous, current):
+    previous = previous.strip()
+    current = current.strip()
+    if not previous or not current or not current[0].islower():
+        return False
+    if previous[-1] in ".!?;:)\"'":
+        return False
+    return previous[-1].isalnum() or previous[-1] in ",-"
 
 
 if __name__ == "__main__":
     pdf = Path(__file__).resolve().parents[2] / "data" / "SEEK_Learning.pdf"
 
     result = extract_blocks(pdf)
-    merged = merge_spans(result)
 
-    for item in merged[:10]:
+    for item in result[:10]:
         print(item)
