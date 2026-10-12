@@ -1,3 +1,4 @@
+# backend/server.py
 import json
 import os
 import re
@@ -13,6 +14,11 @@ from auth import VALID_AGE_GROUPS, VALID_GENDERS, create_access_token, get_user_
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
 from learning.progress_service import ProgressService
+from registration_assessment import (
+    RegistrationAssessmentStore,
+    score_pre_skill,
+    score_screening,
+)
 
 from flask_cors import CORS
 
@@ -113,7 +119,7 @@ def load_content_skills():
     source_paths = [
         Path(configured_path)
         if configured_path
-        else BASE_DIR / "output" / "knowledge_base.json"
+        else BASE_DIR / "output" / "content_skills.json"
     ]
     if not configured_path:
         source_paths.append(Path.home() / "Downloads" / "knowledge_base.json")
@@ -163,6 +169,9 @@ def get_content_skill(skill_id):
 learning_store = LearningStore()
 student_store = get_user_store()
 progress_service = ProgressService()
+
+# Screening / pre-skill results live in the SAME database as the users collection.
+assessment_store = RegistrationAssessmentStore(db=student_store.db)
 
 
 def get_skill_objectives(skill_id):
@@ -269,6 +278,139 @@ def register_student():
         }), 503
 
 
+def _clean_registration(body):
+    """Same rules as /api/auth/register. Returns (data, None) or (None, error_response)."""
+    username = (body.get("username") or "").strip().lower()
+    email = (body.get("email") or "").strip().lower()
+    gender = (body.get("gender") or "").strip()
+    password = body.get("password") or ""
+
+    for field, value in (("Email", email), ("Gender", gender), ("Username", username), ("Password", password)):
+        if not value:
+            return None, (jsonify({"error": f"{field} is required"}), 400)
+
+    if not re.fullmatch(r"[a-z0-9_]{3,30}", username):
+        return None, (jsonify({
+            "error": "Username must be 3-30 characters and use only letters, numbers, or underscores."
+        }), 400)
+
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+        return None, (jsonify({"error": "Please provide a valid email address."}), 400)
+
+    if len(password) < 8:
+        return None, (jsonify({"error": "Password must contain at least 8 characters."}), 400)
+
+    if gender not in VALID_GENDERS:
+        return None, (jsonify({"error": "Invalid gender"}), 400)
+
+    return {"username": username, "email": email, "gender": gender, "password": password}, None
+
+
+def _duplicate_error(username, email):
+    if student_store.find_by_username(username):
+        return jsonify({"error": "Username already exists"}), 409
+    if student_store.find_by_email(email):
+        return jsonify({"error": "Email already exists"}), 409
+    return None
+
+
+@app.post("/api/auth/register/validate")
+def validate_registration():
+    """Step 1 of sign-up: check the details, save nothing."""
+    body = request.get_json(silent=True) or {}
+    data, error = _clean_registration(body)
+    if error:
+        return error
+
+    try:
+        duplicate = _duplicate_error(data["username"], data["email"])
+    except PyMongoError:
+        return jsonify({"error": "Could not check the registration details."}), 503
+    if duplicate:
+        return duplicate
+
+    return jsonify({"valid": True}), 200
+
+
+@app.post("/api/auth/register/complete")
+def register_with_assessments():
+    """
+    Final step of sign-up. Saves the account only together with the screening
+    (and, unless the student reported immediate risk, the pre-skill assessment).
+    Scores are stored in separate collections and are NOT returned.
+    """
+    body = request.get_json(silent=True) or {}
+    data, error = _clean_registration(body)
+    if error:
+        return error
+
+    try:
+        screening = score_screening(body.get("screening"))
+        pre_skill = None
+        if not screening["acute"]:
+            pre_skill = score_pre_skill(body.get("pre_skill"))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    try:
+        duplicate = _duplicate_error(data["username"], data["email"])
+        if duplicate:
+            return duplicate
+        student_store.create_student(
+            data["username"], data["email"], data["password"], data["gender"]
+        )
+    except DuplicateKeyError:
+        return jsonify({"error": "Username or email already exists"}), 409
+    except PyMongoError:
+        return jsonify({"error": "Could not create the student account."}), 503
+
+    created_id = None
+    student_id = None
+    stored = None
+    try:
+        stored = student_store.ensure_student_id(student_store.find_by_username(data["username"]))
+        created_id = str(stored["_id"])
+        student_id = stored.get("student_id", created_id)
+
+        assessment_store.save_screening(student_id, screening)
+        if pre_skill:
+            assessment_store.save_pre_skill(student_id, pre_skill)
+        if screening["tier"] == "red":
+            student_store.update_user(created_id, {"account_status": "on_hold"})
+    except PyMongoError as exc:
+        app.logger.error("Registration save failed, rolling back: %s", exc)
+        # Run each cleanup on its own so one failure can't skip the other.
+        for cleanup in (
+            lambda: assessment_store.delete_for_student(student_id) if student_id else None,
+            lambda: student_store.delete_user(created_id) if created_id else None,
+        ):
+            try:
+                cleanup()
+            except PyMongoError:
+                pass
+        return jsonify({"error": "Could not complete registration. Please try again."}), 503
+
+    response = {
+        "message": "Registration successful.",
+        "tier": screening["tier"],   # for the closing message only, no scores
+        "acute": screening["acute"],
+    }
+
+    # Accounts on hold (red tier) must not be logged in.
+    if screening["tier"] != "red":
+        response["access_token"] = create_access_token(stored)
+        response["student"] = {
+            "id": created_id,
+            "student_id": student_id,
+            "username": stored["username"],
+            "email": stored["email"],
+            "role": stored.get("role", "student"),
+            "gender": stored.get("gender"),
+        }
+
+    return jsonify(response), 201
+
+
 @app.post("/api/auth/login")
 def login_student():
     body = request.get_json(silent=True) or {}
@@ -300,6 +442,11 @@ def login_student():
             return jsonify({
                 "error": "Invalid username or password."
             }), 401
+
+        if student.get("account_status") == "on_hold":
+            return jsonify({
+                "error": "Your account is on hold until you have spoken with a counselor."
+            }), 403
 
         token = create_access_token(student)
 
