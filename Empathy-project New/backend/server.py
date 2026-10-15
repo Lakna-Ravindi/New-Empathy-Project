@@ -209,6 +209,8 @@ def attach_progress_item_id(learning_context):
         return len(activity_terms & set(re.findall(r"[a-z0-9]+", item_text)))
 
     selected_item = max(candidates, key=match_score)
+    if match_score(selected_item) == 0:
+        return
     activity["progress_item_id"] = selected_item["item_id"]
     activity["progress_item_type"] = selected_item.get("type")
     activity["progress_objective_id"] = next(
@@ -288,17 +290,28 @@ def resolve_legacy_progress_ids(skill_id, item_id):
         if item.get("item_id")
     ]
     if candidates:
-        selected_item = max(
-            candidates,
-            key=lambda item: len(
-                item_terms
-                & set(re.findall(
-                    r"[a-z0-9]+",
-                    " ".join(str(item.get(field) or "") for field in ("title", "content")).lower(),
-                ))
-            ),
+        scored_candidates = [
+            (
+                len(
+                    item_terms
+                    & set(re.findall(
+                        r"[a-z0-9]+",
+                        " ".join(
+                            str(item.get(field) or "")
+                            for field in ("title", "content")
+                        ).lower(),
+                    ))
+                ),
+                item,
+            )
+            for item in candidates
+        ]
+        best_score, selected_item = max(
+            scored_candidates,
+            key=lambda candidate: candidate[0],
         )
-        return skill_id, selected_item["item_id"]
+        if best_score > 0:
+            return skill_id, selected_item["item_id"]
 
     return skill_id, item_id
 
@@ -688,6 +701,14 @@ def create_admin():
 def learning_response():
     body = request.get_json(silent=True) or {}
     question = (body.get("question") or "").strip()
+    answer_style = body.get("answer_style", "short")
+    if not isinstance(answer_style, str) or answer_style not in {"short", "long"}:
+        return jsonify({"error": "Invalid answer style."}), 400
+
+    if not question:
+        return jsonify({
+            "error": "Please enter a question."
+        }), 400
 
     if is_greeting(question):
         return jsonify({
@@ -704,14 +725,10 @@ def learning_response():
                 "status": "greeting",
                 "skill": None,
                 "topic": None,
+                "answer_style": answer_style,
             },
             "steps": [],
         })
-
-    if not question:
-        return jsonify({
-            "error": "Please enter a question."
-        }), 400
 
     # Do not accept student_id from frontend.
     # The ID is securely read from the JWT token.
@@ -721,6 +738,7 @@ def learning_response():
         question,
         knowledge_base,
         keyword_skill_map,
+        answer_style,
     )
 
     learning_context = result.get("learning_context", result)
@@ -734,7 +752,7 @@ def learning_response():
     steps = result.get("steps", [])
     educational_response = result.get(
         "educational_response",
-        steps if steps else learning_context.get("message", ""),
+        result.get("answer", steps if steps else learning_context.get("message", "")),
     )
 
     try:

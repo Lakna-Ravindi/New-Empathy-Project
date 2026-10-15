@@ -294,6 +294,9 @@ def learning_response():
     # Receive the student's question from the website.
     body = request.get_json(silent=True) or {}
     question = (body.get("question") or "").strip()
+    answer_style = body.get("answer_style", "short")
+    if not isinstance(answer_style, str) or answer_style not in {"short", "long"}:
+        return jsonify({"error": "Invalid answer style."}), 400
 
     # Do not continue if no question was sent.
     if not question:
@@ -307,12 +310,14 @@ def learning_response():
     result = answer_student_question(
         question,
         knowledge_base,
-        keyword_skill_map
+        keyword_skill_map,
+        answer_style,
     )
 
     learning_context = result.get("learning_context", result)
     educational_response = result.get(
-        "educational_response", learning_context.get("message", "")
+        "educational_response",
+        result.get("answer", learning_context.get("message", "")),
     )
 
     try:

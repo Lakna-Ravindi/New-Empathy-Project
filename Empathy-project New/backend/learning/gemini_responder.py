@@ -18,23 +18,34 @@ You are the language-response component of an educational empathy application.
 
 The Pedagogical Controller has already selected the approved empathy skill,
 learning objective, and activity. Treat this structured context as authoritative.
+The question_relevant_content field contains authoritative approved SEEK content
+chunks selected for the student's question. Prioritize those chunks when
+answering, but do not invent curriculum facts or attribute unsupported details
+to SEEK.
 
 Your primary responsibility is to answer the student's actual question directly
 and practically. Use the approved skill, learning objective, and activity to
 support and enrich the answer, but do not let them replace or overshadow the
 student's immediate question or situation.
+When the student has explicitly asked how to cope or asked for help, do not
+respond by asking whether they want help. Give the useful answer first; an
+approved activity may be offered afterward as an optional next step.
 
 Do not select another skill, objective, activity, or learning path.
 Do not invent curriculum content. Do not diagnose or provide medical advice.
 
 The discussion must follow four learning steps:
 
-1. Directly answer the student's question.
+1. Directly answer the student's question in the top-level "answer" field.
 2. Explain the approved learning objective.
-3. Introduce the approved activity.
+3. Introduce the approved activity when one was selected. If no approved
+   activity was selected, use this step to describe the next learning idea
+   without an activity object. Never invent activity metadata.
 4. Provide a simple Yes/No or True/False practice question.
 
-Generate all four steps in the response, but keep them clearly separated.
+Generate a complete main answer separately from the four supporting steps.
+The answer must directly address the student's question and must not depend on
+the frontend revealing later steps.
 The frontend will present these steps to the student one at a time.
 Do not combine the four steps into one paragraph.
 The practice question must be a Yes/No or True/False question.
@@ -49,14 +60,15 @@ All JSON strings must be properly closed.
 Do not place raw line breaks inside string values.
 Escape quotation marks inside strings when necessary.
 Do not stop generating before all four steps are complete.
-The response must contain exactly four steps.
+The response must contain a non-empty "answer" and exactly four steps.
 
 Return valid JSON only, in exactly this shape:
 {
+  "answer": "...",
   "steps": [
      {"step": 1, "type": "direct_answer", "content": "..."},
      {"step": 2, "type": "learning_objective", "content": "..."},
-     {"step": 3, "type": "activity", "content": "...", "activity": {"id": "...", "title": "...", "type": "..."}},
+     {"step": 3, "type": "activity", "content": "...", "activity": null},
      {"step": 4, "type": "practice_check", "content": "...", "question_type": "true_false", "question": "..."}
   ]
 }
@@ -67,8 +79,8 @@ that focus mainly on the learning objective instead of the student's question.
 """
 
 
-def _parse_steps(response_text: str) -> list:
-    """Parse and validate Gemini's four-step response contract."""
+def _parse_response(response_text: str, selected_activity=None) -> dict:
+    """Parse and validate Gemini's answer and four-step response contract."""
 
     if not response_text:
         raise ValueError("Gemini returned an empty response.")
@@ -109,6 +121,10 @@ def _parse_steps(response_text: str) -> list:
             f"(line {e.lineno}, column {e.colno})"
         ) from e
 
+    answer = payload.get("answer") if isinstance(payload, dict) else None
+    if not isinstance(answer, str) or not answer.strip():
+        raise ValueError("Gemini response must contain a non-empty answer.")
+
     steps = payload.get("steps") if isinstance(payload, dict) else None
 
     if not isinstance(steps, list) or len(steps) != 4:
@@ -133,11 +149,24 @@ def _parse_steps(response_text: str) -> list:
             raise ValueError(f"Step {index} must contain content.")
 
     activity = steps[2].get("activity")
-    if not isinstance(activity, dict):
-        raise ValueError("The activity step must include activity metadata.")
-    for field in ("id", "title", "type"):
-        if not isinstance(activity.get(field), str) or not activity[field].strip():
-            raise ValueError(f"Activity metadata '{field}' is missing.")
+    selected_activity = _valid_activity_metadata(selected_activity)
+    if selected_activity:
+        if not isinstance(activity, dict):
+            raise ValueError("The selected activity must include activity metadata.")
+        for field in ("id", "title", "type"):
+            if not isinstance(activity.get(field), str) or not activity[field].strip():
+                raise ValueError(f"Activity metadata '{field}' is missing.")
+        for field in ("id", "title", "type"):
+            if activity[field] != selected_activity.get(field):
+                raise ValueError(
+                    f"Gemini activity metadata '{field}' does not match "
+                    "the controller-selected activity."
+                )
+    elif activity is not None:
+        raise ValueError(
+            "The activity step must use null activity metadata when no "
+            "approved activity was selected."
+        )
 
     practice_step = steps[3]
     if practice_step.get("question_type") not in {"true_false", "yes_no"}:
@@ -150,44 +179,81 @@ def _parse_steps(response_text: str) -> list:
     ):
         raise ValueError("The final Gemini step must contain a question.")
 
-    return steps
+    return {"answer": answer, "steps": steps}
 
 
-def _fallback_steps(learning_context: dict) -> list:
+def _valid_activity_metadata(activity):
+    """Return selectable activity metadata, or None for an unavailable activity."""
+    if not isinstance(activity, dict):
+        return None
+    fields = ("id", "title", "type")
+    if not all(isinstance(activity.get(field), str) and activity[field].strip()
+               for field in fields):
+        return None
+    return {field: activity[field] for field in fields}
+
+
+def _fallback_response(learning_context: dict, answer_style: str = "short") -> dict:
     """Keep the learning flow usable when Gemini is temporarily unavailable."""
 
     objective = learning_context.get("learning_objective") or {}
-    activity = learning_context.get("recommended_activity") or {}
+    activity = _valid_activity_metadata(
+        learning_context.get("recommended_activity")
+    )
     skill = learning_context.get("skill") or {}
     question = learning_context.get("student_question", "")
     objective_title = objective.get("title") or "emotional regulation"
-    activity_title = activity.get("title") or "a short grounding practice"
-    activity_type = activity.get("type") or "activity"
-    activity_id = activity.get("id") or "activity_unassigned"
+    relevant_content = learning_context.get("question_relevant_content") or []
+    source_excerpt = next(
+        (
+            item.get("content", "").strip()
+            for item in relevant_content
+            if isinstance(item, dict) and item.get("content")
+        ),
+        "",
+    )
 
-    return [
+    if answer_style == "long":
+        answer = (
+            f"Direct answer to your question ({question}): "
+            f"{source_excerpt or 'Use the approved learning objective as your next step.'} "
+            f"This is connected to {objective_title}. 1) Review the approved "
+            "learning idea. 2) Consider how it applies to your situation."
+        )
+    else:
+        answer = (
+            f"You asked: {question} "
+            f"{source_excerpt or 'Start with the approved learning objective.'}"
+        )
+
+    activity_content = (
+        f"Try the recommended activity: {activity['title']}."
+        if activity
+        else "No suitable approved activity was found for this question. Continue with the learning objective above."
+    )
+
+    return {
+        "answer": answer,
+        "steps": [
         {
             "step": 1,
             "type": "direct_answer",
-            "content": (
-                f"You asked: {question} A useful first step is to pause, "
-                "notice what you are feeling, and take two slow breaths before deciding what to do next."
-            ),
+            "content": answer,
         },
         {
             "step": 2,
             "type": "learning_objective",
-            "content": f"This connects to {skill.get('title') or 'your empathy skill'}: {objective_title}.",
+            "content": (
+                f"Learning objective for {skill.get('title') or 'your empathy skill'}: "
+                f"{objective_title}. Notice the feeling, connect it to what happened, "
+                "and choose a response that supports you and others."
+            ),
         },
         {
             "step": 3,
             "type": "activity",
-            "content": f"Try the recommended {activity_type}: {activity_title}.",
-            "activity": {
-                "id": activity_id,
-                "title": activity_title,
-                "type": activity_type,
-            },
+            "content": activity_content,
+            "activity": activity,
         },
         {
             "step": 4,
@@ -196,24 +262,54 @@ def _fallback_steps(learning_context: dict) -> list:
             "question_type": "true_false",
             "question": "Taking a short pause can help you notice your emotional state.",
         },
-    ]
+        ],
+    }
 
 
-def generate_educational_response(learning_context: dict) -> list:
+def generate_educational_response(
+    learning_context: dict,
+    answer_style: str = "short",
+) -> dict:
     """Turn a controller decision into student-facing language."""
 
     if learning_context["status"] != "learning_path_selected":
         return learning_context["message"]
 
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    model_name = os.getenv("GEMINI_MODEL") or "gemini-3.6-flash"
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        print("Gemini configuration is unavailable; using fallback response.")
+        return _fallback_response(learning_context, answer_style)
+
+    client = genai.Client(api_key=api_key)
+    model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    style_instructions = {
+        "short": (
+            "Write the top-level answer in 1-2 clear sentences using simple, "
+            "direct language. Keep each supporting step concise."
+        ),
+        "long": (
+            "Write a structured educational answer of about 120-180 words. Start "
+            "with a direct answer, explain the relevant approved concept, include "
+            "one relevant example, and provide numbered practical steps or an "
+            "exercise. Include the supported learning objective and activity in "
+            "their dedicated steps, then end with a short understanding-check "
+            "question. Use only the approved SEEK context below."
+        ),
+    }
 
     prompt = {
         "student_question": learning_context["student_question"],
+        "answer_style": answer_style,
+        "response_style_instructions": style_instructions[answer_style],
         "selected_skill": learning_context["skill"],
         "selected_topic": learning_context["topic"],
         "selected_learning_objective": learning_context["learning_objective"],
         "selected_activity": learning_context["recommended_activity"],
+        "question_relevant_content": learning_context.get(
+            "question_relevant_content", []
+        ),
+        "matched_skills": learning_context.get("matched_skills", []),
+        "matched_keywords": learning_context.get("matched_keywords", []),
         "source_page": learning_context["source_page"],
     }
 
@@ -229,12 +325,22 @@ def generate_educational_response(learning_context: dict) -> list:
                 ),
             )
 
-            print("Gemini finish reason:", response.candidates[0].finish_reason)
+            finish_reason = (
+                response.candidates[0].finish_reason
+                if getattr(response, "candidates", None)
+                else None
+            )
+            print("Gemini finish reason:", finish_reason)
+            if str(finish_reason).upper().endswith("MAX_TOKENS"):
+                raise ValueError("Gemini response was truncated before completion.")
 
             if not response.text:
                 raise ValueError("Gemini returned an empty response.")
 
-            return _parse_steps(response.text)
+            return _parse_response(
+                response.text,
+                learning_context.get("recommended_activity"),
+            )
 
         except ServerError as e:
             print(f"Gemini 503 error - attempt {attempt + 1}/3")
@@ -245,13 +351,14 @@ def generate_educational_response(learning_context: dict) -> list:
                 time.sleep(wait_time)
             else:
                 print(f"Gemini unavailable after retries: {e}")
-                return _fallback_steps(learning_context)
+                return _fallback_response(learning_context, answer_style)
 
         except ClientError as e:
             if getattr(e, "code", None) == 429:
                 print(f"Gemini quota exhausted; using fallback response: {e}")
-                return _fallback_steps(learning_context)
-            raise
+                return _fallback_response(learning_context, answer_style)
+            print(f"Gemini client error; using fallback response: {e}")
+            return _fallback_response(learning_context, answer_style)
 
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Gemini JSON/validation error - attempt {attempt + 1}/3")
@@ -262,4 +369,5 @@ def generate_educational_response(learning_context: dict) -> list:
                 print(f"Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
             else:
-                raise
+                print("Gemini response remained invalid after retries; using fallback.")
+                return _fallback_response(learning_context, answer_style)
