@@ -332,12 +332,16 @@ def validate_registration():
     return jsonify({"valid": True}), 200
 
 
+
 @app.post("/api/auth/register/complete")
 def register_with_assessments():
     """
-    Final step of sign-up. Saves the account only together with the screening
-    (and, unless the student reported immediate risk, the pre-skill assessment).
-    Scores are stored in separate collections and are NOT returned.
+    Final step of sign-up. Saves the account together with the screening and
+    the pre-skill assessment. Scores are stored in separate collections and
+    are NOT returned (only the tier, for the closing message).
+
+    Safety net: a red-tier screening is never saved. The frontend already
+    stops these students after test 1, this blocks direct API calls.
     """
     body = request.get_json(silent=True) or {}
     data, error = _clean_registration(body)
@@ -346,9 +350,17 @@ def register_with_assessments():
 
     try:
         screening = score_screening(body.get("screening"))
-        pre_skill = None
-        if not screening["acute"]:
-            pre_skill = score_pre_skill(body.get("pre_skill"))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    if screening["tier"] == "red":
+        return jsonify({
+            "error": "Based on your answers, please speak with a counselor before registering. Nothing was saved.",
+            "tier": "red",
+        }), 403
+
+    try:
+        pre_skill = score_pre_skill(body.get("pre_skill"))
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -373,10 +385,7 @@ def register_with_assessments():
         student_id = stored.get("student_id", created_id)
 
         assessment_store.save_screening(student_id, screening)
-        if pre_skill:
-            assessment_store.save_pre_skill(student_id, pre_skill)
-        if screening["tier"] == "red":
-            student_store.update_user(created_id, {"account_status": "on_hold"})
+        assessment_store.save_pre_skill(student_id, pre_skill)
     except PyMongoError as exc:
         app.logger.error("Registration save failed, rolling back: %s", exc)
         # Run each cleanup on its own so one failure can't skip the other.
@@ -390,25 +399,19 @@ def register_with_assessments():
                 pass
         return jsonify({"error": "Could not complete registration. Please try again."}), 503
 
-    response = {
+    return jsonify({
         "message": "Registration successful.",
-        "tier": screening["tier"],   # for the closing message only, no scores
-        "acute": screening["acute"],
-    }
-
-    # Accounts on hold (red tier) must not be logged in.
-    if screening["tier"] != "red":
-        response["access_token"] = create_access_token(stored)
-        response["student"] = {
+        "tier": screening["tier"],   # "green" or "amber" only, no scores
+        "access_token": create_access_token(stored),
+        "student": {
             "id": created_id,
             "student_id": student_id,
             "username": stored["username"],
             "email": stored["email"],
             "role": stored.get("role", "student"),
             "gender": stored.get("gender"),
-        }
-
-    return jsonify(response), 201
+        },
+    }), 201
 
 
 @app.post("/api/auth/login")

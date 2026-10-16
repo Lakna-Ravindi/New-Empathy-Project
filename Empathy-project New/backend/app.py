@@ -653,4 +653,3 @@ if __name__ == "__main__":
     print("Highlighted keywords:", len(highlighted_keywords))
     print("Saved:", HIGHLIGHTED_KEYWORDS_PATH)
     print("Saved:", KEYWORD_SKILL_MAP_PATH)
-

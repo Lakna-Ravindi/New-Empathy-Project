@@ -110,25 +110,32 @@ def score_screening(raw):
 # content_skills.json uses different ids.
 # ---------------------------------------------------------------
 PRE_SKILL_KEY = {
-    "q01": ("skill_01", "c"), "q02": ("skill_01", "a"), "q03": ("skill_01", "d"),
-    "q04": ("skill_02", "b"), "q05": ("skill_02", "c"), "q06": ("skill_02", "d"),
-    "q07": ("skill_03", "b"), "q08": ("skill_03", "c"), "q09": ("skill_03", "a"),
-    "q10": ("skill_04", "c"), "q11": ("skill_04", "d"), "q12": ("skill_04", "a"),
-    "q13": ("skill_05", "b"), "q14": ("skill_05", "d"),
-    "q15": ("skill_06", "c"), "q16": ("skill_06", "d"),
-    "q17": ("skill_07", "c"), "q18": ("skill_07", "b"),
-    "q19": ("skill_08", "a"), "q20": ("skill_08", "d"),
+    "q03": ("skill_01", "d"),
+    "q04": ("skill_02", "b"),
+    "q09": ("skill_03", "a"),
+    "q10": ("skill_04", "c"),
+    "q14": ("skill_05", "d"),
+    "q16": ("skill_06", "d"),
+    "q17": ("skill_07", "c"),
+    "q19": ("skill_08", "a"),
 }
 VALID_OPTIONS = {"a", "b", "c", "d"}
+
+CONFIDENCE_ID = "conf"
+VALID_CONFIDENCE = {"1", "2", "3", "4", "5"}
 
 
 def score_pre_skill(raw):
     if not isinstance(raw, dict):
         raise ValueError("Pre-skill assessment answers are required.")
 
-    missing = [qid for qid in PRE_SKILL_KEY if qid not in raw]
-    if missing:
-        raise ValueError("Please answer all 20 questions.")
+    required = [CONFIDENCE_ID, *PRE_SKILL_KEY]
+    if any(qid not in raw for qid in required):
+        raise ValueError(f"Please answer all {len(required)} questions.")
+
+    confidence = raw[CONFIDENCE_ID]
+    if not isinstance(confidence, str) or confidence not in VALID_CONFIDENCE:
+        raise ValueError("Invalid confidence rating.")
     if any(not isinstance(raw[qid], str) or raw[qid] not in VALID_OPTIONS for qid in PRE_SKILL_KEY):
         raise ValueError("Invalid pre-skill assessment answers.")
 
@@ -143,7 +150,8 @@ def score_pre_skill(raw):
 
     total = len(PRE_SKILL_KEY)
     return {
-        "answers": {qid: raw[qid] for qid in PRE_SKILL_KEY},
+        "answers": {qid: raw[qid] for qid in required},
+        "confidence": int(confidence),   # 1 (not at all) .. 5 (extremely)
         "score": correct_total,
         "total": total,
         "percentage": round(correct_total / total * 100, 1),
