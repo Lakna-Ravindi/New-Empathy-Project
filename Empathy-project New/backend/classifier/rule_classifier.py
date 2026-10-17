@@ -65,9 +65,11 @@ def classify(block):
 
     if text_lower in {
         "module objectives",
+        "module learning objectives",
         "learning objectives",
         "objectives",
-        "module objective"
+        "module objective",
+        "module overview & objectives",
     }:
         return {
             "type": "objective_heading",
@@ -96,8 +98,14 @@ def classify(block):
 
     # SEEK objectives commonly start with action verbs.
 
+    explicit_objective = bool(re.match(
+        r"^(?:objective\s+\d+\s*[:.)-]\s*|\d+\s*[.)]\s+)",
+        text,
+        re.IGNORECASE,
+    ))
     objective_start = re.compile(
-        r"^(define|identify|recognize|describe|explain|apply|"
+        r"^(?:objective\s+\d+\s*[:.)-]\s*|\d+\s*[.)]\s+)?"
+        r"(define|identify|recognize|describe|explain|apply|"
         r"demonstrate|understand|list|compare|distinguish|use|"
         r"develop|practice|discuss|explore|evaluate|reflect|"
         r"analyze|create|examine|"
@@ -108,7 +116,8 @@ def classify(block):
     if objective_start.match(text):
         return {
             "type": "learning_objective",
-            "confidence": 0.90
+            "confidence": 0.90,
+            "explicit": explicit_objective,
         }
 
     # ============================================================

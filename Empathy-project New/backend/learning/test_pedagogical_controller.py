@@ -52,6 +52,29 @@ class PedagogicalControllerTests(unittest.TestCase):
             context["matched_keywords"],
         )
 
+    def test_runtime_retrieval_uses_content_and_highlights_without_map(self):
+        highlighted_keywords = load_fixture("highlighted_keywords.json")
+        context = process_student_question(
+            "How can I stay calm during exams?",
+            self.knowledge_base,
+            highlighted_keywords,
+        )
+
+        self.assertEqual(context["status"], "learning_path_selected")
+        self.assertEqual(context["skill"]["id"], "node_0001")
+        self.assertTrue(context["learning_objective"]["id"])
+        self.assertTrue(context["question_relevant_content"])
+
+    def test_runtime_retrieval_does_not_require_keyword_map_records(self):
+        context = process_student_question(
+            "What is empathy?",
+            self.knowledge_base,
+            [],
+        )
+
+        self.assertEqual(context["status"], "learning_path_selected")
+        self.assertEqual(context["skill"]["id"], "node_0130")
+
     def test_common_word_forms_are_normalized_without_broad_stemming(self):
         self.assertEqual(get_terms("exams"), {"exam"})
         self.assertEqual(get_terms("exam"), {"exam"})

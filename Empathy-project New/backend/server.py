@@ -61,8 +61,8 @@ load_dotenv(BASE_DIR / "backend" / ".env")
 with open(BASE_DIR / "output" / "knowledge_base.json", "r", encoding="utf-8") as file:
     knowledge_base = json.load(file)
 
-with open(BASE_DIR / "output" / "keyword_skill_map.json", "r", encoding="utf-8") as file:
-    keyword_skill_map = json.load(file)
+with open(BASE_DIR / "output" / "highlighted_keywords.json", "r", encoding="utf-8") as file:
+    highlighted_keywords = json.load(file)
 
 
 def _item_with_id(item, item_id, title_key="title"):
@@ -160,17 +160,14 @@ nodes_by_id = {node["id"]: node for node in knowledge_base}
 
 
 def attach_progress_item_id(learning_context):
-    activity = learning_context.get("recommended_activity")
     skill = learning_context.get("skill") or {}
-    if not isinstance(activity, dict) or not activity.get("id"):
-        return
-
     skill_id = skill.get("id") or skill.get("skill_id")
     skill_id, _ = resolve_legacy_progress_ids(skill_id, "")
     if skill.get("id"):
         skill["id"] = skill_id
     if skill.get("skill_id"):
         skill["skill_id"] = skill_id
+
     chapter = next(
         (
             item
@@ -182,9 +179,52 @@ def attach_progress_item_id(learning_context):
     if chapter is None:
         return
 
+    activity = learning_context.get("recommended_activity")
+    objective_context = learning_context.get("learning_objective") or {}
+    objective_id = (
+        objective_context.get("objective_id")
+        or objective_context.get("id")
+    )
+    if isinstance(activity, dict) and activity.get("id"):
+        activity_id = activity.get("id")
+    else:
+        activity_id = None
+
+    if not activity_id and objective_id:
+        objective = next(
+            (
+                item
+                for item in chapter.get("objectives", [])
+                if item.get("objective_id") == objective_id
+            ),
+            None,
+        )
+        selected_item = next(
+            (
+                item
+                for item in (objective or {}).get("items", [])
+                if item.get("type") == "activity"
+            ),
+            None,
+        )
+        if selected_item:
+            activity = {
+                "id": selected_item["item_id"],
+                "type": selected_item.get("type"),
+                "title": selected_item.get("title"),
+                "content": selected_item.get("content"),
+                "objective_id": objective_id,
+            }
+            learning_context["recommended_activity"] = activity
+            activity_id = activity["id"]
+
+    if not isinstance(activity, dict) or not activity_id:
+        return
+
     type_aliases = {"practice": "activity", "assessment": "quiz"}
     activity_type = str(activity.get("type") or "").lower()
     activity_type = type_aliases.get(activity_type, activity_type)
+    known_item_types = {"activity", "video", "quiz", "reflection", "text"}
     activity_text = " ".join(
         str(activity.get(field) or "")
         for field in ("title", "content")
@@ -195,11 +235,51 @@ def attach_progress_item_id(learning_context):
         for objective in chapter.get("objectives", [])
         for item in objective.get("items", [])
         if item.get("item_id") and (
-            not activity_type or item.get("type") == activity_type
+            not activity_type
+            or activity_type not in known_item_types
+            or item.get("type") == activity_type
         )
     ]
     if not candidates:
         return
+
+    activity_node = nodes_by_id.get(activity.get("id"))
+    visited = set()
+    while activity_node and activity_node.get("id") not in visited:
+        visited.add(activity_node.get("id"))
+        if activity_node.get("objective_id"):
+            break
+        activity_node = nodes_by_id.get(activity_node.get("parent_id"))
+    objective_id = (
+        activity.get("objective_id")
+        or (activity_node or {}).get("objective_id")
+        or objective_id
+    )
+    if objective_id:
+        objective_candidates = [
+            item
+            for objective in chapter.get("objectives", [])
+            if objective.get("objective_id") == objective_id
+            for item in objective.get("items", [])
+            if item in candidates
+        ]
+        if objective_candidates:
+            candidates = objective_candidates
+
+    direct_ids = {
+        activity.get("progress_item_id"),
+        activity.get("item_id"),
+        activity.get("activity_id"),
+        activity.get("video_id"),
+        activity.get("quiz_id"),
+    }
+    direct_matches = [
+        item for item in candidates if item.get("item_id") in direct_ids
+    ]
+    if len(direct_matches) == 1:
+        selected_item = direct_matches[0]
+    else:
+        selected_item = None
 
     def match_score(item):
         item_text = " ".join(
@@ -208,8 +288,20 @@ def attach_progress_item_id(learning_context):
         ).lower()
         return len(activity_terms & set(re.findall(r"[a-z0-9]+", item_text)))
 
-    selected_item = max(candidates, key=match_score)
-    if match_score(selected_item) == 0:
+    if selected_item is None:
+        scored_candidates = [
+            (match_score(item), item)
+            for item in candidates
+        ]
+        best_score = max(score for score, _ in scored_candidates)
+        best_matches = [
+            item for score, item in scored_candidates if score == best_score
+        ]
+        if best_score == 0 or len(best_matches) != 1:
+            return
+        selected_item = best_matches[0]
+
+    if not selected_item.get("item_id"):
         return
     activity["progress_item_id"] = selected_item["item_id"]
     activity["progress_item_type"] = selected_item.get("type")
@@ -277,41 +369,6 @@ def resolve_legacy_progress_ids(skill_id, item_id):
     )
     if chapter is None:
         return skill_id, item_id
-
-    item_text = " ".join(
-        str(item_node.get(field) or "")
-        for field in ("title", "content")
-    ).lower()
-    item_terms = set(re.findall(r"[a-z0-9]+", item_text))
-    candidates = [
-        item
-        for objective in chapter.get("objectives", [])
-        for item in objective.get("items", [])
-        if item.get("item_id")
-    ]
-    if candidates:
-        scored_candidates = [
-            (
-                len(
-                    item_terms
-                    & set(re.findall(
-                        r"[a-z0-9]+",
-                        " ".join(
-                            str(item.get(field) or "")
-                            for field in ("title", "content")
-                        ).lower(),
-                    ))
-                ),
-                item,
-            )
-            for item in candidates
-        ]
-        best_score, selected_item = max(
-            scored_candidates,
-            key=lambda candidate: candidate[0],
-        )
-        if best_score > 0:
-            return skill_id, selected_item["item_id"]
 
     return skill_id, item_id
 
@@ -737,7 +794,7 @@ def learning_response():
     result = answer_student_question(
         question,
         knowledge_base,
-        keyword_skill_map,
+        highlighted_keywords,
         answer_style,
     )
 
@@ -853,6 +910,7 @@ def complete_learning_item():
     skill_id, item_id = resolve_legacy_progress_ids(skill_id, item_id)
     quiz_score = body.get("quiz_score")
     source = str(body.get("source") or "skills_page").strip().lower()
+    requested_item_type = str(body.get("item_type") or "").strip().lower()
     app.logger.info(
         "progress item-complete request student_id=%s body=%s parsed_skill_id=%s parsed_item_id=%s item_type=%s source=%s",
         g.student_id,
@@ -915,6 +973,18 @@ def complete_learning_item():
             "error": "A valid assigned skill_id and item_id are required.",
             "received_skill_id": skill_id,
             "received_item_id": item_id,
+        }), 400
+
+    assigned_item_type = str(assigned_item.get("type") or "").lower()
+    if assigned_item_type == "practice":
+        assigned_item_type = "activity"
+    if requested_item_type and requested_item_type == "practice":
+        requested_item_type = "activity"
+    if requested_item_type and requested_item_type != assigned_item_type:
+        return jsonify({
+            "error": "item_type does not match the assigned curriculum item.",
+            "received_item_type": requested_item_type,
+            "assigned_item_type": assigned_item_type,
         }), 400
 
     if quiz_score is not None:

@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from learning.gemini_responder import generate_educational_response
+from learning.semantic_search import semantic_search
 
 VALID_ANSWER_STYLES = {"short", "long"}
 QUESTION_RELEVANT_CONTENT_LIMIT = 5
@@ -339,6 +340,8 @@ def node_summary(node):
         return None
     return {
         "id": node.get("id") if node else None,
+        "skill_id": node.get("skill_id") if node else None,
+        "objective_id": node.get("objective_id") if node else None,
         "type": node.get("type") if node else None,
         "title": node.get("title") if node else None,
         "content": node.get("content") if node else None,
@@ -370,7 +373,84 @@ def rank_question_relevant_content(skill_id, nodes, nodes_by_id, query_terms):
     ]
 
 
-def process_student_question(question, knowledge_base, keyword_skill_map):
+def _highlight_terms(highlighted_keywords):
+    return {
+        term
+        for item in highlighted_keywords or []
+        for term in get_terms(item.get("text", ""))
+    }
+
+
+def _direct_skill_groups(question, knowledge_base, highlighted_keywords=None):
+    query_terms = expand_terms(question)
+    highlighted_terms = _highlight_terms(highlighted_keywords)
+    nodes_by_id = {
+        node["id"]: node
+        for node in knowledge_base
+        if node.get("id")
+    }
+    chapters = [
+        node for node in knowledge_base
+        if node.get("type") == "chapter"
+    ]
+    groups = []
+
+    for chapter in chapters:
+        descendants = [
+            node for node in knowledge_base
+            if belongs_to_skill(node, chapter["id"], nodes_by_id)
+        ]
+        chapter_text = " ".join(
+            f"{node.get('title', '')} {node.get('content', '')}"
+            for node in descendants
+        )
+        score = score_text(chapter_text, query_terms)
+        highlighted_overlap = len(highlighted_terms.intersection(query_terms))
+        if highlighted_overlap:
+            score += highlighted_overlap * 5
+        if score <= 0:
+            continue
+
+        source_nodes = sorted(
+            (
+                node for node in descendants
+                if node.get("type") in {"content", "learning_objective"}
+                and score_text(
+                    f"{node.get('title', '')} {node.get('content', '')}",
+                    query_terms,
+                ) > 0
+            ),
+            key=lambda node: (
+                -score_text(
+                    f"{node.get('title', '')} {node.get('content', '')}",
+                    query_terms,
+                ),
+                node.get("id", ""),
+            ),
+        )
+        groups.append({
+            "skill_id": chapter["id"],
+            "skill": chapter.get("title", ""),
+            "score": score,
+            "matched_keywords": sorted(
+                get_terms(question).intersection(MEANINGFUL_CONCEPTS)
+            ),
+            "mappings": [],
+            "source_nodes": [
+                {
+                    "id": node["id"],
+                    "type": node.get("type"),
+                    "title": node.get("title"),
+                    "resolved": node_summary(node),
+                }
+                for node in source_nodes[:3]
+            ],
+        })
+
+    return groups, query_terms
+
+
+def process_student_question(question, knowledge_base, highlighted_keywords=None):
     """
     Main Pedagogical Controller function.
 
@@ -385,41 +465,49 @@ def process_student_question(question, knowledge_base, keyword_skill_map):
         for node in knowledge_base
     }
 
-    mappings, score, query_terms = find_skill_mapping(
-        question,
-        keyword_skill_map
-    )
-
     nodes_by_id = {
         node["id"]: node
         for node in knowledge_base
         if node.get("id")
     }
-    matched_groups = {}
-    for mapping in mappings:
-        skill_id, source_node = resolve_skill_id(mapping, nodes_by_id)
-        if not skill_id:
-            continue
-        group = matched_groups.setdefault(skill_id, {
-            "skill_id": skill_id,
-            "skill": mapping.get("skill") or nodes_by_id[skill_id].get("title"),
-            "score": 0,
-            "matched_keywords": set(),
-            "mappings": [],
-            "source_nodes": [],
-        })
-        group["score"] = max(group["score"], mapping["_relevance_score"])
-        group["matched_keywords"].add(mapping.get("keyword"))
-        group["mappings"].append(mapping)
-        source_summary = {
-            "id": mapping.get("source_node_id"),
-            "type": mapping.get("source_node_type"),
-            "title": mapping.get("source_node_title"),
-        }
-        if source_node:
-            source_summary["resolved"] = node_summary(source_node)
-        if source_summary not in group["source_nodes"]:
-            group["source_nodes"].append(source_summary)
+    matched_groups, query_terms = _direct_skill_groups(
+        question,
+        knowledge_base,
+        highlighted_keywords,
+    )
+
+    if not matched_groups:
+        semantic_results = semantic_search(question, knowledge_base, limit=5)
+        if semantic_results:
+            primary_skill_id = None
+            if semantic_results[0].get("skill_id"):
+                primary_skill_id = semantic_results[0]["skill_id"]
+            if primary_skill_id:
+                matched_groups, query_terms = _direct_skill_groups(
+                    question,
+                    knowledge_base,
+                    highlighted_keywords,
+                )
+                if not matched_groups:
+                    matched_groups = [{
+                        "skill_id": primary_skill_id,
+                        "skill": next((node.get("title", "") for node in knowledge_base if node.get("id") == primary_skill_id), "Skill"),
+                        "score": 1.0,
+                        "matched_keywords": sorted(get_terms(question).intersection(MEANINGFUL_CONCEPTS | set(CONCEPT_ALIASES))),
+                        "mappings": [],
+                        "source_nodes": [{
+                            "id": item["id"],
+                            "type": item["type"],
+                            "title": item["title"],
+                            "resolved": {
+                                "id": item["id"],
+                                "type": item["type"],
+                                "title": item["title"],
+                                "content": item.get("content"),
+                                "page": item.get("page"),
+                            },
+                        } for item in semantic_results[:3]],
+                    }]
 
     if not matched_groups:
         return {
@@ -433,7 +521,7 @@ def process_student_question(question, knowledge_base, keyword_skill_map):
         }
 
     recommendations = []
-    for group in matched_groups.values():
+    for group in matched_groups:
         objectives = rank_learning_objectives(
             group["skill_id"], knowledge_base, nodes_by_id, query_terms
         )
@@ -487,13 +575,26 @@ def process_student_question(question, knowledge_base, keyword_skill_map):
         )
     )
     primary = recommendations[0]
-    primary_mapping = primary["mappings"][0]
     question_relevant_content = rank_question_relevant_content(
         primary["skill"]["id"],
         knowledge_base,
         nodes_by_id,
         query_terms,
     )
+
+    if not question_relevant_content:
+        semantic_results = semantic_search(question, knowledge_base, limit=QUESTION_RELEVANT_CONTENT_LIMIT, skill_id=primary["skill"]["id"])
+        if semantic_results:
+            question_relevant_content = [
+                {
+                    "id": item["id"],
+                    "type": item["type"],
+                    "title": item["title"],
+                    "content": item["content"],
+                    "page": item["page"],
+                }
+                for item in semantic_results
+            ]
 
     return {
         "status": "learning_path_selected",
@@ -516,26 +617,32 @@ def process_student_question(question, knowledge_base, keyword_skill_map):
         "matched_skills": recommendations,
         "recommendations": recommendations,
 
-        "matched_keyword": primary["matched_keywords"][0] if primary["matched_keywords"] else None,
+        "matched_keyword": (
+            primary["matched_keywords"][0]
+            if primary["matched_keywords"] else None
+        ),
 
         "skill": primary["skill"],
 
         "topic": {
-            "id": primary_mapping.get("topic_id"),
-            "title": primary_mapping.get("topic")
+            "id": None,
+            "title": None,
         },
 
         "learning_objective": primary["learning_objective"],
         "recommended_activity": primary["recommended_activity"],
         "question_relevant_content": question_relevant_content,
 
-        "source_page": primary_mapping.get("page")
+        "source_page": (
+            primary["source_nodes"][0]["resolved"].get("page")
+            if primary["source_nodes"] else None
+        )
     }
 
 def answer_student_question(
     question,
     knowledge_base,
-    keyword_skill_map,
+    highlighted_keywords=None,
     answer_style="short",
 ):
     if answer_style not in VALID_ANSWER_STYLES:
@@ -545,7 +652,7 @@ def answer_student_question(
     learning_context = process_student_question(
         question,
         knowledge_base,
-        keyword_skill_map
+        highlighted_keywords
     )
     learning_context["answer_style"] = answer_style
 
@@ -572,8 +679,8 @@ if __name__ == "__main__":
         BASE_DIR / "output" / "knowledge_base.json"
     )
 
-    keyword_skill_map = load_json(
-        BASE_DIR / "output" / "keyword_skill_map.json"
+    highlighted_keywords = load_json(
+        BASE_DIR / "output" / "highlighted_keywords.json"
     )
 
     question = (
@@ -585,7 +692,7 @@ if __name__ == "__main__":
     result = answer_student_question(
         question,
         knowledge_base,
-        keyword_skill_map
+        highlighted_keywords
     )
 
     print(json.dumps(result, indent=4, ensure_ascii=False))
