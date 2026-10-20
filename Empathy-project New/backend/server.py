@@ -64,6 +64,9 @@ with open(BASE_DIR / "output" / "knowledge_base.json", "r", encoding="utf-8") as
 with open(BASE_DIR / "output" / "highlighted_keywords.json", "r", encoding="utf-8") as file:
     highlighted_keywords = json.load(file)
 
+with open(BASE_DIR / "output" / "keyword_skill_map.json", "r", encoding="utf-8") as file:
+    keyword_skill_map = json.load(file)
+
 
 def _item_with_id(item, item_id, title_key="title"):
     """Add a stable ID without changing the source content shape."""
@@ -267,6 +270,7 @@ def attach_progress_item_id(learning_context):
             candidates = objective_candidates
 
     direct_ids = {
+        activity.get("id"),
         activity.get("progress_item_id"),
         activity.get("item_id"),
         activity.get("activity_id"),
@@ -785,26 +789,35 @@ def learning_response():
                 "answer_style": answer_style,
             },
             "steps": [],
+            "suggested_questions": [],
         })
 
     # Do not accept student_id from frontend.
     # The ID is securely read from the JWT token.
     student_id = g.student_id
 
+    try:
+        progress_documents = learning_store.get_all_progress(student_id)
+    except PyMongoError:
+        app.logger.warning("learning-response progress lookup unavailable.")
+        progress_documents = None
+
     result = answer_student_question(
         question,
         knowledge_base,
-        highlighted_keywords,
+        keyword_skill_map,
         answer_style,
+        progress_documents=progress_documents,
+        progress_structure=progress_service.get_structure(),
     )
 
     learning_context = result.get("learning_context", result)
+    result.setdefault("suggested_questions", [])
     attach_progress_item_id(learning_context)
     app.logger.info(
-        "learning-response recommendation student_id=%s skill=%s activity=%s",
-        g.student_id,
+        "learning-response recommendation skill=%s activity_id=%s",
         (learning_context.get("skill") or {}).get("id"),
-        learning_context.get("recommended_activity"),
+        (learning_context.get("recommended_activity") or {}).get("id"),
     )
     steps = result.get("steps", [])
     educational_response = result.get(
@@ -860,18 +873,18 @@ def student_progress(skill_id):
     try:
         progress = learning_store.get_progress(student_id, skill_id)
 
-        if progress["next_recommended_learning_objective"] is None:
-            progress["next_recommended_learning_objective"] = (
-                next_uncompleted_objective(
-                    skill_id,
-                    progress["completed_objective_ids"],
-                )
-            )
-
         calculated = progress_service.calculate([progress])
         skill = next(
             (item for item in calculated["skills"] if item["skill_id"] == skill_id),
             None,
+        )
+        verified_completed_ids = {
+            objective["objective_id"]
+            for objective in (skill or {}).get("objectives", [])
+            if objective["completed"]
+        }
+        progress["next_recommended_learning_objective"] = (
+            next_uncompleted_objective(skill_id, verified_completed_ids)
         )
         return jsonify({
             **progress,
@@ -975,11 +988,24 @@ def complete_learning_item():
             "received_item_id": item_id,
         }), 400
 
+    requested_objective_id = body.get("objective_id")
+    if (
+        requested_objective_id is not None
+        and requested_objective_id != (assigned_objective or {}).get("objective_id")
+    ):
+        return jsonify({
+            "error": "objective_id does not match the assigned curriculum item.",
+        }), 400
+
     assigned_item_type = str(assigned_item.get("type") or "").lower()
     if assigned_item_type == "practice":
         assigned_item_type = "activity"
+    if assigned_item_type == "assessment":
+        assigned_item_type = "quiz"
     if requested_item_type and requested_item_type == "practice":
         requested_item_type = "activity"
+    if requested_item_type == "assessment":
+        requested_item_type = "quiz"
     if requested_item_type and requested_item_type != assigned_item_type:
         return jsonify({
             "error": "item_type does not match the assigned curriculum item.",
@@ -993,40 +1019,96 @@ def complete_learning_item():
         if quiz_score < 0 or quiz_score > 100:
             return jsonify({"error": "quiz_score must be between 0 and 100."}), 400
 
-    is_quiz = assigned_item.get("type", "").lower() in {"quiz", "assessment"}
-    if is_quiz and (quiz_score is None or quiz_score < 80):
-        return jsonify({
-            "error": "A quiz requires a score of at least 80% to be completed.",
-            "completed": False,
-            "quiz_score": quiz_score,
-        }), 422
-
+    is_quiz = assigned_item_type == "quiz"
     try:
+        objective_id = (assigned_objective or {}).get("objective_id")
+        requirements = (
+            progress_service.completion_requirements(assigned_objective)
+            if assigned_objective
+            else {"activity_item_ids": [], "quiz_passing_scores": {}}
+        )
+        passing_score = requirements["quiz_passing_scores"].get(item_id)
         current = learning_store.get_progress(g.student_id, skill_id)
-        completed_item_ids = set(current.get("completed_item_ids", []))
-        completed_item_ids.add(item_id)
-        required_item_ids = set(
-            (assigned_objective or {}).get("required_item_ids", [])
-        )
-        if not required_item_ids and assigned_objective:
-            required_item_ids = {
-                item.get("item_id")
-                for item in assigned_objective.get("items", [])
-            }
-        completed_objective_ids = set(current.get("completed_objective_ids", []))
-        if required_item_ids.issubset(completed_item_ids) and assigned_objective:
-            completed_objective_ids.add(assigned_objective["objective_id"])
 
-        progress = learning_store.complete_item(
-            g.student_id,
-            skill_id,
-            item_id,
-            objective_id=(assigned_objective or {}).get("objective_id"),
-            next_objective=next_uncompleted_objective(skill_id, completed_objective_ids),
-            required_item_ids=required_item_ids,
-            quiz_score=quiz_score,
-            source=source,
+        if is_quiz and quiz_score is None:
+            return jsonify({
+                "error": "A quiz score is required to record a quiz attempt.",
+                "completed": False,
+            }), 422
+
+        if is_quiz and quiz_score < passing_score:
+            progress = learning_store.record_quiz_attempt(
+                g.student_id,
+                skill_id,
+                item_id,
+                quiz_score,
+                objective_id=objective_id,
+                source=source,
+            )
+            attempt_passed = False
+        else:
+            completed_item_ids = set(current.get("completed_item_ids", []))
+            completed_item_ids.add(item_id)
+            quiz_scores = dict(current.get("quiz_scores", {}))
+            if is_quiz:
+                previous_score = quiz_scores.get(item_id)
+                if isinstance(previous_score, (int, float)) and not isinstance(
+                    previous_score, bool
+                ):
+                    quiz_scores[item_id] = max(previous_score, quiz_score)
+                else:
+                    quiz_scores[item_id] = quiz_score
+            current_state = progress_service.completion_state(
+                assigned_objective,
+                completed_item_ids,
+                quiz_scores,
+            )
+            completed_objective_ids = set(
+                current.get("completed_objective_ids", [])
+            )
+            if current_state["completed"]:
+                completed_objective_ids.add(objective_id)
+            next_objective = next_uncompleted_objective(
+                skill_id,
+                completed_objective_ids,
+            )
+            progress = learning_store.complete_item(
+                g.student_id,
+                skill_id,
+                item_id,
+                objective_id=objective_id,
+                next_objective=next_objective,
+                objective_completion_requirements=requirements,
+                quiz_score=quiz_score,
+                source=source,
+            )
+            attempt_passed = True if is_quiz else None
+
+        calculated = progress_service.calculate([progress])
+        skill_summary = next(
+            (
+                item for item in calculated["skills"]
+                if item["skill_id"] == skill_id
+            ),
+            None,
         )
+        objective_summary = next(
+            (
+                item for item in (skill_summary or {}).get("objectives", [])
+                if item["objective_id"] == objective_id
+            ),
+            None,
+        )
+        verified_completed_ids = {
+            item["objective_id"]
+            for item in (skill_summary or {}).get("objectives", [])
+            if item["completed"]
+        }
+        next_objective = next_uncompleted_objective(
+            skill_id,
+            verified_completed_ids,
+        )
+        progress["next_recommended_learning_objective"] = next_objective
         app.logger.info(
             "progress item-complete persisted student_id=%s skill_id=%s item_id=%s source=%s completed_item_ids=%s",
             g.student_id,
@@ -1035,7 +1117,51 @@ def complete_learning_item():
             source,
             progress.get("completed_item_ids"),
         )
-        return jsonify(progress), 200
+        missing_conditions = []
+        if objective_summary and not objective_summary["activity_completed"]:
+            missing_conditions.append("activity")
+        if objective_summary and not objective_summary["quiz_passed"]:
+            missing_conditions.append("quiz")
+        missing_completion_items = []
+        if objective_summary and assigned_objective:
+            missing_ids = set(
+                objective_summary["missing_required_item_ids"]
+            )
+            missing_completion_items = [
+                {
+                    "item_id": item.get("item_id"),
+                    "type": (
+                        "activity"
+                        if str(item.get("type") or "").lower() == "practice"
+                        else str(item.get("type") or "").lower()
+                    ),
+                    "title": item.get("title") or item.get("item_id"),
+                }
+                for item in assigned_objective.get("items", [])
+                if item.get("item_id") in missing_ids
+            ]
+        return jsonify({
+            **progress,
+            "quiz_passed": bool(
+                objective_summary and objective_summary["quiz_passed"]
+            ),
+            "quiz_attempt_passed": attempt_passed,
+            "passing_score": passing_score,
+            "objective_completed": bool(
+                objective_summary and objective_summary["completed"]
+            ),
+            "completed_objective": (
+                {
+                    "id": objective_id,
+                    "title": assigned_objective.get("title", ""),
+                }
+                if objective_summary and objective_summary["completed"]
+                else None
+            ),
+            "next_incomplete_objective": next_objective,
+            "missing_completion_conditions": missing_conditions,
+            "missing_completion_items": missing_completion_items,
+        }), 200
     except PyMongoError:
         return jsonify({
             "error": "Could not update student progress."
@@ -1097,31 +1223,43 @@ def complete_objective(objective_id):
     try:
         current = learning_store.get_progress(student_id, skill_id)
 
-        required_item_ids = {
-            item_id
-            for item_id in objective.get("required_item_ids", [])
-            if item_id
-        }
-        if not required_item_ids:
-            required_item_ids = {
-                item.get("item_id")
-                for item in objective.get("items", [])
-                if item.get("item_id")
-            }
-
-        completed_item_ids = set(current.get("completed_item_ids", []))
-        missing_item_ids = sorted(required_item_ids - completed_item_ids)
-        if missing_item_ids:
+        state = progress_service.completion_state(
+            objective,
+            current.get("completed_item_ids", []),
+            current.get("quiz_scores", {}),
+        )
+        if not state["completed"]:
+            missing_conditions = []
+            if not state["activity_completed"]:
+                missing_conditions.append("activity")
+            if not state["quiz_passed"]:
+                missing_conditions.append("quiz")
             return jsonify({
-                "error": "Complete all required learning items before completing this objective.",
+                "error": "Complete the objective activity and pass its quiz before completing this objective.",
                 "completed": False,
                 "objective_id": objective_id,
-                "required_item_ids": sorted(required_item_ids),
-                "completed_item_ids": sorted(completed_item_ids & required_item_ids),
-                "missing_item_ids": missing_item_ids,
+                "required_item_ids": state["required_item_ids"],
+                "completed_item_ids": sorted(
+                    set(current.get("completed_item_ids", []))
+                    & set(state["required_item_ids"])
+                ),
+                "missing_item_ids": state["missing_required_item_ids"],
+                "missing_completion_conditions": missing_conditions,
             }), 422
 
-        completed = set(current.get("completed_objective_ids", []))
+        calculated = progress_service.calculate([current])
+        skill_summary = next(
+            (
+                item for item in calculated["skills"]
+                if item["skill_id"] == skill_id
+            ),
+            None,
+        )
+        completed = {
+            item["objective_id"]
+            for item in (skill_summary or {}).get("objectives", [])
+            if item["completed"]
+        }
         completed.add(objective_id)
         objective_record = {
             "id": objective["objective_id"],

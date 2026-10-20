@@ -126,6 +126,7 @@ class LearningStore:
             "completed_objective_ids": [],
             "learning_events": [],
             "quiz_scores": {},
+            "quiz_attempts": [],
             "next_recommended_learning_objective": None,
         }
 
@@ -140,6 +141,8 @@ class LearningStore:
             document["learning_events"] = []
         if not isinstance(document.get("quiz_scores"), dict):
             document["quiz_scores"] = {}
+        if not isinstance(document.get("quiz_attempts"), list):
+            document["quiz_attempts"] = []
         document.setdefault("next_recommended_learning_objective", None)
         return document
 
@@ -310,6 +313,7 @@ class LearningStore:
         objective_id=None,
         next_objective=None,
         required_item_ids=None,
+        objective_completion_requirements=None,
         quiz_score=None,
         source="skills_page",
     ):
@@ -340,7 +344,19 @@ class LearningStore:
             progress = self.local_storage["progress"][key]
 
             if quiz_score is not None:
-                progress.setdefault("quiz_scores", {})[item_id] = quiz_score
+                scores = progress.setdefault("quiz_scores", {})
+                previous_score = scores.get(item_id)
+                scores[item_id] = (
+                    max(previous_score, quiz_score)
+                    if isinstance(previous_score, (int, float))
+                    and not isinstance(previous_score, bool)
+                    else quiz_score
+                )
+                progress.setdefault("quiz_attempts", []).append({
+                    "item_id": item_id,
+                    "score": quiz_score,
+                    "timestamp": now,
+                })
 
             if item_id not in progress["completed_item_ids"]:
                 progress["completed_item_ids"].append(item_id)
@@ -355,10 +371,19 @@ class LearningStore:
                 now,
             )
 
-            required_item_ids = set(required_item_ids or [])
-            if objective_id and required_item_ids.issubset(
-                progress["completed_item_ids"]
-            ):
+            requirements = objective_completion_requirements
+            if requirements:
+                is_objective_complete = self._objective_requirements_met(
+                    requirements,
+                    progress["completed_item_ids"],
+                    progress.get("quiz_scores", {}),
+                )
+            else:
+                required_item_ids = set(required_item_ids or [])
+                is_objective_complete = required_item_ids.issubset(
+                    progress["completed_item_ids"]
+                )
+            if objective_id and is_objective_complete:
                 if objective_id not in progress[
                     "completed_objective_ids"
                 ]:
@@ -390,6 +415,18 @@ class LearningStore:
         current = self.get_progress(student_id, skill_id)
         completed_item_ids = set(current.get("completed_item_ids", []))
         completed_item_ids.add(item_id)
+        quiz_scores = current.get("quiz_scores", {})
+        if quiz_score is not None:
+            previous_score = quiz_scores.get(item_id)
+            quiz_scores = {
+                **quiz_scores,
+                item_id: (
+                    max(previous_score, quiz_score)
+                    if isinstance(previous_score, (int, float))
+                    and not isinstance(previous_score, bool)
+                    else quiz_score
+                ),
+            }
 
         # Older documents may contain null progress fields. Repair those
         # fields before using array/map update operators below.
@@ -406,6 +443,8 @@ class LearningStore:
                     {"learning_events": None},
                     {"quiz_scores": {"$exists": False}},
                     {"quiz_scores": None},
+                    {"quiz_attempts": {"$exists": False}},
+                    {"quiz_attempts": None},
                 ],
             },
             {
@@ -414,11 +453,22 @@ class LearningStore:
                     "completed_objective_ids": current["completed_objective_ids"],
                     "learning_events": current["learning_events"],
                     "quiz_scores": current["quiz_scores"],
+                    "quiz_attempts": current.get("quiz_attempts", []),
                 }
             },
         )
 
-        if objective_id and required_item_ids.issubset(completed_item_ids):
+        if objective_completion_requirements:
+            is_objective_complete = self._objective_requirements_met(
+                objective_completion_requirements,
+                completed_item_ids,
+                quiz_scores,
+            )
+        else:
+            is_objective_complete = required_item_ids.issubset(
+                completed_item_ids
+            )
+        if objective_id and is_objective_complete:
             update["$addToSet"][
                 "completed_objective_ids"
             ] = objective_id
@@ -429,7 +479,14 @@ class LearningStore:
             ] = next_objective
 
         if quiz_score is not None:
-            update["$set"][f"quiz_scores.{item_id}"] = quiz_score
+            update["$set"][f"quiz_scores.{item_id}"] = quiz_scores[item_id]
+            update["$push"] = {
+                "quiz_attempts": {
+                    "item_id": item_id,
+                    "score": quiz_score,
+                    "timestamp": now,
+                }
+            }
 
         self.progress.update_one(
             {
@@ -449,10 +506,124 @@ class LearningStore:
             status="completed",
         )
 
-        return self.get_progress(
-            student_id,
-            skill_id,
+        progress = self.get_progress(student_id, skill_id)
+        if objective_id and objective_completion_requirements and self._objective_requirements_met(
+            objective_completion_requirements,
+            progress.get("completed_item_ids", []),
+            progress.get("quiz_scores", {}),
+        ):
+            self.progress.update_one(
+                {"student_id": student_id, "skill_id": skill_id},
+                {"$addToSet": {"completed_objective_ids": objective_id}},
+            )
+            progress = self.get_progress(student_id, skill_id)
+        return progress
+
+    @staticmethod
+    def _objective_requirements_met(requirements, completed_item_ids, quiz_scores):
+        completed_item_ids = set(completed_item_ids or [])
+        quiz_scores = quiz_scores or {}
+        activity_completed = any(
+            item_id in completed_item_ids
+            for item_id in requirements.get("activity_item_ids", [])
         )
+        quiz_passed = any(
+            item_id in completed_item_ids
+            and isinstance(quiz_scores.get(item_id), (int, float))
+            and not isinstance(quiz_scores.get(item_id), bool)
+            and quiz_scores[item_id] >= passing_score
+            for item_id, passing_score in requirements.get(
+                "quiz_passing_scores", {}
+            ).items()
+        )
+        return activity_completed and quiz_passed
+
+    def record_quiz_attempt(
+        self,
+        student_id,
+        skill_id,
+        item_id,
+        score,
+        objective_id=None,
+        source="skills_page",
+    ):
+        """Persist a quiz attempt without treating a failing score as completion."""
+        key = f"{student_id}:{skill_id}"
+        now = self._now()
+        attempt = {"item_id": item_id, "score": score, "timestamp": now}
+        if not self.is_available:
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(student_id, skill_id),
+                    "created_at": now,
+                }
+            progress = self.local_storage["progress"][key]
+            scores = progress.setdefault("quiz_scores", {})
+            previous_score = scores.get(item_id)
+            scores[item_id] = (
+                max(previous_score, score)
+                if isinstance(previous_score, (int, float))
+                and not isinstance(previous_score, bool)
+                else score
+            )
+            progress.setdefault("quiz_attempts", []).append(attempt)
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "quiz_attempt",
+                now,
+            )
+            progress["updated_at"] = now
+            return progress
+
+        current = self.get_progress(student_id, skill_id)
+        scores = current.get("quiz_scores", {})
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+                "$or": [
+                    {"quiz_attempts": {"$exists": False}},
+                    {"quiz_attempts": None},
+                ],
+            },
+            {"$set": {"quiz_attempts": current.get("quiz_attempts", [])}},
+        )
+        previous_score = scores.get(item_id)
+        if isinstance(previous_score, (int, float)) and not isinstance(
+            previous_score, bool
+        ):
+            score = max(previous_score, score)
+        scores = {**scores, item_id: score}
+        update = {
+            "$set": {
+                "quiz_scores": scores,
+                "learning_events": current["learning_events"],
+                "updated_at": now,
+            },
+            "$push": {"quiz_attempts": attempt},
+            "$setOnInsert": {"created_at": now},
+        }
+        if objective_id:
+            self._merge_learning_event(
+                current,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "quiz_attempt",
+                now,
+            )
+            update["$set"]["learning_events"] = current["learning_events"]
+        self.progress.update_one(
+            {"student_id": student_id, "skill_id": skill_id},
+            update,
+            upsert=True,
+        )
+        return self.get_progress(student_id, skill_id)
 
     # ---------------------------------------------------------
     # Complete objective

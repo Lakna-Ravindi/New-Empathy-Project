@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -12,11 +13,17 @@ from learning.gemini_responder import (
     _parse_response,
     generate_educational_response,
 )
+import learning.gemini_responder as gemini_responder
 
 
 def response_payload(activity):
     return json.dumps({
         "answer": "A short answer.",
+        "suggested_questions": [
+            "What does this idea mean?",
+            "How does it relate to the objective?",
+            "Can you explain this concept?",
+        ],
         "steps": [
             {"step": 1, "type": "direct_answer", "content": "Answer."},
             {"step": 2, "type": "learning_objective", "content": "Objective."},
@@ -54,10 +61,9 @@ class GeminiResponderTests(unittest.TestCase):
         long = _fallback_response(context, "long")
 
         self.assertGreater(len(long["answer"]), len(short["answer"]))
-        self.assertIn("1)", long["answer"])
-        self.assertIn("2)", long["answer"])
+        self.assertIn("curriculum-based guidance", long["answer"])
         self.assertEqual(long["steps"][0]["content"], long["answer"])
-        self.assertIn("Learning objective", long["steps"][1]["content"])
+        self.assertIn("Notice emotions", long["steps"][1]["content"])
 
     def test_activity_metadata_must_match_selected_context(self):
         selected = {
@@ -93,12 +99,105 @@ class GeminiResponderTests(unittest.TestCase):
         fallback = _fallback_response(context)
         self.assertIsNone(fallback["steps"][2]["activity"])
         self.assertNotIn("activity_unassigned", json.dumps(fallback))
+        self.assertEqual(len(fallback["suggested_questions"]), 3)
+        self.assertTrue(all(
+            "Understand empathy" in question
+            for question in fallback["suggested_questions"]
+        ))
+
+    def test_suggested_questions_must_be_three_or_four_non_empty_strings(self):
+        for suggestions in (
+            None,
+            [],
+            ["one", "two"],
+            ["one", "", "three"],
+            ["one", "two", 3],
+            ["one", "two", "three", "four", "five"],
+        ):
+            payload = json.loads(response_payload(None))
+            payload["suggested_questions"] = suggestions
+            with self.subTest(suggestions=suggestions), self.assertRaises(ValueError):
+                _parse_response(json.dumps(payload), None)
+
+        payload = json.loads(response_payload(None))
+        payload["suggested_questions"] = [
+            "  What is this?  ",
+            "How does it work?",
+            "Why does it matter?",
+            "Can you give an example?",
+        ]
+        parsed = _parse_response(json.dumps(payload), None)
+        self.assertEqual(len(parsed["suggested_questions"]), 4)
+        self.assertEqual(parsed["suggested_questions"][0], "What is this?")
+
+    def test_fallback_does_not_invent_objective_activity_or_seek_instructions(self):
+        fallback = _fallback_response({
+            "student_question": "What should I do?",
+            "skill": {},
+            "learning_objective": None,
+            "recommended_activity": None,
+            "question_relevant_content": [],
+        })
+
+        self.assertIn("could not find enough relevant approved SEEK content", fallback["answer"])
+        self.assertIn("No approved learning objective", fallback["steps"][1]["content"])
+        self.assertIsNone(fallback["steps"][2]["activity"])
+        self.assertEqual(fallback["suggested_questions"], [])
+
+    def test_fallback_questions_use_next_objective_approved_content(self):
+        fallback = _fallback_response({
+            "status": "learning_path_selected",
+            "student_question": "Continue learning.",
+            "learning_objective": {"title": "Completed objective"},
+            "suggestion_learning_objective": {
+                "title": "Practice self-compassion",
+            },
+            "question_relevant_content": [{
+                "title": "Completed topic",
+                "content": "Previously learned material.",
+            }],
+            "suggestion_relevant_content": [{
+                "title": "Common humanity",
+                "content": "People can recognize that suffering is part of the shared human experience.",
+            }, {
+                "title": "Self-kindness",
+                "content": "Treating oneself with care during difficult moments.",
+            }],
+            "recommended_activity": None,
+        })
+
+        self.assertEqual(len(fallback["suggested_questions"]), 4)
+        self.assertTrue(all(
+            any(topic in question for topic in ("Common humanity", "Self-kindness"))
+            for question in fallback["suggested_questions"]
+        ))
+        self.assertTrue(all(
+            "Completed topic" not in question
+            for question in fallback["suggested_questions"]
+        ))
+
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
+    @patch("learning.gemini_responder.genai.Client")
+    def test_missing_relevant_seek_content_skips_gemini(self, client_class):
+        result = generate_educational_response({
+            "status": "learning_path_selected",
+            "student_question": "Unrelated question",
+            "skill": {},
+            "learning_objective": None,
+            "recommended_activity": None,
+            "question_relevant_content": [],
+        })
+
+        client_class.assert_not_called()
+        self.assertEqual(result["suggested_questions"], [])
+        self.assertEqual(len(result["steps"]), 4)
 
     def test_null_activity_metadata_is_rejected_when_activity_was_selected(self):
         selected = {"id": "activity_01", "title": "Grounding", "type": "activity"}
         with self.assertRaises(ValueError):
             _parse_response(response_payload(None), selected)
 
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.genai.Client")
     def test_exam_question_prompt_includes_relevant_seek_content(self, client_class):
         selected = {"id": "activity_01", "title": "Grounding", "type": "activity"}
@@ -129,7 +228,114 @@ class GeminiResponderTests(unittest.TestCase):
         ]
         self.assertIn("How can I stay calm during exams?", prompt)
         self.assertIn("Staying calm during a tough exam", prompt)
+        self.assertIn("suggestion_learning_objective", prompt)
+        self.assertEqual(len(result["suggested_questions"]), 3)
         self.assertEqual(result["answer"], "A short answer.")
+
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
+    @patch("learning.gemini_responder.genai.Client")
+    def test_rate_limit_fallback_generates_grounded_suggestions(self, client_class):
+        class RateLimitError(Exception):
+            code = 429
+
+        client_class.side_effect = RateLimitError("rate limited")
+        context = {
+            "status": "learning_path_selected",
+            "student_question": "What is empathy?",
+            "skill": {"title": "Self compassion"},
+            "learning_objective": {"title": "Understand empathy"},
+            "recommended_activity": None,
+            "question_relevant_content": [{
+                "title": "Empathy",
+                "content": "Empathy means understanding another person's feelings.",
+            }],
+        }
+        with patch.object(gemini_responder, "ClientError", RateLimitError):
+            result = generate_educational_response(context)
+
+        self.assertIsInstance(result["answer"], str)
+        self.assertEqual(len(result["steps"]), 4)
+        self.assertEqual(len(result["suggested_questions"]), 3)
+        self.assertEqual(result["steps"][2]["activity"], None)
+
+    @patch("learning.gemini_responder.time.sleep")
+    @patch("learning.gemini_responder.genai.Client")
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
+    def test_invalid_gemini_suggestions_use_grounded_fallback(
+        self, client_class, _sleep
+    ):
+        payload = json.loads(response_payload(None))
+        payload["suggested_questions"] = []
+        client_class.return_value.models.generate_content.return_value = Mock(
+            text=json.dumps(payload),
+            candidates=[],
+        )
+        context = {
+            "status": "learning_path_selected",
+            "student_question": "Continue learning.",
+            "skill": {"id": "skill_01", "title": "Self-compassion"},
+            "learning_objective": {"title": "Completed objective"},
+            "suggestion_learning_objective": {
+                "title": "Practice self-compassion",
+            },
+            "recommended_activity": None,
+            "question_relevant_content": [{
+                "title": "Completed content",
+                "content": "Previously learned material.",
+            }],
+            "suggestion_relevant_content": [{
+                "title": "Common humanity",
+                "content": "People share difficult experiences.",
+            }],
+        }
+
+        result = generate_educational_response(context)
+
+        self.assertEqual(
+            client_class.return_value.models.generate_content.call_count,
+            3,
+        )
+        self.assertEqual(len(result["suggested_questions"]), 3)
+        self.assertTrue(all(
+            "Common humanity" in question
+            for question in result["suggested_questions"]
+        ))
+
+    @patch("learning.gemini_responder.time.sleep")
+    @patch("learning.gemini_responder.genai.Client")
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
+    def test_server_failure_retries_then_returns_consistent_fallback(
+        self, client_class, sleep
+    ):
+        class ServiceUnavailable(Exception):
+            pass
+
+        client_class.return_value.models.generate_content.side_effect = (
+            ServiceUnavailable("unavailable")
+        )
+        context = {
+            "status": "learning_path_selected",
+            "student_question": "What is empathy?",
+            "skill": {"title": "Self compassion"},
+            "topic": {},
+            "learning_objective": {"title": "Understand empathy"},
+            "recommended_activity": None,
+            "question_relevant_content": [{
+                "title": "Empathy",
+                "content": "Empathy means understanding another person's feelings.",
+            }],
+            "source_page": 1,
+        }
+        with patch.object(gemini_responder, "ServerError", ServiceUnavailable):
+            result = generate_educational_response(context)
+
+        self.assertEqual(
+            client_class.return_value.models.generate_content.call_count,
+            3,
+        )
+        self.assertEqual(sleep.call_count, 2)
+        self.assertEqual(len(result["suggested_questions"]), 3)
+        self.assertEqual(len(result["steps"]), 4)
 
     @patch("learning.gemini_responder.time.sleep")
     @patch("learning.gemini_responder.genai.Client")
@@ -145,7 +351,10 @@ class GeminiResponderTests(unittest.TestCase):
             "topic": {},
             "learning_objective": None,
             "recommended_activity": None,
-            "question_relevant_content": [],
+            "question_relevant_content": [{
+                "title": "Empathy",
+                "content": "Approved SEEK content about empathy.",
+            }],
             "matched_skills": [],
             "matched_keywords": [],
             "source_page": None,

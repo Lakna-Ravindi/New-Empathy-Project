@@ -269,6 +269,23 @@ def belongs_to_skill(node, skill_id, nodes_by_id):
     return False
 
 
+def curriculum_skill_id(skill_id, nodes, nodes_by_id):
+    """Resolve a knowledge-base chapter ID to its saved-progress skill ID."""
+    node = nodes_by_id.get(skill_id) or {}
+    if node.get("skill_id"):
+        return node["skill_id"]
+
+    descendant_skill_ids = {
+        descendant.get("skill_id")
+        for descendant in nodes
+        if descendant.get("skill_id")
+        and belongs_to_skill(descendant, skill_id, nodes_by_id)
+    }
+    if len(descendant_skill_ids) == 1:
+        return descendant_skill_ids.pop()
+    return skill_id
+
+
 def resolve_skill_id(mapping, nodes_by_id):
     """Resolve a mapping to a real skill node in the knowledge-base tree."""
     skill_id = mapping.get("skill_id")
@@ -295,10 +312,52 @@ def resolve_skill_id(mapping, nodes_by_id):
     return None, source_node
 
 
-def rank_learning_objectives(skill_id, nodes, nodes_by_id, query_terms):
+def rank_learning_objectives(
+    skill_id,
+    nodes,
+    nodes_by_id,
+    query_terms,
+    progress_structure=None,
+):
     """
     Select the most relevant learning-objective node inside the skill.
     """
+    resolved_curriculum_skill_id = curriculum_skill_id(
+        skill_id,
+        nodes,
+        nodes_by_id,
+    )
+    chapter = next(
+        (
+            item
+            for item in (progress_structure or {}).get("chapters", [])
+            if item.get("chapter_id") == resolved_curriculum_skill_id
+        ),
+        None,
+    )
+    if chapter:
+        return sorted(
+            (
+                {
+                    "id": objective.get("objective_id"),
+                    "objective_id": objective.get("objective_id"),
+                    "skill_id": resolved_curriculum_skill_id,
+                    "type": "learning_objective",
+                    "title": objective.get("title"),
+                    "content": objective.get("content"),
+                    "page": None,
+                }
+                for objective in chapter.get("objectives", [])
+                if objective.get("objective_id")
+            ),
+            key=lambda objective: (
+                -score_text(
+                    f"{objective.get('title', '')} {objective.get('content', '')}",
+                    query_terms,
+                ),
+            ),
+        )
+
     objectives = [
         node for node in nodes
         if node.get("type") == "learning_objective"
@@ -314,18 +373,68 @@ def rank_learning_objectives(skill_id, nodes, nodes_by_id, query_terms):
     )
 
 
-def rank_learning_activities(skill_id, objective, nodes, nodes_by_id, query_terms):
+def rank_learning_activities(
+    skill_id,
+    objective,
+    nodes,
+    nodes_by_id,
+    query_terms,
+    progress_structure=None,
+):
     """
     Select a relevant practice, activity, or reflection from the same skill.
     """
     allowed_types = {"practice", "activity", "reflection"}
 
-    activities = [
+    knowledge_base_activities = [
         node for node in nodes
         if node.get("type") in allowed_types
         and belongs_to_skill(node, skill_id, nodes_by_id)
     ]
+    objective_id = (
+        (objective or {}).get("objective_id")
+        or (objective or {}).get("id")
+    )
+    resolved_curriculum_skill_id = (
+        (objective or {}).get("skill_id")
+        or curriculum_skill_id(skill_id, nodes, nodes_by_id)
+    )
+    chapter = next(
+        (
+            item
+            for item in (progress_structure or {}).get("chapters", [])
+            if item.get("chapter_id") == resolved_curriculum_skill_id
+        ),
+        None,
+    )
+    curriculum_objective = next(
+        (
+            item
+            for item in (chapter or {}).get("objectives", [])
+            if item.get("objective_id") == objective_id
+        ),
+        None,
+    )
+    curriculum_activities = []
+    for item in (curriculum_objective or {}).get("items", []):
+        item_type = str(item.get("type") or "").lower()
+        if item_type not in allowed_types:
+            continue
+        curriculum_activities.append({
+            "id": item.get("item_id"),
+            "skill_id": resolved_curriculum_skill_id,
+            "objective_id": objective_id,
+            "type": item_type,
+            "title": item.get("title") or item.get("question"),
+            "content": item.get("content") or item.get("instructions") or item.get("question"),
+            "page": item.get("page"),
+        })
 
+    activities = (
+        curriculum_activities
+        if progress_structure is not None and curriculum_objective is not None
+        else knowledge_base_activities
+    )
     return sorted(
         activities,
         key=lambda node: (
@@ -450,7 +559,45 @@ def _direct_skill_groups(question, knowledge_base, highlighted_keywords=None):
     return groups, query_terms
 
 
-def process_student_question(question, knowledge_base, highlighted_keywords=None):
+def _mapped_skill_groups(question, keyword_skill_map, nodes_by_id):
+    """Build skill groups only from valid approved keyword mappings."""
+    mappings, _, query_terms = find_skill_mapping(question, keyword_skill_map)
+    groups_by_skill = {}
+
+    for mapping in mappings:
+        skill_id, source_node = resolve_skill_id(mapping, nodes_by_id)
+        if not skill_id:
+            continue
+        group = groups_by_skill.setdefault(skill_id, {
+            "skill_id": skill_id,
+            "skill": mapping.get("skill") or nodes_by_id[skill_id].get("title"),
+            "score": 0,
+            "matched_keywords": set(),
+            "mappings": [],
+            "source_nodes": [],
+        })
+        group["score"] = max(group["score"], mapping["_relevance_score"])
+        group["matched_keywords"].add(mapping.get("keyword"))
+        group["mappings"].append(mapping)
+        source_summary = {
+            "id": mapping.get("source_node_id"),
+            "type": mapping.get("source_node_type"),
+            "title": mapping.get("source_node_title"),
+        }
+        if source_node:
+            source_summary["resolved"] = node_summary(source_node)
+        if source_summary not in group["source_nodes"]:
+            group["source_nodes"].append(source_summary)
+
+    return list(groups_by_skill.values()), query_terms, bool(mappings)
+
+
+def process_student_question(
+    question,
+    knowledge_base,
+    highlighted_keywords=None,
+    progress_structure=None,
+):
     """
     Main Pedagogical Controller function.
 
@@ -463,31 +610,53 @@ def process_student_question(question, knowledge_base, highlighted_keywords=None
     nodes_by_id = {
         node["id"]: node
         for node in knowledge_base
-    }
-
-    nodes_by_id = {
-        node["id"]: node
-        for node in knowledge_base
         if node.get("id")
     }
-    matched_groups, query_terms = _direct_skill_groups(
-        question,
-        knowledge_base,
-        highlighted_keywords,
+    has_mapping_records = any(
+        isinstance(item, dict) and "mapping_status" in item
+        for item in highlighted_keywords or []
     )
+    if has_mapping_records:
+        matched_groups, query_terms, has_matching_mappings = _mapped_skill_groups(
+            question,
+            highlighted_keywords,
+            nodes_by_id,
+        )
+        if not has_matching_mappings:
+            matched_groups, query_terms = _direct_skill_groups(
+                question,
+                knowledge_base,
+                highlighted_keywords,
+            )
+    else:
+        matched_groups, query_terms = _direct_skill_groups(
+            question,
+            knowledge_base,
+            highlighted_keywords,
+        )
+        has_matching_mappings = False
 
-    if not matched_groups:
+    if not matched_groups and not (
+        has_mapping_records and has_matching_mappings
+    ):
         semantic_results = semantic_search(question, knowledge_base, limit=5)
         if semantic_results:
             primary_skill_id = None
             if semantic_results[0].get("skill_id"):
                 primary_skill_id = semantic_results[0]["skill_id"]
+                selected_node = nodes_by_id.get(primary_skill_id)
+                if not selected_node or selected_node.get("type") != "chapter":
+                    chapter = next(
+                        (
+                            node for node in knowledge_base
+                            if node.get("type") == "chapter"
+                            and node.get("skill_id") == primary_skill_id
+                        ),
+                        None,
+                    )
+                    if chapter:
+                        primary_skill_id = chapter["id"]
             if primary_skill_id:
-                matched_groups, query_terms = _direct_skill_groups(
-                    question,
-                    knowledge_base,
-                    highlighted_keywords,
-                )
                 if not matched_groups:
                     matched_groups = [{
                         "skill_id": primary_skill_id,
@@ -523,18 +692,28 @@ def process_student_question(question, knowledge_base, highlighted_keywords=None
     recommendations = []
     for group in matched_groups:
         objectives = rank_learning_objectives(
-            group["skill_id"], knowledge_base, nodes_by_id, query_terms
+            group["skill_id"],
+            knowledge_base,
+            nodes_by_id,
+            query_terms,
+            progress_structure,
         )
         objective = objectives[0] if objectives else None
         activities = rank_learning_activities(
-            group["skill_id"], objective, knowledge_base, nodes_by_id, query_terms
+            group["skill_id"],
+            objective,
+            knowledge_base,
+            nodes_by_id,
+            query_terms,
+            progress_structure,
         )
         objective_score = (
             score_text(f"{objective.get('title', '')} {objective.get('content', '')}", query_terms)
             if objective else 0
         )
         activity = activities[0] if activities and (
-            score_text(
+            progress_structure
+            or score_text(
                 f"{activities[0].get('title', '')} {activities[0].get('content', '')}",
                 query_terms,
             ) > 0
@@ -582,7 +761,7 @@ def process_student_question(question, knowledge_base, highlighted_keywords=None
         query_terms,
     )
 
-    if not question_relevant_content:
+    if not question_relevant_content and not has_mapping_records:
         semantic_results = semantic_search(question, knowledge_base, limit=QUESTION_RELEVANT_CONTENT_LIMIT, skill_id=primary["skill"]["id"])
         if semantic_results:
             question_relevant_content = [
@@ -639,11 +818,181 @@ def process_student_question(question, knowledge_base, highlighted_keywords=None
         )
     }
 
+
+def _suggestion_target_for_progress(
+    learning_context,
+    knowledge_base,
+    progress_documents,
+    progress_structure,
+):
+    """Select the next saved-progress objective and its approved SEEK content."""
+    if (
+        not isinstance(progress_documents, list)
+        or any(not isinstance(document, dict) for document in progress_documents)
+        or not isinstance(progress_structure, dict)
+    ):
+        return None
+
+    selected_objective = learning_context.get("learning_objective") or {}
+    current_objective_id = (
+        selected_objective.get("objective_id") or selected_objective.get("id")
+    )
+    selected_skill = learning_context.get("skill") or {}
+    skill_id = selected_skill.get("skill_id") or selected_skill.get("id")
+    nodes_by_id = {
+        node.get("id"): node
+        for node in knowledge_base
+        if isinstance(node, dict) and node.get("id")
+    }
+    skill_node = nodes_by_id.get(skill_id) or {}
+    chapter_id = (
+        selected_objective.get("skill_id")
+        or skill_node.get("skill_id")
+        or skill_id
+    )
+    chapters = progress_structure.get("chapters", [])
+    if not isinstance(chapters, list) or any(
+        not isinstance(chapter, dict) for chapter in chapters
+    ):
+        return None
+    chapter_index = next(
+        (
+            index
+            for index, chapter in enumerate(chapters)
+            if chapter.get("chapter_id") == chapter_id
+        ),
+        None,
+    )
+    if chapter_index is None or not current_objective_id:
+        return None
+
+    current_progress = next(
+        (
+            document
+            for document in progress_documents
+            if document.get("skill_id") == chapter_id
+        ),
+        None,
+    )
+    if current_progress is None:
+        return None
+    completed_current = current_progress.get("completed_objective_ids")
+    if not isinstance(completed_current, list):
+        return None
+    if current_objective_id not in set(completed_current):
+        return None
+
+    current_chapter = chapters[chapter_index]
+    current_objectives = current_chapter.get("objectives", [])
+    if not isinstance(current_objectives, list) or any(
+        not isinstance(objective, dict) for objective in current_objectives
+    ):
+        return None
+    objective_index = next(
+        (
+            index
+            for index, objective in enumerate(current_objectives)
+            if objective.get("objective_id") == current_objective_id
+        ),
+        None,
+    )
+    if objective_index is None:
+        return None
+
+    for index in range(chapter_index, len(chapters)):
+        chapter = chapters[index]
+        progress = next(
+            (
+                document
+                for document in progress_documents
+                if document.get("skill_id") == chapter.get("chapter_id")
+            ),
+            None,
+        )
+        start = objective_index + 1 if index == chapter_index else 0
+        objectives = chapter.get("objectives", [])
+        if not isinstance(objectives, list) or any(
+            not isinstance(objective, dict) for objective in objectives
+        ):
+            return None
+        future_completed = (
+            progress.get("completed_objective_ids", [])
+            if progress is not None
+            else []
+        )
+        if not isinstance(future_completed, list):
+            return None
+        completed_ids = set(future_completed)
+        for objective in objectives[start:]:
+            objective_id = objective.get("objective_id")
+            if not objective_id or objective_id in completed_ids:
+                continue
+            approved_content = [
+                node_summary(node)
+                for node in knowledge_base
+                if isinstance(node, dict)
+                and node.get("type") == "content"
+                and node.get("objective_id") == objective_id
+                and (
+                    node.get("skill_id") == chapter.get("chapter_id")
+                    or belongs_to_skill(
+                        node,
+                        chapter.get("chapter_id"),
+                        nodes_by_id,
+                    )
+                )
+            ][:QUESTION_RELEVANT_CONTENT_LIMIT]
+            if approved_content:
+                return {
+                    "skill": {
+                        "id": chapter.get("chapter_id"),
+                        "skill_id": chapter.get("chapter_id"),
+                        "title": chapter.get("title"),
+                    },
+                    "learning_objective": {
+                        "id": objective_id,
+                        "objective_id": objective_id,
+                        "skill_id": chapter.get("chapter_id"),
+                        "type": "learning_objective",
+                        "title": objective.get("title"),
+                        "content": objective.get("content"),
+                    },
+                    "recommended_activity": next(
+                        (
+                            {
+                                "id": item.get("item_id"),
+                                "skill_id": chapter.get("chapter_id"),
+                                "objective_id": objective_id,
+                                "type": item.get("type"),
+                                "title": item.get("title") or item.get("question"),
+                                "content": (
+                                    item.get("content")
+                                    or item.get("instructions")
+                                    or item.get("question")
+                                ),
+                                "page": item.get("page"),
+                            }
+                            for item in objective.get("items", [])
+                            if item.get("type") in {"activity", "practice", "reflection"}
+                            and item.get("item_id")
+                        ),
+                        None,
+                    ),
+                    "question_relevant_content": approved_content,
+                }
+            return None
+        objective_index = -1
+
+    return None
+
+
 def answer_student_question(
     question,
     knowledge_base,
     highlighted_keywords=None,
     answer_style="short",
+    progress_documents=None,
+    progress_structure=None,
 ):
     if answer_style not in VALID_ANSWER_STYLES:
         raise ValueError("answer_style must be 'short' or 'long'.")
@@ -652,23 +1001,55 @@ def answer_student_question(
     learning_context = process_student_question(
         question,
         knowledge_base,
-        highlighted_keywords
+        highlighted_keywords,
+        progress_structure,
     )
     learning_context["answer_style"] = answer_style
 
     # 2. If the controller could not find an approved lesson,
     #    return its own message. Gemini is not called.
     if learning_context["status"] != "learning_path_selected":
+        learning_context["suggested_questions"] = []
         return learning_context
 
-    # 3. Gemini receives only the controller's selected lesson.
-    gemini_response = generate_educational_response(learning_context, answer_style)
+    suggestion_target = _suggestion_target_for_progress(
+        learning_context,
+        knowledge_base,
+        progress_documents,
+        progress_structure,
+    )
+    responder_context = learning_context
+    if suggestion_target:
+        learning_context["skill"] = suggestion_target["skill"]
+        learning_context["learning_objective"] = suggestion_target[
+            "learning_objective"
+        ]
+        learning_context["recommended_activity"] = suggestion_target[
+            "recommended_activity"
+        ]
+        learning_context["question_relevant_content"] = suggestion_target[
+            "question_relevant_content"
+        ]
+        responder_context = {
+            **learning_context,
+            "suggestion_learning_objective": suggestion_target[
+                "learning_objective"
+            ],
+            "suggestion_relevant_content": suggestion_target[
+                "question_relevant_content"
+            ],
+        }
+
+    # 3. Gemini receives the selected lesson and, when completed, the next
+    #    incomplete objective for suggestions in the same request.
+    gemini_response = generate_educational_response(responder_context, answer_style)
 
     # 4. Return the decision and the four separately-presented learning steps.
     return {
         "learning_context": learning_context,
         "answer": gemini_response["answer"],
         "steps": gemini_response["steps"],
+        "suggested_questions": gemini_response.get("suggested_questions", []),
     }
 
 

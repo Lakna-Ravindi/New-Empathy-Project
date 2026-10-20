@@ -58,3 +58,54 @@ def test_learning_events_are_deduplicated_and_keep_sources(monkeypatch):
     event = progress["learning_events"][0]
     assert event["status"] == "completed"
     assert event["sources"] == ["chatbot", "skills_page"]
+
+
+def test_quiz_attempts_are_saved_separately_and_objective_requires_activity_and_pass(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        module,
+        "MongoClient",
+        lambda *args, **kwargs: (_ for _ in ()).throw(ConnectionErrorStub()),
+    )
+    store = module.LearningStore()
+    requirements = {
+        "activity_item_ids": ["activity_1"],
+        "quiz_passing_scores": {"quiz_1": 75},
+    }
+
+    failed = store.record_quiz_attempt(
+        "student-1",
+        "skill-1",
+        "quiz_1",
+        60,
+        objective_id="objective-1",
+    )
+    assert failed["quiz_scores"]["quiz_1"] == 60
+    assert failed["completed_item_ids"] == []
+    assert failed["completed_objective_ids"] == []
+
+    store.complete_item(
+        "student-1",
+        "skill-1",
+        "quiz_1",
+        objective_id="objective-1",
+        objective_completion_requirements=requirements,
+        quiz_score=80,
+    )
+    quiz_only = store.get_progress("student-1", "skill-1")
+    assert quiz_only["completed_item_ids"] == ["quiz_1"]
+    assert quiz_only["completed_objective_ids"] == []
+    assert quiz_only["quiz_scores"]["quiz_1"] == 80
+
+    completed = store.complete_item(
+        "student-1",
+        "skill-1",
+        "activity_1",
+        objective_id="objective-1",
+        objective_completion_requirements=requirements,
+    )
+    persisted = store.get_progress("student-1", "skill-1")
+    assert completed["completed_objective_ids"] == ["objective-1"]
+    assert persisted["completed_objective_ids"] == ["objective-1"]
+    assert len(persisted["quiz_attempts"]) == 2

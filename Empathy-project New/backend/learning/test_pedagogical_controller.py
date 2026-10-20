@@ -15,8 +15,10 @@ from learning.pedagogical_controller import (
     get_terms,
     process_student_question,
     QUESTION_RELEVANT_CONTENT_LIMIT,
+    rank_learning_activities,
     score_text,
 )
+from learning.interaction_store import LearningStore
 
 
 def load_fixture(name):
@@ -29,6 +31,7 @@ class PedagogicalControllerTests(unittest.TestCase):
     def setUpClass(cls):
         cls.knowledge_base = load_fixture("knowledge_base.json")
         cls.keyword_map = load_fixture("keyword_skill_map.json")
+        cls.progress_structure = load_fixture("progress_structure.json")
 
     def test_punctuation_is_normalized_and_generic_words_are_filtered(self):
         context = process_student_question(
@@ -73,7 +76,7 @@ class PedagogicalControllerTests(unittest.TestCase):
         )
 
         self.assertEqual(context["status"], "learning_path_selected")
-        self.assertEqual(context["skill"]["id"], "node_0130")
+        self.assertEqual(context["skill"]["id"], "node_0147")
 
     def test_common_word_forms_are_normalized_without_broad_stemming(self):
         self.assertEqual(get_terms("exams"), {"exam"})
@@ -121,9 +124,58 @@ class PedagogicalControllerTests(unittest.TestCase):
             "How can I stay calm during exams?",
             self.knowledge_base,
             self.keyword_map,
+            self.progress_structure,
         )
         self.assertFalse(context["learning_confirmation_required"])
-        self.assertEqual(context["recommended_activity"]["id"], "node_0058")
+        self.assertEqual(context["recommended_activity"]["id"], "reflection_01_03")
+
+    def test_objective_without_authored_activity_does_not_recommend_another_objectives_activity(self):
+        nodes = [
+            {
+                "id": "skill-a",
+                "type": "chapter",
+                "title": "Skill A",
+                "content": "",
+                "parent_id": None,
+            },
+            {
+                "id": "objective-a",
+                "type": "learning_objective",
+                "title": "Objective A",
+                "content": "",
+                "parent_id": "skill-a",
+                "objective_id": "objective-a",
+                "skill_id": "skill-a",
+            },
+            {
+                "id": "activity-b",
+                "type": "activity",
+                "title": "Activity for another objective",
+                "content": "An unrelated activity",
+                "parent_id": "skill-a",
+            },
+        ]
+        nodes_by_id = {node["id"]: node for node in nodes}
+        structure = {
+            "chapters": [{
+                "chapter_id": "skill-a",
+                "objectives": [{
+                    "objective_id": "objective-a",
+                    "items": [],
+                }],
+            }],
+        }
+
+        activities = rank_learning_activities(
+            "skill-a",
+            nodes[1],
+            nodes,
+            nodes_by_id,
+            {"unrelated"},
+            structure,
+        )
+
+        self.assertEqual(activities, [])
 
     def test_empathy_question_does_not_reuse_exam_content(self):
         context = process_student_question(
@@ -152,7 +204,7 @@ class PedagogicalControllerTests(unittest.TestCase):
         chunks = context["question_relevant_content"]
         self.assertTrue(chunks)
         self.assertLessEqual(len(chunks), QUESTION_RELEVANT_CONTENT_LIMIT)
-        self.assertIn("node_0032", {chunk["id"] for chunk in chunks})
+        self.assertEqual(chunks[0]["id"], "node_0027")
         self.assertTrue(all(chunk["type"] == "content" for chunk in chunks))
         self.assertTrue(all(chunk["content"] for chunk in chunks))
         self.assertTrue(all(chunk["page"] is not None for chunk in chunks))
@@ -255,6 +307,18 @@ class PedagogicalControllerTests(unittest.TestCase):
         )
         self.assertEqual(context["status"], "no_match")
 
+    @patch("learning.pedagogical_controller.generate_educational_response")
+    def test_no_match_returns_empty_suggestions_without_calling_gemini(self, responder):
+        result = answer_student_question(
+            "Tell me about unrelated engine maintenance.",
+            [],
+            [],
+        )
+
+        self.assertEqual(result["status"], "no_match")
+        self.assertEqual(result["suggested_questions"], [])
+        responder.assert_not_called()
+
     def test_no_relevant_activity_is_explicit(self):
         knowledge_base = [
             {
@@ -297,8 +361,8 @@ class PedagogicalControllerTests(unittest.TestCase):
             self.keyword_map,
         )
         skill_ids = {item["skill"]["id"] for item in context["matched_skills"]}
-        self.assertIn("node_0187", skill_ids)
-        self.assertIn("node_0416", skill_ids)
+        self.assertIn("node_0001", skill_ids)
+        self.assertIn("node_0147", skill_ids)
         self.assertIn("compassion", context["detected_keywords"])
 
     def test_direct_keywords_are_separate_from_alias_expansion(self):
@@ -319,9 +383,10 @@ class PedagogicalControllerTests(unittest.TestCase):
             "I feel overwhelmed and anxious before exams. How can I calm down?",
             self.knowledge_base,
             self.keyword_map,
+            self.progress_structure,
         )
         self.assertEqual(context["skill"]["id"], "node_0001")
-        self.assertEqual(context["recommended_activity"]["id"], "node_0058")
+        self.assertEqual(context["recommended_activity"]["id"], "reflection_01_02")
         self.assertEqual(
             context["recommendations"][0]["activity_selection_reason"],
             "selected_relevant_activity",
@@ -345,9 +410,12 @@ class PedagogicalControllerTests(unittest.TestCase):
             "I want to learn about empathy and compassion.",
             self.knowledge_base,
             self.keyword_map,
+            self.progress_structure,
         )
-        self.assertEqual(context["skill"]["id"], "node_0416")
-        self.assertEqual(context["recommended_activity"]["id"], "node_0452")
+        self.assertEqual(context["skill"]["id"], "node_0147")
+        self.assertTrue(
+            context["recommended_activity"]["id"].startswith("activity_04_")
+        )
 
     @patch("learning.pedagogical_controller.generate_educational_response")
     def test_answer_style_is_preserved_for_short_mode(self, responder):
@@ -400,6 +468,256 @@ class PedagogicalControllerTests(unittest.TestCase):
 
         self.assertEqual(result["learning_context"]["answer_style"], "short")
         self.assertEqual(responder.call_args.args[1], "short")
+        self.assertEqual(result["suggested_questions"], [])
+
+    @patch("learning.pedagogical_controller.generate_educational_response")
+    def test_completed_objective_uses_next_incomplete_seek_content_for_suggestions(
+        self, responder
+    ):
+        question = "How can I stay calm during exams?"
+        selected_context = process_student_question(
+            question,
+            self.knowledge_base,
+            self.keyword_map,
+            self.progress_structure,
+        )
+        current_objective_id = selected_context["learning_objective"]["objective_id"]
+        skill_id = selected_context["skill"]["id"]
+        chapter_id = selected_context["learning_objective"]["skill_id"]
+        next_content_node = next(
+            node
+            for node in self.knowledge_base
+            if node.get("type") == "content"
+            and node.get("skill_id") == chapter_id
+            and node.get("objective_id")
+            and node.get("objective_id") != current_objective_id
+        )
+        next_objective_id = next_content_node["objective_id"]
+        responder.return_value = {
+            "answer": "Grounded answer.",
+            "steps": [],
+            "suggested_questions": ["Question one?", "Question two?", "Question three?"],
+        }
+        structure = {
+            "chapters": [{
+                "chapter_id": chapter_id,
+                "objectives": [
+                    {
+                        "objective_id": current_objective_id,
+                        "title": "Current objective",
+                        "content": "Current objective content",
+                    },
+                    {
+                        "objective_id": next_objective_id,
+                        "title": "Next objective",
+                        "content": "Next objective content",
+                    },
+                ],
+            }],
+        }
+
+        result = answer_student_question(
+            question,
+            self.knowledge_base,
+            self.keyword_map,
+            progress_documents=[{
+                "skill_id": chapter_id,
+                "completed_objective_ids": [current_objective_id],
+            }],
+            progress_structure=structure,
+        )
+
+        responder_context = responder.call_args.args[0]
+        self.assertEqual(
+            responder_context["suggestion_learning_objective"]["objective_id"],
+            next_objective_id,
+        )
+        self.assertTrue(responder_context["suggestion_relevant_content"])
+        self.assertTrue(all(
+            item["objective_id"] == next_objective_id
+            for item in responder_context["suggestion_relevant_content"]
+        ))
+        self.assertEqual(result["suggested_questions"], [
+            "Question one?", "Question two?", "Question three?"
+        ])
+
+    @patch("learning.pedagogical_controller.generate_educational_response")
+    def test_saved_completed_objectives_are_skipped_when_selecting_guidance(
+        self, responder
+    ):
+        question = "Continue learning."
+        current_objective_id = "objective_current"
+        completed_next_id = "objective_already_complete"
+        expected_objective_id = "objective_next"
+        selected_context = {
+            "student_question": question,
+            "status": "learning_path_selected",
+            "skill": {"id": "skill_test", "title": "Approved skill"},
+            "learning_objective": {
+                "id": current_objective_id,
+                "objective_id": current_objective_id,
+                "skill_id": "skill_test",
+                "title": "Current objective",
+            },
+            "question_relevant_content": [],
+        }
+        knowledge_base = [
+            {
+                "id": f"content_{objective_id}",
+                "type": "content",
+                "skill_id": "skill_test",
+                "objective_id": objective_id,
+                "title": f"Approved content for {objective_id}",
+                "content": f"Approved SEEK material about {objective_id}.",
+            }
+            for objective_id in (
+                current_objective_id,
+                completed_next_id,
+                expected_objective_id,
+            )
+        ]
+        structure = {
+            "chapters": [{
+                "chapter_id": "skill_test",
+                "title": "Approved skill",
+                "objectives": [
+                    {
+                        "objective_id": objective_id,
+                        "title": f"Objective {objective_id}",
+                        "content": f"Objective content for {objective_id}.",
+                    }
+                    for objective_id in (
+                        current_objective_id,
+                        completed_next_id,
+                        expected_objective_id,
+                    )
+                ],
+            }],
+        }
+        responder.return_value = {
+            "answer": "Continue with the next incomplete objective.",
+            "steps": [],
+            "suggested_questions": [],
+        }
+
+        with patch(
+            "learning.pedagogical_controller.process_student_question",
+            return_value=selected_context,
+        ):
+            result = answer_student_question(
+                question,
+                knowledge_base,
+                progress_documents=[{
+                    "skill_id": "skill_test",
+                    "completed_objective_ids": [
+                        current_objective_id,
+                        completed_next_id,
+                    ],
+                }],
+                progress_structure=structure,
+            )
+
+        self.assertEqual(
+            result["learning_context"]["learning_objective"]["objective_id"],
+            expected_objective_id,
+        )
+        self.assertEqual(
+            responder.call_args.args[0]["suggestion_learning_objective"][
+                "objective_id"
+            ],
+            expected_objective_id,
+        )
+
+    @patch("learning.pedagogical_controller.generate_educational_response")
+    def test_persisted_completion_selects_next_incomplete_objective_in_order(
+        self, responder
+    ):
+        question = "How can I stay calm during exams?"
+        selected = process_student_question(
+            question,
+            self.knowledge_base,
+            self.keyword_map,
+            self.progress_structure,
+        )
+        completed_objective = selected["learning_objective"]["objective_id"]
+        chapter_id = selected["learning_objective"]["skill_id"]
+        chapter = next(
+            item
+            for item in self.progress_structure["chapters"]
+            if item["chapter_id"] == chapter_id
+        )
+        objective = next(
+            item
+            for item in chapter["objectives"]
+            if item["objective_id"] == completed_objective
+        )
+        required_item_ids = set(objective.get("required_item_ids", []))
+
+        def mongo_unavailable(*_args, **_kwargs):
+            raise RuntimeError("Use isolated local progress storage in this test.")
+
+        with patch("learning.interaction_store.MongoClient", mongo_unavailable):
+            store = LearningStore()
+        for item_id in required_item_ids:
+            store.complete_item(
+                "student-1",
+                chapter_id,
+                item_id,
+                objective_id=completed_objective,
+                required_item_ids=required_item_ids,
+                source="chatbot",
+            )
+
+        persisted_progress = store.get_all_progress("student-1")
+        self.assertIn(
+            completed_objective,
+            persisted_progress[0]["completed_objective_ids"],
+        )
+        next_objective = next(
+            item
+            for item in chapter["objectives"][
+                next(
+                    index
+                    for index, item in enumerate(chapter["objectives"])
+                    if item["objective_id"] == completed_objective
+                ) + 1:
+            ]
+            if any(
+                node.get("type") == "content"
+                and node.get("skill_id") == chapter_id
+                and node.get("objective_id") == item["objective_id"]
+                for node in self.knowledge_base
+            )
+        )
+        responder.return_value = {
+            "answer": "Next objective answer.",
+            "steps": [],
+            "suggested_questions": [],
+        }
+
+        result = answer_student_question(
+            question,
+            self.knowledge_base,
+            self.keyword_map,
+            progress_documents=persisted_progress,
+            progress_structure=self.progress_structure,
+        )
+
+        selected_after_completion = result["learning_context"]["learning_objective"]
+        self.assertEqual(
+            selected_after_completion["objective_id"],
+            next_objective["objective_id"],
+        )
+        self.assertNotEqual(
+            selected_after_completion["objective_id"],
+            completed_objective,
+        )
+        self.assertEqual(
+            responder.call_args.args[0]["suggestion_learning_objective"][
+                "objective_id"
+            ],
+            next_objective["objective_id"],
+        )
 
 
 if __name__ == "__main__":
