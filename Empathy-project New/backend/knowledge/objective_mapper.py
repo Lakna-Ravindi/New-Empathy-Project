@@ -15,6 +15,14 @@ STOP_WORDS = {
 }
 
 NON_CONTENT_TYPES = {"chapter", "module", "topic", "objective_heading"}
+SKILL_01_OBJECTIVE_MAP = {
+    1: "obj_01_01",
+    2: "obj_01_01",
+    3: "obj_01_02",
+    4: "obj_01_02",
+    5: "obj_01_03",
+    6: "obj_01_04",
+}
 
 
 def _tokens(value: str) -> set[str]:
@@ -67,6 +75,21 @@ def _skill_id_for_node(node, nodes_by_id, skills):
     return None
 
 
+
+def _pdf_objective_number(node):
+    """Extract objective number from explicit or numbered PDF objectives."""
+    text = str(node.get("title", "") or node.get("content", ""))
+    match = re.search(r"\bobjective\s+(\d+)\b", text, re.IGNORECASE)
+    if not match:
+        match = re.match(r"\s*(\d+)[.)]\s+", text)
+    return int(match.group(1)) if match else None
+
+
+def _is_explicit_pdf_objective(node):
+    text = str(node.get("title", "") or node.get("content", ""))
+    return bool(re.search(r"\bobjective\s+\d+\b", text, re.IGNORECASE))
+
+
 def _score(node, objective):
     node_tokens = _tokens(_node_text(node))
     title_tokens = _tokens(objective.get("objective_title", ""))
@@ -86,6 +109,7 @@ def map_nodes_to_objectives(nodes, content_skills):
         for objective in objectives
         if objective.get("objective_id")
     }
+    current_skill_01_objective = None
 
     for node in nodes:
         node["skill_id"] = None
@@ -97,6 +121,33 @@ def map_nodes_to_objectives(nodes, content_skills):
             continue
 
         skill_id = _skill_id_for_node(node, nodes_by_id, skills)
+
+        if skill_id == "skill_01" and node.get("type") == "learning_objective":
+            heading_number = _pdf_objective_number(node)
+            target_id = SKILL_01_OBJECTIVE_MAP.get(heading_number)
+            target = objectives_by_id.get(target_id)
+
+            if target and target.get("skill_id") == "skill_01":
+                if _is_explicit_pdf_objective(node):
+                    current_skill_01_objective = target_id
+                node["skill_id"] = "skill_01"
+                node["objective_id"] = target_id
+                node["match_status"] = "matched"
+            else:
+                node["skill_id"] = skill_id
+                node["match_status"] = "review"
+            continue
+
+        if (
+            skill_id == "skill_01"
+            and current_skill_01_objective
+            and node.get("type") not in NON_CONTENT_TYPES
+        ):
+            node["skill_id"] = "skill_01"
+            node["objective_id"] = current_skill_01_objective
+            node["match_status"] = "matched"
+            continue
+
         candidates = [
             objective for objective in objectives
             if not skill_id or objective.get("skill_id") == skill_id

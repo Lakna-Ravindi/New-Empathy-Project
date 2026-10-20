@@ -45,9 +45,11 @@ result = answer_student_question(test_question, kb, km)
 if 'learning_context' in result:
     status = result['learning_context'].get('status')
     emotion = result['learning_context'].get('detected_emotion')
+    activity = result['learning_context'].get('recommended_activity')
     has_response = len(result.get('steps', [])) == 4
     print(f'OK: Controller status: {status}')
     print(f'OK: Emotion detected: {emotion}')
+    print(f'OK: Recommended activity: {activity.get("id") if activity else "none"}')
     print(f'OK: Response generated: {has_response}\n')
 else:
     print(f'OK: Query status: {result.get("status")}\n')

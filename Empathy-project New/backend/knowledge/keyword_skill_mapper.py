@@ -61,16 +61,17 @@ def map_keywords_to_skills(highlighted_keywords, knowledge_base):
     mapped_keywords = []
 
     for keyword in highlighted_keywords:
-        source_node = find_node_for_keyword(
-            keyword,
-            knowledge_base
-        )
+        source_node_id = keyword.get("source", {}).get("node_id")
+        source_node = nodes_by_id.get(source_node_id) if source_node_id else None
+        if source_node is None:
+            source_node = find_node_for_keyword(keyword, knowledge_base)
 
         if source_node is None:
             mapped_keywords.append({
                 "keyword": keyword["text"],
                 "page": keyword["page"],
                 "mapping_status": "not_found",
+                "keyword_type": keyword.get("type", "highlighted_keyword"),
                 "source_node_id": None,
                 "topic": None,
                 "skill_id": None,
@@ -93,7 +94,13 @@ def map_keywords_to_skills(highlighted_keywords, knowledge_base):
         mapped_keywords.append({
             "keyword": keyword["text"],
             "page": keyword["page"],
-            "mapping_status": "mapped",
+            "mapping_status": (
+                "mapped"
+                if keyword.get("type") == "highlighted_keyword"
+                or source_node.get("objective_id")
+                else "review"
+            ),
+            "keyword_type": keyword.get("type", "highlighted_keyword"),
 
             "source_node_id": source_node["id"],
             "source_node_type": source_node["type"],
@@ -104,6 +111,12 @@ def map_keywords_to_skills(highlighted_keywords, knowledge_base):
 
             "skill_id": skill["id"] if skill else None,
             "skill": skill["title"] if skill else None,
+            "objective_id": source_node.get("objective_id"),
+            "objective_title": (
+                source_node.get("title")
+                if source_node.get("type") == "learning_objective"
+                else None
+            ),
 
             "source": keyword.get("source")
         })
