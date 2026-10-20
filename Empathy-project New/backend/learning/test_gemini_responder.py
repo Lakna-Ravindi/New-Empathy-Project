@@ -197,6 +197,17 @@ class GeminiResponderTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _parse_response(response_payload(None), selected)
 
+    def test_question_type_aliases_are_normalized(self):
+        payload = json.loads(response_payload(None))
+        payload["steps"][3]["question_type"] = "YesNo"
+        parsed = _parse_response(json.dumps(payload), None)
+        self.assertEqual(parsed["steps"][3]["question_type"], "yes_no")
+
+        payload = json.loads(response_payload(None))
+        payload["steps"][3]["question_type"] = "TrueFalse"
+        parsed = _parse_response(json.dumps(payload), None)
+        self.assertEqual(parsed["steps"][3]["question_type"], "true_false")
+
     @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.genai.Client")
     def test_exam_question_prompt_includes_relevant_seek_content(self, client_class):

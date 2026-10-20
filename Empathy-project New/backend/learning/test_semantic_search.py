@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
 
+from learning.pedagogical_controller import process_student_question
 from learning.semantic_search import semantic_search
 
 
@@ -33,6 +34,20 @@ class SemanticSearchTests(unittest.TestCase):
         results = semantic_search("How can I calm down before exams?", knowledge_base, limit=3, skill_id="skill_01")
         self.assertTrue(results)
         self.assertTrue(all(item.get("skill_id") in {"skill_01", None} for item in results))
+
+    def test_emotional_awareness_question_selects_emotional_awareness_objective(self):
+        knowledge_base = load_fixture("knowledge_base.json")
+        highlighted_keywords = load_fixture("highlighted_keywords.json")
+        question = (
+            'What is Emotional Awareness, and what are the key stages of the "Spark to Forest Fire" '
+            'model used to understand how emotions develop and influence our actions?'
+        )
+
+        result = process_student_question(question, knowledge_base, highlighted_keywords)
+
+        self.assertEqual(result["skill"]["id"], "node_0094")
+        self.assertEqual(result["learning_objective"]["objective_id"], "obj_03_02")
+        self.assertIn("Spark to Forest Fire", result["learning_objective"]["title"])
 
 
 if __name__ == "__main__":

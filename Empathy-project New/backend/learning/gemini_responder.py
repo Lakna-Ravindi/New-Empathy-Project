@@ -84,6 +84,30 @@ Return valid JSON only, in exactly this shape:
 The student's situation should remain the main focus throughout the response.
 Avoid long theoretical explanations, generic educational content, or responses
 that focus mainly on the learning objective instead of the student's question.
+
+For long educational answers, follow these additional language and writing rules:
+- Use simple, clear, student-friendly English. Explain difficult concepts
+  in everyday language without changing their original meaning.
+- Correct grammar, spelling, punctuation, and awkward sentence structures.
+- Improve the logical flow by organizing ideas clearly and using natural
+  transitions between related points.
+- Avoid unnecessary repetition, overly complex vocabulary, and excessively
+  long sentences.
+- Where relevant, include one short, realistic example from everyday
+  Sri Lankan student life, such as A/L examination stress, university
+  group projects, classroom discussions, or misunderstandings between friends.
+- Examples must be relevant to the student's actual question and should
+  help the student understand the concept practically.
+- Do not force an example into an answer when it is not useful.
+- Never include religious practices, rituals, teachings, scriptures,
+  religious figures, or religious activities as examples, explanations,
+  or recommendations. Use neutral, inclusive, everyday Sri Lankan contexts.
+- Do not present illustrative examples as facts from the approved SEEK
+  curriculum.
+- Keep all explanations grounded in the supplied approved SEEK content.
+  Never invent curriculum facts, objectives, activities, or instructions.
+- Apply these additional writing rules only when answer_style is "long".
+  Keep short answers concise and direct.
 """
 
 
@@ -182,7 +206,13 @@ def _parse_response(response_text: str, selected_activity=None) -> dict:
         )
 
     practice_step = steps[3]
-    if practice_step.get("question_type") not in {"true_false", "yes_no"}:
+    question_type = str(practice_step.get("question_type") or "").strip().lower()
+    normalized_question_type = re.sub(r"\s+|[-_]", "_", question_type)
+    normalized_question_type = normalized_question_type.replace("yesno", "yes_no")
+    normalized_question_type = normalized_question_type.replace("truefalse", "true_false")
+    if normalized_question_type in {"true_false", "yes_no"}:
+        practice_step["question_type"] = normalized_question_type
+    else:
         raise ValueError(
             "The final Gemini step must be a Yes/No or True/False check."
         )
@@ -238,11 +268,9 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
             " ",
             str(item.get("title") or item.get("content") or "").strip(),
         )
-        if not topic:
-            continue
-        if len(topic) > 64:
-            topic = " ".join(topic.split()[:9]).rstrip(".,;:")
         if topic and topic.casefold() not in {value.casefold() for value in topics}:
+            if len(topic) > 64:
+                topic = " ".join(topic.split()[:9]).rstrip(".,;:")
             topics.append(topic)
         if len(topics) == 2:
             break
@@ -412,12 +440,23 @@ def generate_educational_response(
             "direct language. Keep each supporting step concise."
         ),
         "long": (
-            "Write a structured educational answer of about 120-180 words. Start "
-            "with a direct answer and explain the relevant approved concept. "
-            "Include examples or practical steps only when supported by the "
-            "approved SEEK context. Include the selected objective and activity "
-            "in their dedicated steps, then end with a short understanding-check "
-            "question. Use only the approved SEEK context below."
+            "Write a structured educational answer of about 120-180 words. "
+            "Start by directly answering the student's question. Explain the "
+            "relevant concept using simple, clear, student-friendly English. "
+            "Correct grammar, spelling, punctuation, and awkward phrasing. "
+            "Organize ideas logically and use natural transitions to improve "
+            "the flow. Avoid unnecessarily complex vocabulary and repetition. "
+            "Where relevant, include one short, realistic example from everyday "
+            "Sri Lankan student life, such as A/L examination stress, university "
+            "group projects, classroom discussions, or misunderstandings between "
+            "friends. Do not include religious practices, religious teachings, "
+            "or religious examples. Do not force examples when they are not useful. "
+            "Keep examples distinct from approved SEEK curriculum facts. "
+            "Use only the supplied approved SEEK content for curriculum-based "
+            "explanations. Include the selected learning objective and approved "
+            "activity in their dedicated steps. Finish with a short Yes/No or "
+            "True/False understanding-check question. Preserve the existing "
+            "four-step JSON structure and all activity metadata."
         ),
     }
 
