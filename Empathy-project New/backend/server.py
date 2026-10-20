@@ -1378,14 +1378,25 @@ def complete_objective(objective_id):
             current.get("completed_item_ids", []),
             current.get("quiz_scores", {}),
         )
-        if not state["completed"]:
+        chatbot_quick_check_passed = (
+            body.get("source") == "chatbot"
+            and body.get("quick_check_passed") is True
+        )
+        can_complete = state["completed"] or (
+            chatbot_quick_check_passed and state["activity_completed"]
+        )
+        if not can_complete:
             missing_conditions = []
             if not state["activity_completed"]:
                 missing_conditions.append("activity")
-            if not state["quiz_passed"]:
+            if not state["quiz_passed"] and not chatbot_quick_check_passed:
                 missing_conditions.append("quiz")
             return jsonify({
-                "error": "Complete the objective activity and pass its quiz before completing this objective.",
+                "error": (
+                    "Complete the objective activity before completing this objective."
+                    if chatbot_quick_check_passed
+                    else "Complete the objective activity and pass its quiz before completing this objective."
+                ),
                 "completed": False,
                 "objective_id": objective_id,
                 "required_item_ids": state["required_item_ids"],

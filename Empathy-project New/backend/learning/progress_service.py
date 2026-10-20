@@ -128,6 +128,9 @@ class ProgressService:
                 {},
             )
             completed_ids = set(progress.get("completed_item_ids", []))
+            completed_objective_ids = set(
+                progress.get("completed_objective_ids", [])
+            )
             quiz_scores = progress.get("quiz_scores", {})
             objectives = []
             objective_percentages = []
@@ -139,9 +142,13 @@ class ProgressService:
                     completed_ids,
                     quiz_scores,
                 )
+                is_completed = (
+                    state["completed"]
+                    or objective["objective_id"] in completed_objective_ids
+                )
                 completed_count = len(progress_item_ids & completed_ids)
                 total_count = len(progress_item_ids)
-                if state["completed"]:
+                if is_completed:
                     objective_progress = 100.0
                 else:
                     objective_progress = self._percentage(
@@ -157,7 +164,7 @@ class ProgressService:
                     "progress": objective_progress,
                     "completed_items": completed_count,
                     "total_items": total_count,
-                    "completed": state["completed"],
+                    "completed": is_completed,
                     "activity_completed": state["activity_completed"],
                     "quiz_passed": state["quiz_passed"],
                     "required_item_ids": state["required_item_ids"],

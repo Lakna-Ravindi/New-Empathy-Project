@@ -161,6 +161,14 @@ class StoreStub:
         })
         return copy.deepcopy(self.progress)
 
+    def complete_objective(self, student_id, skill_id, objective, next_objective):
+        self.progress["skill_id"] = skill_id
+        objective_id = objective["id"]
+        if objective_id not in self.progress["completed_objective_ids"]:
+            self.progress["completed_objective_ids"].append(objective_id)
+        self.progress["next_recommended_learning_objective"] = next_objective
+        return copy.deepcopy(self.progress)
+
 
 def call_completion(client, body, store, structure=None):
     original_structure = server.progress_service.structure
@@ -175,6 +183,24 @@ def call_completion(client, body, store, structure=None):
         ):
             server.g.student_id = "student-1"
             return server.complete_learning_item.__wrapped__()
+    finally:
+        server.progress_service.structure = original_structure
+        server.learning_store = original_store
+
+
+def call_objective_completion(client, objective_id, body, store, structure=None):
+    original_structure = server.progress_service.structure
+    original_store = server.learning_store
+    server.progress_service.structure = structure or _objective_rule_structure()
+    server.learning_store = store
+    try:
+        with client.application.test_request_context(
+            f"/api/objectives/{objective_id}/complete",
+            method="POST",
+            json=body,
+        ):
+            server.g.student_id = "student-1"
+            return server.complete_objective.__wrapped__(objective_id)
     finally:
         server.progress_service.structure = original_structure
         server.learning_store = original_store
@@ -249,6 +275,79 @@ def test_objective_completes_after_activity_and_quiz_without_content_or_video():
     objective = summary["skills"][0]["objectives"][0]
     assert objective["completed"] is True
     assert objective["missing_required_item_ids"] == []
+
+
+def test_chatbot_quick_check_completes_objective_and_updates_next_recommendation():
+    structure = _objective_rule_structure()
+    store = StoreStub()
+    store.progress.update({
+        "skill_id": "skill_test",
+        "completed_item_ids": ["activity_test"],
+    })
+
+    response, status = call_objective_completion(
+        server.app.test_client(),
+        "objective_test",
+        {
+            "skill_id": "skill_test",
+            "source": "chatbot",
+            "quick_check_passed": True,
+        },
+        store,
+        structure,
+    )
+
+    assert status == 200
+    progress = response.get_json()
+    assert progress["completed_objective_ids"] == ["objective_test"]
+    assert progress["next_recommended_learning_objective"]["id"] == "objective_next"
+    summary = ProgressService(structure=structure).calculate([progress])
+    current_objective = summary["skills"][0]["objectives"][0]
+    assert current_objective["completed"] is True
+    assert current_objective["quiz_passed"] is False
+
+
+def test_chatbot_quick_check_cannot_complete_objective_without_saved_activity():
+    store = StoreStub()
+
+    response, status = call_objective_completion(
+        server.app.test_client(),
+        "objective_test",
+        {
+            "skill_id": "skill_test",
+            "source": "chatbot",
+            "quick_check_passed": True,
+        },
+        store,
+        _objective_rule_structure(),
+    )
+
+    assert status == 422
+    assert "activity" in response.get_json()["missing_completion_conditions"]
+    assert store.progress["completed_objective_ids"] == []
+
+
+def test_quick_check_completion_requires_chatbot_source_and_correct_answer():
+    store = StoreStub()
+    store.progress.update({
+        "skill_id": "skill_test",
+        "completed_item_ids": ["activity_test"],
+    })
+
+    response, status = call_objective_completion(
+        server.app.test_client(),
+        "objective_test",
+        {
+            "skill_id": "skill_test",
+            "source": "skills_page",
+            "quick_check_passed": True,
+        },
+        store,
+        _objective_rule_structure(),
+    )
+
+    assert status == 422
+    assert store.progress["completed_objective_ids"] == []
 
 
 def test_skill_four_objective_reports_actual_missing_items_after_activity_only():

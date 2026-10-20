@@ -45,7 +45,7 @@ def response_payload(activity):
 
 
 class GeminiResponderTests(unittest.TestCase):
-    def test_long_fallback_is_more_detailed_and_structured(self):
+    def test_fallback_is_concise_and_structured_for_both_answer_styles(self):
         context = {
             "student_question": "How can I calm down?",
             "skill": {"title": "Regulation"},
@@ -60,10 +60,11 @@ class GeminiResponderTests(unittest.TestCase):
         short = _fallback_response(context, "short")
         long = _fallback_response(context, "long")
 
-        self.assertGreater(len(long["answer"]), len(short["answer"]))
-        self.assertIn("curriculum-based guidance", long["answer"])
+        self.assertEqual(long["answer"], short["answer"])
+        self.assertNotIn("The approved SEEK content says", long["answer"])
         self.assertEqual(long["steps"][0]["content"], long["answer"])
         self.assertIn("Notice emotions", long["steps"][1]["content"])
+        self.assertIn("instructions are not available", long["steps"][2]["content"])
 
     def test_activity_metadata_must_match_selected_context(self):
         selected = {
@@ -139,10 +140,21 @@ class GeminiResponderTests(unittest.TestCase):
             "question_relevant_content": [],
         })
 
-        self.assertIn("could not find enough relevant approved SEEK content", fallback["answer"])
+        self.assertIn("don't have enough approved information", fallback["answer"])
         self.assertIn("No approved learning objective", fallback["steps"][1]["content"])
         self.assertIsNone(fallback["steps"][2]["activity"])
         self.assertEqual(fallback["suggested_questions"], [])
+
+    def test_fallback_prioritizes_urgent_physical_symptoms(self):
+        fallback = _fallback_response({
+            "student_question": "I have severe chest tightness and difficulty breathing.",
+            "learning_objective": None,
+            "recommended_activity": None,
+            "question_relevant_content": [],
+        })
+
+        self.assertIn("seek immediate medical help now", fallback["answer"])
+        self.assertNotIn("caused by stress", fallback["answer"])
 
     def test_fallback_questions_use_next_objective_approved_content(self):
         fallback = _fallback_response({

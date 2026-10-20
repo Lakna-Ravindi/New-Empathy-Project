@@ -36,24 +36,48 @@ respond by asking whether they want help. Give the useful answer first; an
 approved activity may be offered afterward as an optional next step.
 
 Do not select another skill, objective, activity, or learning path.
-Do not invent curriculum content. Do not diagnose or provide medical advice.
+Do not invent curriculum content. Never diagnose or provide medical advice.
+If the student describes potentially serious physical symptoms, including
+severe chest tightness or difficulty breathing, prioritize immediate safety and
+advise seeking urgent medical assistance. Do not assume those symptoms are
+caused by stress.
 
-The discussion must follow four learning steps:
+Structure the conversation using these four stages, in order. The frontend
+reveals the stage content progressively across conversation turns; do not write
+or present all four stages as one student-facing response. Keep each generated
+stage focused, concise, and appropriate to the student's latest message:
 
-1. Directly answer the student's question in the top-level "answer" field.
-2. Explain the approved learning objective.
-3. Introduce the approved activity when one was selected. If no approved
-   activity was selected, state that no approved activity was selected. Never
-   invent an activity, learning idea, instruction, or activity metadata.
-4. Provide a simple Yes/No or True/False practice question.
+1. Direct response: Answer the student's actual question first. Acknowledge
+   their feelings naturally and give practical, empathetic guidance for their
+   immediate situation. Never begin with "The approved SEEK content says" or
+   copy curriculum text directly as the answer.
+2. Explain the concept: After addressing the immediate concern, briefly explain
+   the relevant approved SEEK concept in simple, natural language. Connect it
+   to the student's situation with a practical example when useful.
+3. Guided activity: Introduce only the activity selected by the controller.
+   Use its supplied approved instructions only. Give the student just the first
+   actionable step, then invite them to try it or describe what they notice.
+   Wait for their response before giving another step. If no activity was
+   selected, say so without inventing an alternative or instructions.
+4. Understanding check: Only after the student has had an opportunity to
+   understand and practise the concept, ask one relevant, simple question.
+   Use a natural True/False question for the current button-based check. A
+   short-answer question is appropriate only when the interface explicitly
+   supports a short written answer. Do not ask whether the learning objective
+   is relevant.
 
-Generate a complete main answer separately from the four supporting steps.
-The answer must directly address the student's question and must not depend on
-the frontend revealing later steps.
-The frontend will present these steps to the student one at a time.
-Do not combine the four steps into one paragraph.
-The practice question must be a Yes/No or True/False question.
-Do not use an open-ended reflection question.
+Conversation rules:
+- Treat the student's latest message as the immediate priority and respond to
+  it before advancing to another stage.
+- Do not force every stage into every response. Do not repeat explanations
+  unnecessarily or restart the learning flow after each message.
+- If the student is confused, explain the same approved concept more simply
+  and check understanding before proceeding.
+- Use warm, conversational English. Avoid robotic introductions, textbook-like
+  paragraphs, unnecessary headings, and "The approved SEEK content says".
+- Use only information supported by the supplied approved SEEK content for
+  curriculum explanations. Do not select a different skill, objective,
+  activity, or learning path.
 
 IMPORTANT JSON RULES:
 
@@ -63,8 +87,10 @@ Do not wrap the JSON in ```json or ```.
 All JSON strings must be properly closed.
 Do not place raw line breaks inside string values.
 Escape quotation marks inside strings when necessary.
-Do not stop generating before all four steps are complete.
-The response must contain a non-empty "answer" and exactly four steps.
+Return the four stage fields in the structured payload so the frontend can
+reveal them one at a time. A stage field is not permission to present that
+stage early in the visible conversation. The response must contain a non-empty
+"answer" and exactly four ordered steps.
 Include 3 or 4 short, natural, non-empty suggested questions when the supplied
 approved content supports them. Do not suggest unrelated counselling,
 medical, or crisis questions.
@@ -85,7 +111,7 @@ The student's situation should remain the main focus throughout the response.
 Avoid long theoretical explanations, generic educational content, or responses
 that focus mainly on the learning objective instead of the student's question.
 
-For long educational answers, follow these additional language and writing rules:
+For both short and long answer styles:
 - Use simple, clear, student-friendly English. Explain difficult concepts
   in everyday language without changing their original meaning.
 - Correct grammar, spelling, punctuation, and awkward sentence structures.
@@ -93,6 +119,9 @@ For long educational answers, follow these additional language and writing rules
   transitions between related points.
 - Avoid unnecessary repetition, overly complex vocabulary, and excessively
   long sentences.
+- Keep the answer appropriate to the current stage and the student's latest
+  message. "Long" may add useful detail to the current stage, but must not
+  combine multiple stages or become a complete lesson.
 - Where relevant, include one short, realistic example from everyday
   Sri Lankan student life, such as A/L examination stress, university
   group projects, classroom discussions, or misunderstandings between friends.
@@ -106,12 +135,14 @@ For long educational answers, follow these additional language and writing rules
   curriculum.
 - Keep all explanations grounded in the supplied approved SEEK content.
   Never invent curriculum facts, objectives, activities, or instructions.
-- Apply these additional writing rules only when answer_style is "long".
-  Keep short answers concise and direct.
 """
 
 
-def _parse_response(response_text: str, selected_activity=None) -> dict:
+def _parse_response(
+    response_text: str,
+    selected_activity=None,
+    allow_empty_suggestions: bool = False,
+) -> dict:
     """Parse and validate Gemini's answer, suggestions, and four-step contract."""
 
     if not response_text:
@@ -145,16 +176,21 @@ def _parse_response(response_text: str, selected_activity=None) -> dict:
     suggested_questions = (
         payload.get("suggested_questions") if isinstance(payload, dict) else None
     )
-    if (
-        not isinstance(suggested_questions, list)
-        or not 3 <= len(suggested_questions) <= 4
-        or any(
-            not isinstance(question, str) or not question.strip()
-            for question in suggested_questions
-        )
+    if not isinstance(suggested_questions, list) or not (
+        (allow_empty_suggestions and len(suggested_questions) == 0)
+        or 3 <= len(suggested_questions) <= 4
     ):
         raise ValueError(
-            "Gemini response must contain three or four non-empty suggested questions."
+            "Gemini response must contain three or four non-empty suggested "
+            "questions, or an empty list when approved suggestion content is "
+            "unavailable."
+        )
+    if any(
+        not isinstance(question, str) or not question.strip()
+        for question in suggested_questions
+    ):
+        raise ValueError(
+            "Gemini response must contain non-empty suggested questions."
         )
     suggested_questions = [question.strip() for question in suggested_questions]
     if len({question.casefold() for question in suggested_questions}) != len(
@@ -240,6 +276,20 @@ def _valid_activity_metadata(activity):
     return {field: activity[field] for field in fields}
 
 
+def _mentions_urgent_physical_symptom(question: str) -> bool:
+    normalized = re.sub(r"\s+", " ", str(question or "").casefold())
+    urgent_phrases = (
+        "severe chest tightness",
+        "chest tightness",
+        "difficulty breathing",
+        "trouble breathing",
+        "shortness of breath",
+        "can't breathe",
+        "cannot breathe",
+    )
+    return any(phrase in normalized for phrase in urgent_phrases)
+
+
 def _fallback_suggested_questions(learning_context: dict) -> list[str]:
     """Build questions from the approved content selected for suggestions."""
 
@@ -316,45 +366,45 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
     )
     objective_title = objective.get("title")
     objective_content = objective.get("content")
-    relevant_content = (
-        learning_context.get("suggestion_relevant_content")
-        or learning_context.get("question_relevant_content")
-        or []
-    )
-    if not isinstance(relevant_content, list):
-        relevant_content = []
-    source_excerpt = next(
+    student_question = learning_context.get("student_question", "")
+    question_content = learning_context.get("question_relevant_content") or []
+    related_topic = next(
         (
-            item["content"].strip()
-            for item in relevant_content
+            str(item.get("title") or item.get("content") or "").strip()
+            for item in question_content
             if isinstance(item, dict)
-            and isinstance(item.get("content"), str)
-            and item["content"].strip()
+            and (
+                isinstance(item.get("title"), str) and item["title"].strip()
+                or isinstance(item.get("content"), str) and item["content"].strip()
+            )
         ),
         "",
     )
-
-    if source_excerpt:
-        if answer_style == "long":
-            answer = f"The approved SEEK content relevant to your question says: {source_excerpt}"
-            if objective_title:
-                answer += f" This relates to the learning objective: {objective_title}."
-        else:
-            answer = f"The approved SEEK content says: {source_excerpt}"
+    if related_topic and len(related_topic) > 140:
+        related_topic = related_topic.split(".")[0].strip()
+    if _mentions_urgent_physical_symptom(student_question):
+        answer = (
+            "I'm sorry you're experiencing this. Severe chest tightness or "
+            "difficulty breathing can be urgent. Please seek immediate medical "
+            "help now or contact local emergency services, and tell a trusted "
+            "person nearby if you can. I can't determine the cause here."
+        )
+    elif related_topic:
+        answer = (
+            "It makes sense to want to calm your mind. A gentle first step is "
+            "to pause and notice what feels unsettled. The approved SEEK "
+            f"material also covers {related_topic}."
+        )
     else:
         answer = (
-            "I could not find enough relevant approved SEEK content to answer "
-            "that reliably. Please try asking about a specific empathy learning topic."
+            "That sounds difficult. I don't have enough approved information "
+            "to guide you reliably yet. What part would you most like help with?"
         )
-        if answer_style == "long":
-            answer = (
-                "I could not find enough relevant approved SEEK content to answer "
-                "that reliably, so I cannot provide curriculum-based guidance yet. "
-                "Please try asking about a specific empathy learning topic."
-            )
 
     activity_content = (
-        f"An approved activity was selected: {activity['title']}."
+        f"The approved activity “{activity['title']}” was selected, but its "
+        "instructions are not available here, so I can't guide you through a "
+        "step without inventing one."
         if activity
         else "No approved activity was selected for this response."
     )
@@ -369,9 +419,9 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
         )
 
     practice_question = (
-        f"Does the approved learning objective relate to {objective_title}?"
+        f"True or false: The learning objective we discussed is {objective_title}."
         if objective_title
-        else "Is this response based on approved SEEK learning content?"
+        else "True or false: We discussed an approved learning objective."
     )
 
     return {
@@ -436,27 +486,13 @@ def generate_educational_response(
     model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
     style_instructions = {
         "short": (
-            "Write the top-level answer in 1-2 clear sentences using simple, "
-            "direct language. Keep each supporting step concise."
+            "Use concise, direct language for the current stage. Do not combine "
+            "stages or add a complete lesson."
         ),
         "long": (
-            "Write a structured educational answer of about 120-180 words. "
-            "Start by directly answering the student's question. Explain the "
-            "relevant concept using simple, clear, student-friendly English. "
-            "Correct grammar, spelling, punctuation, and awkward phrasing. "
-            "Organize ideas logically and use natural transitions to improve "
-            "the flow. Avoid unnecessarily complex vocabulary and repetition. "
-            "Where relevant, include one short, realistic example from everyday "
-            "Sri Lankan student life, such as A/L examination stress, university "
-            "group projects, classroom discussions, or misunderstandings between "
-            "friends. Do not include religious practices, religious teachings, "
-            "or religious examples. Do not force examples when they are not useful. "
-            "Keep examples distinct from approved SEEK curriculum facts. "
-            "Use only the supplied approved SEEK content for curriculum-based "
-            "explanations. Include the selected learning objective and approved "
-            "activity in their dedicated steps. Finish with a short Yes/No or "
-            "True/False understanding-check question. Preserve the existing "
-            "four-step JSON structure and all activity metadata."
+            "Use a little more helpful detail within the current stage, while "
+            "remaining concise and conversational. Do not combine stages or "
+            "write a complete lesson."
         ),
     }
 
@@ -481,6 +517,10 @@ def generate_educational_response(
         "matched_keywords": learning_context.get("matched_keywords", []),
         "source_page": learning_context.get("source_page"),
     }
+    allow_empty_suggestions = not _fallback_suggested_questions({
+        "suggestion_learning_objective": prompt["suggestion_learning_objective"],
+        "suggestion_relevant_content": prompt["suggestion_relevant_content"],
+    })
 
     client = None
     for attempt in range(3):
@@ -511,6 +551,7 @@ def generate_educational_response(
             return _parse_response(
                 response.text,
                 learning_context.get("recommended_activity"),
+                allow_empty_suggestions=allow_empty_suggestions,
             )
 
         except ServerError as e:
