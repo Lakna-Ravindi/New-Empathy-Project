@@ -7,9 +7,11 @@ from collections import Counter
 from classifier.rule_classifier import classify
 from knowledge.node_builder import build_node
 from parser.metadata_extractor import extract_blocks
-from parser.highlight_extractor import extract_highlighted_keywords
-from knowledge.keyword_skill_mapper import map_keywords_to_skills
+from parser.highlight_extractor import (
+    extract_highlighted_keywords,
+)
 from knowledge.objective_mapper import map_nodes_to_objectives
+from knowledge.progress_builder import build_content_progress_structure
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -18,8 +20,8 @@ PDF_PATH = BASE_DIR / "data" / "SEEK_Learning.pdf"
 OUTPUT_PATH = BASE_DIR / "output" / "knowledge_base.json"
 REPORT_PATH = BASE_DIR / "output" / "validation_report.json"
 HIGHLIGHTED_KEYWORDS_PATH = BASE_DIR / "output" / "highlighted_keywords.json"
-KEYWORD_SKILL_MAP_PATH = BASE_DIR / "output" / "keyword_skill_map.json"
 CONTENT_SKILLS_PATH = BASE_DIR / "output" / "content_skills.json"
+PROGRESS_STRUCTURE_PATH = BASE_DIR / "output" / "progress_structure.json"
 
 
 def build_knowledge_base():
@@ -42,7 +44,7 @@ def build_knowledge_base():
     # -------------------------------
     # 2. Extractor already returns paragraph/list-item blocks.
     # -------------------------------
-    merged_blocks = blocks
+    merged_blocks = split_combined_objective_blocks(blocks)
 
     print("Merged blocks:", len(merged_blocks))
 
@@ -54,6 +56,7 @@ def build_knowledge_base():
         "chapter": None,
         "module": None,
         "topic": None,
+        "objective": None,
         "practice": None,
         "activity": None,
         "reflection": None,
@@ -110,11 +113,14 @@ def build_knowledge_base():
             node_type = classification
             confidence = 0.5
 
+        explicit_objective = (
+            isinstance(classification, dict)
+            and classification.get("explicit", False)
+        )
         is_bold_heading = "bold" in block.get("font_name", "").lower()
 
         if node_type == "objective_heading":
             objective_section = True
-            continue
         elif objective_section and (
             node_type in {"chapter", "topic"}
             or (
@@ -123,7 +129,11 @@ def build_knowledge_base():
             )
         ):
             objective_section = False
-        elif not objective_section and node_type == "learning_objective":
+        elif (
+            not objective_section
+            and node_type == "learning_objective"
+            and not explicit_objective
+        ):
             node_type = "content"
             confidence = 0.70
 
@@ -179,7 +189,10 @@ def build_knowledge_base():
             "page": block.get(
                 "page",
                 None
-            )
+            ),
+            "block_index": block.get("block_index"),
+            "item_index": block.get("item_index"),
+            "text": block.get("text", ""),
 
         }
 
@@ -204,6 +217,56 @@ def build_knowledge_base():
     return nodes
 
 
+def split_combined_objective_blocks(blocks):
+    """Split only numbered lists found in an explicit objective section."""
+    result = []
+    in_objective_section = False
+
+    for block in blocks:
+        text = block.get("text", "").strip()
+        normalized = re.sub(r"\s+", " ", text).lower()
+        if normalized in {
+            "module objectives",
+            "module learning objectives",
+            "learning objectives",
+            "objectives",
+            "module objective",
+            "module overview & objectives",
+        }:
+            in_objective_section = True
+            result.append(block)
+            continue
+
+        if normalized.startswith("by the end of this skill") or normalized.startswith(
+            "by the end of this module"
+        ) or normalized.startswith("you will be able to"):
+            in_objective_section = True
+            result.append(block)
+            continue
+
+        if re.match(r"^skill\s+\d+\s*:", normalized):
+            in_objective_section = False
+
+        matches = list(re.finditer(r"(?<!\w)(\d+)[.)]\u200b*\s+", text))
+        if in_objective_section and len(matches) > 1 and matches[0].start() == 0:
+            for match_index, match in enumerate(matches):
+                start = match.start()
+                end = (
+                    matches[match_index + 1].start()
+                    if match_index + 1 < len(matches)
+                    else len(text)
+                )
+                item = dict(block)
+                item["text"] = text[start:end].strip()
+                item["item_index"] = match_index
+                result.append(item)
+            continue
+
+        result.append(block)
+
+    return result
+
+
 
 # --------------------------------------------------
 # Parent-child hierarchy handling
@@ -222,6 +285,7 @@ def resolve_parent_id(node_type, stack):
     if node_type == "topic":
         return (
             stack["module"]
+            or stack["objective"]
             or stack["chapter"]
         )
 
@@ -235,13 +299,21 @@ def resolve_parent_id(node_type, stack):
 
         return (
             stack["topic"]
+            or stack["objective"]
             or stack["module"]
             or stack["chapter"]
         )
 
+    if node_type == "learning_objective":
+        return (
+            stack["topic"]
+            or stack["module"]
+            or stack["chapter"]
+        )
 
     return (
         stack["topic"]
+        or stack["objective"]
         or stack["module"]
         or stack["chapter"]
     )
@@ -262,6 +334,7 @@ def update_stack(stack, node_type, node_id):
             "chapter": node_id,
             "module": None,
             "topic": None,
+            "objective": None,
             "practice": None,
             "activity": None,
             "reflection": None,
@@ -279,6 +352,7 @@ def update_stack(stack, node_type, node_id):
 
             "module": node_id,
             "topic": None,
+            "objective": None,
             "practice": None,
             "activity": None,
             "reflection": None,
@@ -304,6 +378,15 @@ def update_stack(stack, node_type, node_id):
 
         return
 
+
+    if node_type == "learning_objective":
+        stack["objective"] = node_id
+        stack["topic"] = None
+        stack["practice"] = None
+        stack["activity"] = None
+        stack["reflection"] = None
+        stack["assessment"] = None
+        return
 
 
     if node_type in {
@@ -351,6 +434,8 @@ def clean_text(text):
 
     text = str(text)
 
+    text = text.replace("\u200b", "").replace("\ufeff", "")
+
     # Remove common PDF bullet symbols
     text = text.replace("\u2022", " ")
     text = text.replace("\u25cf", " ")
@@ -396,7 +481,7 @@ def generate_tags(node):
 # Validation
 # --------------------------------------------------
 
-def validate_nodes(nodes, content_skills=None):
+def validate_nodes(nodes, content_skills=None, source_blocks=None):
 
     report = {
 
@@ -411,6 +496,10 @@ def validate_nodes(nodes, content_skills=None):
         "duplicate_content": [],
         "invalid_objective_ids": [],
         "mapping_review": [],
+        "objective_mapping_review": [],
+        "content_mapping_review": [],
+        "objective_coverage": {},
+        "intentional_duplicate_content": [],
         "possible_split_nodes": []
 
     }
@@ -430,18 +519,54 @@ def validate_nodes(nodes, content_skills=None):
             report["duplicate_ids"].append(node_id)
         seen_ids.add(node_id)
         if normalized_content:
-            if node.get("type") not in {"topic", "reflection"}:
+            if node.get("type") not in {"topic", "reflection", "objective_heading"}:
                 seen_content.setdefault(normalized_content, []).append(node_id)
+            elif node.get("type") == "objective_heading":
+                report["intentional_duplicate_content"].append(node_id)
 
         objective_id = node.get("objective_id")
         if objective_id and objective_id not in valid_objectives:
             report["invalid_objective_ids"].append(node_id)
-        if node.get("type") not in {"chapter", "module", "topic", "objective_heading"} and node.get("match_status") in {"review", "unassigned"}:
-            report["mapping_review"].append({"node_id": node_id, "status": node.get("match_status")})
+        if (
+            node.get("type") not in {"chapter", "module", "topic", "objective_heading"}
+            and node.get("match_status") in {"review", "unassigned"}
+        ):
+            mapping = {"node_id": node_id, "status": node.get("match_status")}
+            report["mapping_review"].append(mapping)
+            if node.get("type") == "learning_objective":
+                report["objective_mapping_review"].append(mapping)
+            elif node.get("type") == "content":
+                report["content_mapping_review"].append(mapping)
 
     report["duplicate_content"] = [
         node_ids for node_ids in seen_content.values() if len(node_ids) > 1
     ]
+
+    objective_nodes = [
+        node for node in nodes
+        if node.get("type") == "learning_objective"
+    ]
+    source_objectives = [
+        block.get("text", "").strip()
+        for block in (source_blocks or [])
+        if re.match(r"^objective\s+\d+\s*:", block.get("text", "").strip(), re.IGNORECASE)
+    ]
+    objective_titles = {
+        re.sub(r"\s+", " ", node.get("title", "")).strip()
+        for node in objective_nodes
+    }
+    missing_objectives = [
+        title for title in source_objectives
+        if re.sub(r"\s+", " ", title).strip() not in objective_titles
+    ]
+    report["objective_coverage"] = {
+        "source_explicit_objective_count": len(source_objectives),
+        "generated_objective_node_count": len(objective_nodes),
+        "missing_source_objectives": missing_objectives,
+        "objective_nodes_without_authored_mapping": [
+            item["node_id"] for item in report["objective_mapping_review"]
+        ],
+    }
 
     for previous, current in zip(nodes, nodes[1:]):
         previous_text = previous.get("content", "").strip()
@@ -516,6 +641,7 @@ def validate_nodes(nodes, content_skills=None):
         report["requires_review"] += len(report["duplicate_ids"]) + len(report["duplicate_content"])
     if report["invalid_objective_ids"]:
         report["requires_review"] += len(report["invalid_objective_ids"])
+    report["requires_review"] += len(report["mapping_review"])
     report["issues"].extend(
         {"node_id": node_id, "issues": ["Invalid objective_id"]}
         for node_id in report["invalid_objective_ids"]
@@ -549,7 +675,11 @@ if __name__ == "__main__":
     with open(CONTENT_SKILLS_PATH, "r", encoding="utf-8") as file:
         content_skills = json.load(file)
 
-    knowledge_base, report = validate_nodes(knowledge_base, content_skills)
+    knowledge_base, report = validate_nodes(
+        knowledge_base,
+        content_skills,
+        source_blocks=extract_blocks(PDF_PATH),
+    )
 
 
     OUTPUT_PATH.parent.mkdir(
@@ -633,18 +763,17 @@ if __name__ == "__main__":
             ensure_ascii=False
         )
 
-    keyword_skill_map = map_keywords_to_skills(
-        highlighted_keywords,
-        knowledge_base
-    )
+    with open(REPORT_PATH, "w", encoding="utf-8") as file:
+        json.dump(report, file, indent=4, ensure_ascii=False)
 
+    progress_structure = build_content_progress_structure(content_skills)
     with open(
-        KEYWORD_SKILL_MAP_PATH,
+        PROGRESS_STRUCTURE_PATH,
         "w",
         encoding="utf-8"
     ) as file:
         json.dump(
-            keyword_skill_map,
+            progress_structure,
             file,
             indent=4,
             ensure_ascii=False
@@ -652,4 +781,4 @@ if __name__ == "__main__":
 
     print("Highlighted keywords:", len(highlighted_keywords))
     print("Saved:", HIGHLIGHTED_KEYWORDS_PATH)
-    print("Saved:", KEYWORD_SKILL_MAP_PATH)
+    print("Saved:", PROGRESS_STRUCTURE_PATH)
