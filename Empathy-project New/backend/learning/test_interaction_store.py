@@ -16,9 +16,16 @@ def test_learning_store_falls_back_when_mongo_is_unavailable(monkeypatch):
         "student-1",
         {"student_question": "Why do I feel upset?", "status": "learning_path_selected"},
         "A calm explanation.",
+        learning_steps=[{
+            "type": "practice_check",
+            "correct_answer": True,
+        }],
     )
 
     assert interaction_id.startswith("local-")
+    interaction = store.get_interaction("student-1", interaction_id)
+    assert interaction["learning_steps"][0]["correct_answer"] is True
+    assert store.get_interaction("another-student", interaction_id) is None
     progress = store.get_progress("student-1", "skill-1")
     assert progress["completed_objective_ids"] == []
 
