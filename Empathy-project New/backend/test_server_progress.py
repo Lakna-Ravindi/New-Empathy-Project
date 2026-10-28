@@ -101,9 +101,13 @@ class StoreStub:
             "quiz_attempts": [],
         }
         self.complete_calls = []
+        self.saved_interactions = {}
 
     def get_progress(self, student_id, skill_id):
         return copy.deepcopy(self.progress)
+
+    def get_interaction(self, student_id, interaction_id):
+        return self.saved_interactions.get(interaction_id)
 
     def get_all_progress(self, student_id):
         return [copy.deepcopy(self.progress)]
@@ -280,6 +284,14 @@ def test_objective_completes_after_activity_and_quiz_without_content_or_video():
 def test_chatbot_quick_check_completes_objective_and_updates_next_recommendation():
     structure = _objective_rule_structure()
     store = StoreStub()
+    store.saved_interactions["interaction-1"] = {
+        "selected_skill": {"id": "skill_test"},
+        "learning_objective": {"objective_id": "objective_test"},
+        "learning_steps": [{
+            "type": "practice_check",
+            "correct_answer": True,
+        }],
+    }
     store.progress.update({
         "skill_id": "skill_test",
         "completed_item_ids": ["activity_test"],
@@ -291,7 +303,8 @@ def test_chatbot_quick_check_completes_objective_and_updates_next_recommendation
         {
             "skill_id": "skill_test",
             "source": "chatbot",
-            "quick_check_passed": True,
+            "interaction_id": "interaction-1",
+            "quick_check_answer": True,
         },
         store,
         structure,
@@ -309,6 +322,14 @@ def test_chatbot_quick_check_completes_objective_and_updates_next_recommendation
 
 def test_chatbot_quick_check_cannot_complete_objective_without_saved_activity():
     store = StoreStub()
+    store.saved_interactions["interaction-1"] = {
+        "selected_skill": {"id": "skill_test"},
+        "learning_objective": {"objective_id": "objective_test"},
+        "learning_steps": [{
+            "type": "practice_check",
+            "correct_answer": True,
+        }],
+    }
 
     response, status = call_objective_completion(
         server.app.test_client(),
@@ -316,7 +337,8 @@ def test_chatbot_quick_check_cannot_complete_objective_without_saved_activity():
         {
             "skill_id": "skill_test",
             "source": "chatbot",
-            "quick_check_passed": True,
+            "interaction_id": "interaction-1",
+            "quick_check_answer": True,
         },
         store,
         _objective_rule_structure(),
@@ -329,6 +351,14 @@ def test_chatbot_quick_check_cannot_complete_objective_without_saved_activity():
 
 def test_quick_check_completion_requires_chatbot_source_and_correct_answer():
     store = StoreStub()
+    store.saved_interactions["interaction-1"] = {
+        "selected_skill": {"id": "skill_test"},
+        "learning_objective": {"objective_id": "objective_test"},
+        "learning_steps": [{
+            "type": "practice_check",
+            "correct_answer": True,
+        }],
+    }
     store.progress.update({
         "skill_id": "skill_test",
         "completed_item_ids": ["activity_test"],
@@ -340,7 +370,8 @@ def test_quick_check_completion_requires_chatbot_source_and_correct_answer():
         {
             "skill_id": "skill_test",
             "source": "skills_page",
-            "quick_check_passed": True,
+            "interaction_id": "interaction-1",
+            "quick_check_answer": True,
         },
         store,
         _objective_rule_structure(),
@@ -348,6 +379,48 @@ def test_quick_check_completion_requires_chatbot_source_and_correct_answer():
 
     assert status == 422
     assert store.progress["completed_objective_ids"] == []
+
+
+def test_objective_completion_rejects_unverified_quick_check_answers():
+    cases = (
+        ("no_saved_interaction", None, True),
+        ("missing_answer_key", {}, True),
+        ("invalid_answer_key", {"correct_answer": "true"}, True),
+        ("incorrect_answer", {"correct_answer": False}, True),
+    )
+    for name, answer_key, submitted_answer in cases:
+        store = StoreStub()
+        store.progress.update({
+            "skill_id": "skill_test",
+            "completed_item_ids": ["activity_test"],
+        })
+        interaction = {
+            "selected_skill": {"id": "skill_test"},
+            "learning_objective": {"objective_id": "objective_test"},
+            "learning_steps": [{
+                "type": "practice_check",
+                **({"correct_answer": answer_key} if answer_key is not None else {}),
+            }],
+        }
+        if name != "no_saved_interaction":
+            store.saved_interactions["interaction-1"] = interaction
+
+        response, status = call_objective_completion(
+            server.app.test_client(),
+            "objective_test",
+            {
+                "skill_id": "skill_test",
+                "source": "chatbot",
+                "quick_check_passed": True,
+                "interaction_id": "interaction-1",
+                "quick_check_answer": submitted_answer,
+            },
+            store,
+            _objective_rule_structure(),
+        )
+
+        assert status == 422, name
+        assert store.progress["completed_objective_ids"] == [], name
 
 
 def test_skill_four_objective_reports_actual_missing_items_after_activity_only():
@@ -719,10 +792,13 @@ def test_learning_response_keeps_authored_metadata_in_nested_context():
     }
 
     class ResponseStore:
+        saved_steps = None
+
         def get_all_progress(self, *_args):
             return []
 
-        def save_interaction(self, *_args):
+        def save_interaction(self, *_args, learning_steps=None):
+            self.saved_steps = learning_steps
             return "interaction-1"
 
         def record_learning_event(self, *_args, **_kwargs):
@@ -745,7 +821,8 @@ def test_learning_response_keeps_authored_metadata_in_nested_context():
         "steps": [],
         "suggested_questions": ["How do I ground myself?", "What does grounding mean?", "When can I practice grounding?"],
     }
-    server.learning_store = ResponseStore()
+    response_store = ResponseStore()
+    server.learning_store = response_store
 
     try:
         with server.app.test_request_context(
@@ -767,6 +844,7 @@ def test_learning_response_keeps_authored_metadata_in_nested_context():
     assert activity["progress_item_type"] == "activity"
     assert activity["progress_objective_id"] == "obj_01_04"
     assert len(response.get_json()["suggested_questions"]) == 3
+    assert response_store.saved_steps == []
 
 
 def test_real_objective_context_resolves_authored_activity_when_controller_has_no_node_activity():
