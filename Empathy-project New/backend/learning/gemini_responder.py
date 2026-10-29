@@ -63,9 +63,8 @@ stage focused, concise, and appropriate to the student's latest message:
    understand and practise the concept, ask one relevant, simple question.
    Use a natural True/False question for the current button-based check. A
    short-answer question is appropriate only when the interface explicitly
-   supports a short written answer. Include the correct answer as a JSON boolean
-   in "correct_answer", separate from the question text. Do not put the answer
-   in the question itself. Do not ask whether the learning objective is relevant.
+   supports a short written answer. Do not ask whether the learning objective
+   is relevant.
 
 Conversation rules:
 - Treat the student's latest message as the immediate priority and respond to
@@ -104,7 +103,7 @@ Return valid JSON only, in exactly this shape:
      {"step": 1, "type": "direct_answer", "content": "..."},
      {"step": 2, "type": "learning_objective", "content": "..."},
      {"step": 3, "type": "activity", "content": "...", "activity": null},
-     {"step": 4, "type": "practice_check", "content": "...", "question_type": "true_false", "question": "...", "correct_answer": true}
+     {"step": 4, "type": "practice_check", "content": "...", "question_type": "true_false", "question": "..."}
   ]
 }
 
@@ -258,11 +257,6 @@ def _parse_response(
         or not practice_step["question"].strip()
     ):
         raise ValueError("The final Gemini step must contain a question.")
-
-    if not isinstance(practice_step.get("correct_answer"), bool):
-        raise ValueError(
-            "The final Gemini step must contain a boolean correct_answer."
-        )
 
     return {
         "answer": answer.strip(),
@@ -455,7 +449,6 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             "content": "Before continuing, check in with yourself.",
             "question_type": "true_false",
             "question": practice_question,
-            "correct_answer": bool(objective_title),
         },
         ],
         "suggested_questions": _fallback_suggested_questions(learning_context),

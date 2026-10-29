@@ -11,7 +11,6 @@ from pymongo.errors import DuplicateKeyError, PyMongoError
 from dotenv import load_dotenv
 
 from auth import VALID_AGE_GROUPS, VALID_GENDERS, create_access_token, get_user_store, require_auth, require_role
-from general_empathy_service import EmpathyServiceError, generate_empathy_response
 from learning.pedagogical_controller import answer_student_question, belongs_to_skill
 from learning.interaction_store import LearningStore
 from learning.progress_service import ProgressService
@@ -905,53 +904,9 @@ def create_admin():
 
 
 # ---------------------------------------------------
-# General support chat
-# ---------------------------------------------------
-@app.post("/api/general-empathy-chat")
-@require_auth
-def general_empathy_chat():
-    body = request.get_json(silent=True)
-    if not isinstance(body, dict):
-        return jsonify({"error": "A JSON object is required."}), 400
-
-    message = body.get("message")
-    if not isinstance(message, str):
-        return jsonify({"error": "Please enter a message."}), 400
-    message = message.strip()
-    if not message:
-        return jsonify({"error": "Please enter a message."}), 400
-    if len(message) > 4000:
-        return jsonify({"error": "Messages must be 4000 characters or fewer."}), 400
-
-    history = body.get("history", [])
-    if not isinstance(history, list) or len(history) > 20:
-        return jsonify({"error": "Conversation history must contain at most 20 messages."}), 400
-    for entry in history:
-        if (
-            not isinstance(entry, dict)
-            or not isinstance(entry.get("role"), str)
-            or entry["role"] not in {"user", "assistant"}
-            or not isinstance(entry.get("content"), str)
-            or not entry["content"].strip()
-            or len(entry["content"]) > 4000
-        ):
-            return jsonify({
-                "error": "Each history message must have a user or assistant role and non-empty content of 4000 characters or fewer."
-            }), 400
-
-    try:
-        response = generate_empathy_response(message, history)
-        return jsonify({"response": response}), 200
-    except EmpathyServiceError:
-        app.logger.warning("General empathy-support response generation failed.")
-        return jsonify({
-            "error": "The empathy-support service is currently unavailable."
-        }), 503
-
-
-# ---------------------------------------------------
 # Student learning APIs
 # ---------------------------------------------------
+
 @app.post("/api/learning-response")
 @require_auth
 def learning_response():
@@ -1025,7 +980,6 @@ def learning_response():
             student_id,
             learning_context,
             educational_response,
-            learning_steps=steps,
         )
 
         result["interaction_id"] = interaction_id
@@ -1424,47 +1378,10 @@ def complete_objective(objective_id):
             current.get("completed_item_ids", []),
             current.get("quiz_scores", {}),
         )
-        chatbot_quick_check_passed = False
-        if (
+        chatbot_quick_check_passed = (
             body.get("source") == "chatbot"
-            and isinstance(body.get("quick_check_answer"), bool)
-        ):
-            interaction = learning_store.get_interaction(
-                student_id,
-                body.get("interaction_id"),
-            )
-            selected_skill = (interaction or {}).get("selected_skill") or {}
-            interaction_objective = (
-                (interaction or {}).get("learning_objective") or {}
-            )
-            saved_steps = (interaction or {}).get("learning_steps")
-            practice_check = next(
-                (
-                    step
-                    for step in (
-                        saved_steps if isinstance(saved_steps, list) else []
-                    )
-                    if isinstance(step, dict)
-                    and step.get("type") == "practice_check"
-                ),
-                {},
-            )
-            interaction_skill_id = (
-                selected_skill.get("id")
-                or selected_skill.get("skill_id")
-                or selected_skill.get("chapter_id")
-            )
-            interaction_objective_id = (
-                interaction_objective.get("id")
-                or interaction_objective.get("objective_id")
-            )
-            correct_answer = practice_check.get("correct_answer")
-            chatbot_quick_check_passed = (
-                interaction_skill_id == skill_id
-                and interaction_objective_id == objective_id
-                and isinstance(correct_answer, bool)
-                and body["quick_check_answer"] is correct_answer
-            )
+            and body.get("quick_check_passed") is True
+        )
         can_complete = state["completed"] or (
             chatbot_quick_check_passed and state["activity_completed"]
         )
@@ -1474,25 +1391,12 @@ def complete_objective(objective_id):
                 missing_conditions.append("activity")
             if not state["quiz_passed"] and not chatbot_quick_check_passed:
                 missing_conditions.append("quiz")
-            if (
-                body.get("source") == "chatbot"
-                and not chatbot_quick_check_passed
-            ):
-                completion_error = (
-                    "A correct, verified understanding check is required "
-                    "to complete this objective."
-                )
-            elif chatbot_quick_check_passed:
-                completion_error = (
-                    "Complete the objective activity before completing this objective."
-                )
-            else:
-                completion_error = (
-                    "Complete the objective activity and pass its quiz before "
-                    "completing this objective."
-                )
             return jsonify({
-                "error": completion_error,
+                "error": (
+                    "Complete the objective activity before completing this objective."
+                    if chatbot_quick_check_passed
+                    else "Complete the objective activity and pass its quiz before completing this objective."
+                ),
                 "completed": False,
                 "objective_id": objective_id,
                 "required_item_ids": state["required_item_ids"],
