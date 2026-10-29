@@ -56,6 +56,7 @@ class LearningStore:
         student_id,
         learning_context,
         educational_response,
+        learning_steps=None,
     ):
         """Store the controller decision and generated wording."""
 
@@ -81,6 +82,8 @@ class LearningStore:
             "response": educational_response,
             "timestamp": self._now(),
         }
+        if learning_steps is not None:
+            document["learning_steps"] = learning_steps
 
         if not self.is_available:
             local_id = f"local-{uuid.uuid4()}"
@@ -93,6 +96,29 @@ class LearningStore:
         result = self.interactions.insert_one(document)
 
         return str(result.inserted_id)
+
+    def get_interaction(self, student_id, interaction_id):
+        """Return a student's saved interaction, if it exists."""
+        if not isinstance(interaction_id, str) or not interaction_id:
+            return None
+
+        if not self.is_available:
+            return next(
+                (
+                    interaction
+                    for interaction in self.local_storage["interactions"]
+                    if interaction.get("student_id") == student_id
+                    and interaction.get("_id") == interaction_id
+                ),
+                None,
+            )
+
+        if not ObjectId.is_valid(interaction_id):
+            return None
+        return self.interactions.find_one({
+            "_id": ObjectId(interaction_id),
+            "student_id": student_id,
+        })
 
     def list_interactions(self, student_id, limit=100):
         """Return the authenticated student's most recent interactions."""

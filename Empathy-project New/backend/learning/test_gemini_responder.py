@@ -39,6 +39,7 @@ def response_payload(activity):
                 "content": "Check.",
                 "question_type": "true_false",
                 "question": "Is this useful?",
+                "correct_answer": True,
             },
         ],
     })
@@ -219,6 +220,35 @@ class GeminiResponderTests(unittest.TestCase):
         payload["steps"][3]["question_type"] = "TrueFalse"
         parsed = _parse_response(json.dumps(payload), None)
         self.assertEqual(parsed["steps"][3]["question_type"], "true_false")
+
+    def test_true_false_check_requires_a_boolean_answer_key(self):
+        payload = json.loads(response_payload(None))
+        payload["steps"][3]["correct_answer"] = False
+        parsed = _parse_response(json.dumps(payload), None)
+        self.assertIs(parsed["steps"][3]["correct_answer"], False)
+
+        for invalid_answer in ("true", 1, None):
+            invalid_payload = json.loads(response_payload(None))
+            if invalid_answer is None:
+                del invalid_payload["steps"][3]["correct_answer"]
+            else:
+                invalid_payload["steps"][3]["correct_answer"] = invalid_answer
+            with self.subTest(correct_answer=invalid_answer):
+                with self.assertRaisesRegex(ValueError, "boolean correct_answer"):
+                    _parse_response(json.dumps(invalid_payload), None)
+
+    def test_fallback_true_false_check_has_an_explicit_boolean_answer(self):
+        with_objective = _fallback_response({
+            "learning_objective": {"title": "Notice emotions"},
+            "recommended_activity": None,
+        })
+        without_objective = _fallback_response({
+            "learning_objective": None,
+            "recommended_activity": None,
+        })
+
+        self.assertIs(with_objective["steps"][3]["correct_answer"], True)
+        self.assertIs(without_objective["steps"][3]["correct_answer"], False)
 
     @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.genai.Client")
