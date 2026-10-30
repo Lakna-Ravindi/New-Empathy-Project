@@ -3,6 +3,7 @@ import re
 import sys
 from pathlib import Path
 
+from learning.chatbot_practice import CHATBOT_PRACTICES
 from learning.gemini_responder import generate_educational_response
 from learning.semantic_search import semantic_search
 
@@ -65,7 +66,9 @@ MEANINGFUL_CONCEPTS = {
     "anxiety", "anxious", "anger", "angry", "calm", "compassion",
     "dysregulation", "emotional", "empathy", "forgiveness",
     "grounding", "mindfulness", "regulation", "resilient", "self",
-    "stress", "tracking",
+    "stress", "tracking", "spark", "forest", "fire", "thoughts",
+    "awareness", "attention", "heedfulness", "sensations",
+    "parasympathetic", "suffering", "happiness",
 }
 
 EXPLICIT_CONCEPT_PHRASES = {
@@ -272,12 +275,15 @@ def belongs_to_skill(node, skill_id, nodes_by_id):
 
 
 def _merge_approved_skill_nodes(knowledge_base):
-    """Add objective/content nodes from approved skill definitions when the
-    parsed knowledge base is missing the richer curriculum metadata."""
+    """Keep chatbot retrieval grounded in the extracted SEEK knowledge base."""
     if not isinstance(knowledge_base, list):
         return knowledge_base
 
     formatted = [dict(node) for node in knowledge_base if isinstance(node, dict)]
+    return formatted
+
+    # Legacy authored-content merging is intentionally unreachable. The
+    # extracted PDF is the sole source of SEEK curriculum nodes.
     nodes_by_id = {node.get("id"): node for node in formatted if node.get("id")}
 
     base_dir = Path(__file__).resolve().parents[2]
@@ -431,6 +437,14 @@ def rank_learning_objectives(
         None,
     )
     if chapter:
+        def objective_score(objective):
+            text = f"{objective.get('title', '')} {objective.get('content', '')}"
+            score = score_text(text, query_terms)
+            normalized_text = normalize_text(text)
+            if {"body", "literacy"}.issubset(query_terms) and "body literacy" in normalized_text:
+                score += 25
+            return score
+
         return sorted(
             (
                 {
@@ -445,12 +459,7 @@ def rank_learning_objectives(
                 for objective in chapter.get("objectives", [])
                 if objective.get("objective_id")
             ),
-            key=lambda objective: (
-                -score_text(
-                    f"{objective.get('title', '')} {objective.get('content', '')}",
-                    query_terms,
-                ),
-            ),
+            key=lambda objective: (-objective_score(objective),),
         )
 
     objectives = [
@@ -458,11 +467,55 @@ def rank_learning_objectives(
         if node.get("type") == "learning_objective"
         and belongs_to_skill(node, skill_id, nodes_by_id)
     ]
+    objective_context = {}
+    for node in nodes:
+        objective_id = node.get("objective_id")
+        if objective_id:
+            objective_context.setdefault(objective_id, []).append(
+                f"{node.get('title', '')} {node.get('content', '')}"
+            )
 
     return sorted(
         objectives,
         key=lambda node: (
-            -score_text(f"{node.get('title', '')} {node.get('content', '')}", query_terms),
+            -(
+                score_text(
+                    " ".join(
+                        [
+                            f"{node.get('title', '')} {node.get('content', '')}",
+                            *objective_context.get(node.get("objective_id"), []),
+                        ]
+                    ),
+                    query_terms,
+                )
+                + 10 * len(
+                    query_terms.intersection(
+                        {"spark", "forest", "fire", "heedfulness"}
+                    )
+                    & set(
+                        get_terms(
+                            " ".join(objective_context.get(node.get("objective_id"), []))
+                        )
+                    )
+                )
+                + (
+                    25
+                    if (
+                        {"body", "literacy"}.issubset(query_terms)
+                        and "body literacy" in normalize_text(
+                            " ".join(
+                                [
+                                    f"{node.get('title', '')} {node.get('content', '')}",
+                                    *objective_context.get(
+                                        node.get("objective_id"), []
+                                    ),
+                                ]
+                            )
+                        )
+                    )
+                    else 0
+                )
+            ),
             node.get("id", ""),
         ),
     )
@@ -523,6 +576,7 @@ def rank_learning_activities(
             "title": item.get("title") or item.get("question"),
             "content": item.get("content") or item.get("instructions") or item.get("question"),
             "page": item.get("page"),
+            "interaction_type": item.get("interaction_type"),
         })
 
     activities = (
@@ -542,7 +596,7 @@ def rank_learning_activities(
 def node_summary(node):
     if not node:
         return None
-    return {
+    summary = {
         "id": node.get("id") if node else None,
         "skill_id": node.get("skill_id") if node else None,
         "objective_id": node.get("objective_id") if node else None,
@@ -551,9 +605,18 @@ def node_summary(node):
         "content": node.get("content") if node else None,
         "page": node.get("page") if node else None,
     }
+    if node.get("interaction_type"):
+        summary["interaction_type"] = node["interaction_type"]
+    return summary
 
 
-def rank_question_relevant_content(skill_id, nodes, nodes_by_id, query_terms, preferred_objective_id=None):
+def rank_question_relevant_content(
+    skill_id,
+    nodes,
+    nodes_by_id,
+    query_terms,
+    preferred_objective_id=None,
+):
     """Return the highest-scoring approved content nodes for a skill."""
     relevant_content = []
     query_lower = " ".join(query_terms).casefold()
@@ -561,6 +624,10 @@ def rank_question_relevant_content(skill_id, nodes, nodes_by_id, query_terms, pr
         if (
             node.get("type") != "content"
             or not belongs_to_skill(node, skill_id, nodes_by_id)
+            or (
+                preferred_objective_id
+                and node.get("objective_id") != preferred_objective_id
+            )
         ):
             continue
 
@@ -864,7 +931,14 @@ def process_student_question(
         or (primary.get("learning_objective") or {}).get("id"),
     )
 
-    if not question_relevant_content and not has_mapping_records:
+    if (
+        not question_relevant_content
+        and not has_mapping_records
+        and not (
+            (primary.get("learning_objective") or {}).get("objective_id")
+            or (primary.get("learning_objective") or {}).get("id")
+        )
+    ):
         semantic_results = semantic_search(question, knowledge_base, limit=QUESTION_RELEVANT_CONTENT_LIMIT, skill_id=primary["skill"]["id"])
         if semantic_results:
             question_relevant_content = [
@@ -1115,6 +1189,18 @@ def answer_student_question(
         learning_context["suggested_questions"] = []
         return learning_context
 
+    objective = learning_context.get("learning_objective") or {}
+    objective_id = objective.get("objective_id") or objective.get("id")
+    chatbot_practice = CHATBOT_PRACTICES.get(objective_id)
+    if chatbot_practice and not learning_context.get("recommended_activity"):
+        skill = learning_context.get("skill") or {}
+        learning_context["recommended_activity"] = {
+            **chatbot_practice,
+            "id": chatbot_practice["item_id"],
+            "skill_id": skill.get("id") or skill.get("skill_id"),
+            "objective_id": objective_id,
+        }
+
     suggestion_target = _suggestion_target_for_progress(
         learning_context,
         knowledge_base,
@@ -1123,16 +1209,6 @@ def answer_student_question(
     )
     responder_context = learning_context
     if suggestion_target:
-        learning_context["skill"] = suggestion_target["skill"]
-        learning_context["learning_objective"] = suggestion_target[
-            "learning_objective"
-        ]
-        learning_context["recommended_activity"] = suggestion_target[
-            "recommended_activity"
-        ]
-        learning_context["question_relevant_content"] = suggestion_target[
-            "question_relevant_content"
-        ]
         responder_context = {
             **learning_context,
             "suggestion_learning_objective": suggestion_target[

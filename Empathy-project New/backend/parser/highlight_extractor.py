@@ -1,6 +1,17 @@
 from pathlib import Path
 import re
-import fitz
+
+
+def _load_fitz():
+    try:
+        import fitz
+    except (ImportError, OSError) as exc:
+        raise RuntimeError(
+            "PDF highlight extraction requires PyMuPDF, but its native "
+            "_mupdf DLL could not be loaded. Repair the Windows Application "
+            "Control policy/PyMuPDF installation before rebuilding."
+        ) from exc
+    return fitz
 
 STOP_WORDS = {
     "a", "an", "and", "are", "as", "at", "be", "by", "for", "from",
@@ -17,6 +28,7 @@ GENERIC_CONCEPT_WORDS = {
 
 def _highlight_rectangles(annotation):
     """Convert a highlight annotation's quadrilaterals into rectangles."""
+    fitz = _load_fitz()
     vertices = annotation.vertices
     rectangles = []
 
@@ -33,6 +45,7 @@ def extract_highlighted_keywords(pdf_path: str | Path) -> list[dict]:
 
     Returns page number, keyword text, and its bounding position.
     """
+    fitz = _load_fitz()
     pdf_path = Path(pdf_path)
     keywords = []
 

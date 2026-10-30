@@ -17,7 +17,8 @@ SYSTEM_INSTRUCTION = """
 You are the language-response component of an educational empathy application.
 
 The Pedagogical Controller has already selected the approved empathy skill,
-learning objective, and activity. Treat this structured context as authoritative.
+learning objective, and activity or registered chatbot-practice scaffold. Treat
+this structured context as authoritative.
 The question_relevant_content field contains authoritative approved SEEK content
 chunks selected for the student's question. Prioritize those chunks when
 answering, but do not invent curriculum facts or attribute unsupported details
@@ -55,17 +56,22 @@ stage focused, concise, and appropriate to the student's latest message:
    the relevant approved SEEK concept in simple, natural language. Connect it
    to the student's situation with a practical example when useful.
 3. Guided activity: Introduce only the activity selected by the controller.
-   Use its supplied approved instructions only. Give the student just the first
-   actionable step, then invite them to try it or describe what they notice.
-   Wait for their response before giving another step. If no activity was
-   selected, say so without inventing an alternative or instructions.
+   For a registered chatbot-practice scaffold, create one short, optional
+   student-facing scenario or reflection prompt grounded in the supplied
+   approved SEEK content. Do not claim that chatbot-created practice came from
+   the PDF. Match the interaction to activity.interaction_type: practical
+   activities give an exercise and ask for a completion confirmation;
+   reflective activities ask the student to type a brief reflection; combined
+   activities give an exercise, ask for a brief reflection, and require the
+   student to confirm completing the exercise. For a PDF activity, use its
+   supplied instructions. If no activity was selected, say so without
+   inventing an alternative.
 4. Understanding check: Only after the student has had an opportunity to
    understand and practise the concept, ask one relevant, simple question.
-   Use a natural True/False question for the current button-based check. A
-   short-answer question is appropriate only when the interface explicitly
-   supports a short written answer. Include the correct answer as a JSON boolean
-   in "correct_answer", separate from the question text. Do not put the answer
-   in the question itself. Do not ask whether the learning objective is relevant.
+   Use either a True/False check or a multiple-choice check. For multiple
+   choice, include three or four concise options and return the correct option
+   text separately in "correct_answer". Do not put the answer in the question
+   itself. Do not ask whether the learning objective is relevant.
 
 Conversation rules:
 - Treat the student's latest message as the immediate priority and respond to
@@ -78,7 +84,8 @@ Conversation rules:
   paragraphs, unnecessary headings, and "The approved SEEK content says".
 - Use only information supported by the supplied approved SEEK content for
   curriculum explanations. Do not select a different skill, objective,
-  activity, or learning path.
+  activity, or learning path. A registered chatbot-practice scaffold may be
+  phrased as a new short exercise, but must not be described as PDF content.
 
 IMPORTANT JSON RULES:
 
@@ -92,6 +99,9 @@ Return the four stage fields in the structured payload so the frontend can
 reveal them one at a time. A stage field is not permission to present that
 stage early in the visible conversation. The response must contain a non-empty
 "answer" and exactly four ordered steps.
+When an activity is selected, copy its id, title, type, and interaction_type
+exactly into the step 3 activity object. Do not invent or alter activity
+metadata. Use null only when the controller supplied no activity.
 Include 3 or 4 short, natural, non-empty suggested questions when the supplied
 approved content supports them. Do not suggest unrelated counselling,
 medical, or crisis questions.
@@ -104,7 +114,7 @@ Return valid JSON only, in exactly this shape:
      {"step": 1, "type": "direct_answer", "content": "..."},
      {"step": 2, "type": "learning_objective", "content": "..."},
      {"step": 3, "type": "activity", "content": "...", "activity": null},
-     {"step": 4, "type": "practice_check", "content": "...", "question_type": "true_false", "question": "...", "correct_answer": true}
+     {"step": 4, "type": "practice_check", "content": "...", "question_type": "multiple_choice", "question": "...", "options": ["...", "...", "..."], "correct_answer": "..."}
   ]
 }
 
@@ -227,10 +237,10 @@ def _parse_response(
     if selected_activity:
         if not isinstance(activity, dict):
             raise ValueError("The selected activity must include activity metadata.")
-        for field in ("id", "title", "type"):
+        for field in ("id", "title", "type", "interaction_type"):
             if not isinstance(activity.get(field), str) or not activity[field].strip():
                 raise ValueError(f"Activity metadata '{field}' is missing.")
-        for field in ("id", "title", "type"):
+        for field in ("id", "title", "type", "interaction_type"):
             if activity[field] != selected_activity.get(field):
                 raise ValueError(
                     f"Gemini activity metadata '{field}' does not match "
@@ -247,11 +257,12 @@ def _parse_response(
     normalized_question_type = re.sub(r"\s+|[-_]", "_", question_type)
     normalized_question_type = normalized_question_type.replace("yesno", "yes_no")
     normalized_question_type = normalized_question_type.replace("truefalse", "true_false")
-    if normalized_question_type in {"true_false", "yes_no"}:
+    if normalized_question_type in {"true_false", "yes_no", "multiple_choice"}:
         practice_step["question_type"] = normalized_question_type
     else:
         raise ValueError(
-            "The final Gemini step must be a Yes/No or True/False check."
+            "The final Gemini step must be a Yes/No, True/False, or "
+            "multiple-choice check."
         )
     if (
         not isinstance(practice_step.get("question"), str)
@@ -259,9 +270,29 @@ def _parse_response(
     ):
         raise ValueError("The final Gemini step must contain a question.")
 
-    if not isinstance(practice_step.get("correct_answer"), bool):
+    correct_answer = practice_step.get("correct_answer")
+    if normalized_question_type == "multiple_choice":
+        options = practice_step.get("options")
+        if (
+            not isinstance(options, list)
+            or not 3 <= len(options) <= 4
+            or any(not isinstance(option, str) or not option.strip() for option in options)
+            or len({option.strip().casefold() for option in options}) != len(options)
+            or not isinstance(correct_answer, str)
+            or not correct_answer.strip()
+            or correct_answer.strip().casefold()
+            not in {option.strip().casefold() for option in options}
+        ):
+            raise ValueError(
+                "A multiple-choice check must contain three or four distinct "
+                "options and a correct answer matching one option."
+            )
+        practice_step["options"] = [option.strip() for option in options]
+        practice_step["correct_answer"] = correct_answer.strip()
+    elif not isinstance(correct_answer, bool):
         raise ValueError(
-            "The final Gemini step must contain a boolean correct_answer."
+            "The final True/False or Yes/No step must contain a boolean "
+            "correct_answer."
         )
 
     return {
@@ -279,7 +310,15 @@ def _valid_activity_metadata(activity):
     if not all(isinstance(activity.get(field), str) and activity[field].strip()
                for field in fields):
         return None
-    return {field: activity[field] for field in fields}
+    interaction_type = activity.get("interaction_type")
+    if interaction_type not in {"practical", "reflective", "combined"}:
+        interaction_type = (
+            "reflective" if activity.get("type") == "reflection" else "practical"
+        )
+    return {
+        **{field: activity[field] for field in fields},
+        "interaction_type": interaction_type,
+    }
 
 
 def _mentions_urgent_physical_symptom(question: str) -> bool:
@@ -319,14 +358,8 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
     for item in relevant_content:
         if not isinstance(item, dict):
             continue
-        topic = re.sub(
-            r"\s+",
-            " ",
-            str(item.get("title") or item.get("content") or "").strip(),
-        )
+        topic = re.sub(r"\s+", " ", str(item.get("title") or "").strip())
         if topic and topic.casefold() not in {value.casefold() for value in topics}:
-            if len(topic) > 64:
-                topic = " ".join(topic.split()[:9]).rstrip(".,;:")
             topics.append(topic)
         if len(topics) == 2:
             break
@@ -359,14 +392,37 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
     return unique_questions[:4]
 
 
+def _response_uses_other_objective(response: dict, learning_context: dict) -> bool:
+    """Reject model output that explicitly switches to another selected objective."""
+    selected_objective = (
+        learning_context.get("learning_objective")
+        or {}
+    )
+    selected_id = (
+        selected_objective.get("objective_id")
+        or selected_objective.get("id")
+    )
+    other_titles = set()
+    for recommendation in learning_context.get("matched_skills", []):
+        objective = recommendation.get("learning_objective") or {}
+        objective_id = objective.get("objective_id") or objective.get("id")
+        title = objective.get("title")
+        if (
+            objective_id
+            and objective_id != selected_id
+            and isinstance(title, str)
+            and title.strip()
+        ):
+            other_titles.add(title.strip().casefold())
+
+    response_text = json.dumps(response, ensure_ascii=False).casefold()
+    return any(title in response_text for title in other_titles)
+
+
 def _fallback_response(learning_context: dict, answer_style: str = "short") -> dict:
     """Return a grounded response when Gemini is temporarily unavailable."""
 
-    objective = (
-        learning_context.get("suggestion_learning_objective")
-        or learning_context.get("learning_objective")
-        or {}
-    )
+    objective = learning_context.get("learning_objective") or {}
     activity = _valid_activity_metadata(
         learning_context.get("recommended_activity")
     )
@@ -407,13 +463,23 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             "to guide you reliably yet. What part would you most like help with?"
         )
 
-    activity_content = (
-        f"The approved activity “{activity['title']}” was selected, but its "
-        "instructions are not available here, so I can't guide you through a "
-        "step without inventing one."
-        if activity
-        else "No approved activity was selected for this response."
-    )
+    selected_activity = learning_context.get("recommended_activity") or {}
+    if activity and selected_activity.get("source") == "chatbot_generated":
+        activity_content = (
+            "Imagine you are getting ready for an exam and notice your "
+            "shoulders feel tense. Name the body sensation, then consider "
+            "which feeling it might help you notice. You can use this example "
+            "instead of sharing a personal experience."
+        )
+    elif activity:
+        activity_content = str(selected_activity.get("content") or "").strip()
+        if not activity_content:
+            activity_content = (
+                f"The activity “{activity['title']}” was selected, but its "
+                "instructions are not available here."
+            )
+    else:
+        activity_content = "No activity was selected for this response."
 
     if objective_content:
         objective_step_content = str(objective_content).strip()
@@ -491,6 +557,14 @@ def generate_educational_response(
         return _fallback_response(learning_context, answer_style)
 
     model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    selected_activity = learning_context.get("recommended_activity")
+    if isinstance(selected_activity, dict):
+        selected_activity = dict(selected_activity)
+        activity_metadata = _valid_activity_metadata(selected_activity)
+        if activity_metadata:
+            selected_activity["interaction_type"] = activity_metadata[
+                "interaction_type"
+            ]
     style_instructions = {
         "short": (
             "Use concise, direct language for the current stage. Do not combine "
@@ -510,7 +584,7 @@ def generate_educational_response(
         "selected_skill": learning_context["skill"],
         "selected_topic": learning_context.get("topic"),
         "selected_learning_objective": learning_context.get("learning_objective"),
-        "selected_activity": learning_context.get("recommended_activity"),
+        "selected_activity": selected_activity,
         "question_relevant_content": question_relevant_content,
         "suggestion_learning_objective": learning_context.get(
             "suggestion_learning_objective",
@@ -555,11 +629,16 @@ def generate_educational_response(
             if not response.text:
                 raise ValueError("Gemini returned an empty response.")
 
-            return _parse_response(
+            parsed_response = _parse_response(
                 response.text,
                 learning_context.get("recommended_activity"),
                 allow_empty_suggestions=allow_empty_suggestions,
             )
+            if _response_uses_other_objective(parsed_response, learning_context):
+                raise ValueError(
+                    "Gemini response referenced an objective other than the selected objective."
+                )
+            return parsed_response
 
         except ServerError as e:
             print(f"Gemini service error - attempt {attempt + 1}/3.")

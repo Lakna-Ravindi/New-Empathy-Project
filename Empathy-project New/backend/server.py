@@ -213,7 +213,7 @@ def attach_progress_item_id(learning_context):
             (
                 item
                 for item in (objective or {}).get("items", [])
-                if item.get("type") == "activity"
+                if str(item.get("type") or "").lower() in {"activity", "practice"}
             ),
             None,
         )
@@ -1427,7 +1427,7 @@ def complete_objective(objective_id):
         chatbot_quick_check_passed = False
         if (
             body.get("source") == "chatbot"
-            and isinstance(body.get("quick_check_answer"), bool)
+            and isinstance(body.get("quick_check_answer"), (bool, str))
         ):
             interaction = learning_store.get_interaction(
                 student_id,
@@ -1459,11 +1459,17 @@ def complete_objective(objective_id):
                 or interaction_objective.get("objective_id")
             )
             correct_answer = practice_check.get("correct_answer")
+            submitted_answer = body.get("quick_check_answer")
+            if isinstance(correct_answer, bool) and isinstance(submitted_answer, bool):
+                answer_matches = submitted_answer is correct_answer
+            elif isinstance(correct_answer, str) and isinstance(submitted_answer, str):
+                answer_matches = submitted_answer.strip().casefold() == correct_answer.strip().casefold()
+            else:
+                answer_matches = False
             chatbot_quick_check_passed = (
                 interaction_skill_id == skill_id
                 and interaction_objective_id == objective_id
-                and isinstance(correct_answer, bool)
-                and body["quick_check_answer"] is correct_answer
+                and answer_matches
             )
         can_complete = state["completed"] or (
             chatbot_quick_check_passed and state["activity_completed"]

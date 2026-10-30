@@ -29,21 +29,21 @@ class ObjectiveMapperTests(unittest.TestCase):
             {"id": "chapter", "type": "chapter", "title": "Skill 1: Calming the Body and Mind", "content": "", "parent_id": None},
             {"id": "heading-1", "type": "learning_objective", "title": "Objective 1: Name body sensations", "content": "", "parent_id": "chapter"},
             {"id": "body", "type": "content", "title": "Sensation vocabulary", "content": "Name physical sensations.", "parent_id": "heading-1"},
-            {"id": "heading-3", "type": "learning_objective", "title": "Objective 3: Define the resilient zone", "content": "", "parent_id": "chapter"},
-            {"id": "zone", "type": "content", "title": "Resilient zone", "content": "Recognize hyper-arousal and hypo-arousal.", "parent_id": "heading-3"},
-            {"id": "heading-6", "type": "learning_objective", "title": "Objective 6: Apply tools", "content": "", "parent_id": "chapter"},
-            {"id": "tracking", "type": "content", "title": "Tracking definition", "content": "Tracking observes sensations.", "parent_id": "heading-6"},
-            {"id": "grounding", "type": "content", "title": "Grounding activity", "content": "Notice contact with the floor.", "parent_id": "heading-6"},
-            {"id": "resourcing", "type": "content", "title": "Resource benefits", "content": "Build a supportive resource.", "parent_id": "heading-6"},
+            {"id": "heading-2", "type": "learning_objective", "title": "Objective 2: Define the resilient zone", "content": "", "parent_id": "chapter"},
+            {"id": "zone", "type": "content", "title": "Resilient zone", "content": "Recognize hyper-arousal and hypo-arousal.", "parent_id": "heading-2"},
+            {"id": "heading-4", "type": "learning_objective", "title": "Objective 4: Apply tools", "content": "", "parent_id": "chapter"},
+            {"id": "tracking", "type": "content", "title": "Tracking definition", "content": "Tracking observes sensations.", "parent_id": "heading-4"},
+            {"id": "grounding", "type": "content", "title": "Grounding activity", "content": "Notice contact with the floor.", "parent_id": "heading-4"},
+            {"id": "resourcing", "type": "content", "title": "Resource benefits", "content": "Build a supportive resource.", "parent_id": "heading-4"},
         ]
 
         mapped, _ = map_nodes_to_objectives(nodes, SKILLS)
 
         by_id = {node["id"]: node for node in mapped}
         self.assertEqual(by_id["body"]["objective_id"], "obj_01_01")
-        self.assertEqual(by_id["zone"]["objective_id"], "obj_01_02")
+        self.assertEqual(by_id["zone"]["objective_id"], "obj_01_05")
         for node_id in ("tracking", "grounding", "resourcing"):
-            self.assertEqual(by_id[node_id]["objective_id"], "obj_01_04")
+            self.assertEqual(by_id[node_id]["objective_id"], "obj_01_06")
 
     def test_unknown_skill_one_content_remains_review_or_unassigned(self):
         nodes = [
@@ -55,4 +55,3 @@ class ObjectiveMapperTests(unittest.TestCase):
 
         self.assertIn(mapped[1]["match_status"], {"review", "unassigned"})
         self.assertIsNone(mapped[1]["objective_id"])
-

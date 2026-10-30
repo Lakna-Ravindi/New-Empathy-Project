@@ -104,25 +104,22 @@ def _best_objective(
 
 
 def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
-    """Return a progress blueprint without changing the knowledge-base nodes."""
+    """Build progress data from the source-numbered SEEK objectives."""
     node_list = list(nodes)
     nodes_by_id = {node["id"]: node for node in node_list if node.get("id")}
     chapters = [node for node in node_list if node.get("type") == "chapter"]
     actionable = [node for node in node_list if node.get("type") in ACTIONABLE_TYPES]
 
     structure: list[dict[str, Any]] = []
-    chapter_by_id: dict[str, dict[str, Any]] = {}
-
     for chapter in chapters:
         chapter_entry = {
-            "chapter_id": chapter["id"],
+            "chapter_id": chapter.get("skill_id") or chapter["id"],
             "title": chapter.get("title", ""),
             "page": chapter.get("page"),
             "objectives": [],
             "unassigned_items": [],
         }
         structure.append(chapter_entry)
-        chapter_by_id[chapter["id"]] = chapter_entry
 
         objectives = [
             node
@@ -131,21 +128,70 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
             and _chapter_for(node, nodes_by_id)
             and _chapter_for(node, nodes_by_id).get("id") == chapter["id"]
         ]
+        seen_objectives: set[str] = set()
         for objective in objectives:
+            objective_id = objective.get("objective_id")
+            if not objective_id or objective_id in seen_objectives:
+                continue
+            seen_objectives.add(objective_id)
+            items = []
+            for item in actionable:
+                if item.get("objective_id") != objective_id:
+                    continue
+                items.append({
+                    "item_id": item["id"],
+                    "type": item.get("type"),
+                    "interaction_type": item.get("interaction_type"),
+                    "title": item.get("title", ""),
+                    "content": item.get("content", ""),
+                    "page": item.get("page"),
+                    "source": item.get("source"),
+                })
+            source_context = [
+                f"{item.get('title', '')} {item.get('content', '')}"
+                for item in node_list
+                if item.get("objective_id") == objective_id
+            ]
             chapter_entry["objectives"].append(
                 {
-                    "objective_id": objective["id"],
+                    "objective_id": objective_id,
                     "title": objective.get("title", ""),
-                    "content": objective.get("content", ""),
+                    "content": " ".join(
+                        [
+                            objective.get("content", ""),
+                            *(item.get("content", "") for item in items),
+                            *source_context,
+                        ]
+                    ).strip(),
                     "page": objective.get("page"),
-                    "items": [],
+                    "items": items,
+                    "required_item_ids": [item["item_id"] for item in items],
                 }
             )
 
-    objective_entries = {
-        objective["objective_id"]: objective
+    item_types = sorted({
+        item.get("type")
         for chapter in structure
         for objective in chapter["objectives"]
+        for item in objective["items"]
+        if item.get("type")
+    })
+    return {
+        "version": 3,
+        "source": "output/knowledge_base.json",
+        "item_types": item_types,
+        "chapters": structure,
+        "summary": {
+            "chapter_count": len(structure),
+            "objective_count": sum(
+                len(chapter["objectives"]) for chapter in structure
+            ),
+            "actionable_item_count": sum(
+                len(objective["items"])
+                for chapter in structure
+                for objective in chapter["objectives"]
+            ),
+        },
     }
 
 

@@ -1,6 +1,17 @@
 from pathlib import Path
 
-import fitz
+
+def _load_fitz():
+    try:
+        import fitz
+    except (ImportError, OSError) as exc:
+        raise RuntimeError(
+            "PDF extraction requires PyMuPDF, but its native _mupdf DLL "
+            "could not be loaded. Run the API from server.py to use the "
+            "existing knowledge base, or repair the Windows Application "
+            "Control policy/PyMuPDF installation before rebuilding it."
+        ) from exc
+    return fitz
 
 
 def extract_blocks(pdf_path):
@@ -12,6 +23,7 @@ def extract_blocks(pdf_path):
     contains an objectives or activity list.
     """
     pdf_path = Path(pdf_path)
+    fitz = _load_fitz()
 
     blocks = []
 

@@ -15,16 +15,6 @@ STOP_WORDS = {
 }
 
 NON_CONTENT_TYPES = {"chapter", "module", "topic", "objective_heading"}
-SKILL_01_OBJECTIVE_MAP = {
-    1: "obj_01_01",
-    2: "obj_01_01",
-    3: "obj_01_02",
-    4: "obj_01_02",
-    5: "obj_01_03",
-    6: "obj_01_04",
-}
-
-
 def _tokens(value: str) -> set[str]:
     return {
         token
@@ -90,6 +80,32 @@ def _is_explicit_pdf_objective(node):
     return bool(re.search(r"\bobjective\s+\d+\b", text, re.IGNORECASE))
 
 
+def _objective_id_for_number(skill_id: str | None, number: int | None) -> str | None:
+    canonical = {
+        "skill_01": {1: "obj_01_01", 2: "obj_01_05", 3: "obj_01_02",
+                     4: "obj_01_06", 5: "obj_01_03", 6: "obj_01_04"},
+        "skill_02": {1: "obj_02_01", 2: "obj_02_02", 3: "obj_02_03",
+                     4: "obj_02_04", 5: "obj_02_05"},
+        "skill_03": {1: "obj_03_01", 2: "obj_03_05", 3: "obj_03_06",
+                     4: "obj_03_02", 5: "obj_03_03", 6: "obj_03_04"},
+        "skill_04": {1: "obj_04_01", 2: "obj_04_02", 3: "obj_04_05",
+                     4: "obj_04_06", 5: "obj_04_07", 6: "obj_04_03",
+                     7: "obj_04_04"},
+    }
+    return canonical.get(skill_id, {}).get(number)
+
+
+def _nearest_objective(node, nodes_by_id):
+    current = node
+    visited = set()
+    while current and current.get("id") not in visited:
+        visited.add(current.get("id"))
+        if current.get("type") == "learning_objective":
+            return current
+        current = nodes_by_id.get(current.get("parent_id"))
+    return None
+
+
 def _score(node, objective):
     node_tokens = _tokens(_node_text(node))
     title_tokens = _tokens(objective.get("objective_title", ""))
@@ -109,28 +125,28 @@ def map_nodes_to_objectives(nodes, content_skills):
         for objective in objectives
         if objective.get("objective_id")
     }
-    current_skill_01_objective = None
-
     for node in nodes:
         node["skill_id"] = None
         node["objective_id"] = None
         node["match_status"] = "unassigned"
 
-        if node.get("type") in NON_CONTENT_TYPES:
+        skill_id = _skill_id_for_node(node, nodes_by_id, skills)
+
+        if node.get("type") == "chapter":
+            node["skill_id"] = skill_id
             node["match_status"] = "not_applicable"
             continue
 
-        skill_id = _skill_id_for_node(node, nodes_by_id, skills)
+        if node.get("type") in NON_CONTENT_TYPES:
+            node["skill_id"] = skill_id
+            node["match_status"] = "not_applicable"
+            continue
 
-        if skill_id == "skill_01" and node.get("type") == "learning_objective":
+        if node.get("type") == "learning_objective":
             heading_number = _pdf_objective_number(node)
-            target_id = SKILL_01_OBJECTIVE_MAP.get(heading_number)
-            target = objectives_by_id.get(target_id)
-
-            if target and target.get("skill_id") == "skill_01":
-                if _is_explicit_pdf_objective(node):
-                    current_skill_01_objective = target_id
-                node["skill_id"] = "skill_01"
+            target_id = _objective_id_for_number(skill_id, heading_number)
+            if target_id:
+                node["skill_id"] = skill_id
                 node["objective_id"] = target_id
                 node["match_status"] = "matched"
             else:
@@ -138,37 +154,20 @@ def map_nodes_to_objectives(nodes, content_skills):
                 node["match_status"] = "review"
             continue
 
-        if (
-            skill_id == "skill_01"
-            and current_skill_01_objective
-            and node.get("type") not in NON_CONTENT_TYPES
-        ):
-            node["skill_id"] = "skill_01"
-            node["objective_id"] = current_skill_01_objective
-            node["match_status"] = "matched"
-            continue
+        parent_objective = _nearest_objective(node, nodes_by_id)
+        if parent_objective:
+            parent_skill = _skill_id_for_node(parent_objective, nodes_by_id, skills)
+            objective_number = _pdf_objective_number(parent_objective)
+            objective_id = _objective_id_for_number(parent_skill, objective_number)
+            if objective_id:
+                node["skill_id"] = parent_skill
+                node["objective_id"] = objective_id
+                node["match_status"] = "matched"
+                continue
 
-        candidates = [
-            objective for objective in objectives
-            if not skill_id or objective.get("skill_id") == skill_id
-        ]
-        scored = sorted(
-            ((_score(node, objective), objective) for objective in candidates),
-            key=lambda entry: (entry[0][0], entry[0][1], entry[1].get("objective_id", "")),
-            reverse=True,
-        )
-        if not scored:
-            continue
-
-        best_score, best = scored[0]
-        second_score = scored[1][0] if len(scored) > 1 else (0, 0, 0)
-        score, title_overlap, _ = best_score
-        node["skill_id"] = skill_id or best.get("skill_id")
-        if score >= 3 and title_overlap >= 1 and score > second_score[0]:
-            node["objective_id"] = best.get("objective_id")
-            node["skill_id"] = best.get("skill_id")
-            node["match_status"] = "matched"
-        elif score > 0:
+        if skill_id:
+            node["skill_id"] = skill_id
             node["match_status"] = "review"
+            continue
 
     return nodes, objectives_by_id

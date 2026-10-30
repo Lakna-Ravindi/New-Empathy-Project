@@ -2,6 +2,7 @@
 from pathlib import Path
 import json
 import re
+import sys
 from collections import Counter
 
 from classifier.rule_classifier import classify
@@ -11,7 +12,7 @@ from parser.highlight_extractor import (
     extract_highlighted_keywords,
 )
 from knowledge.objective_mapper import map_nodes_to_objectives
-from knowledge.progress_builder import build_content_progress_structure
+from knowledge.progress_builder import build_progress_structure
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -663,6 +664,18 @@ KEYWORDS_OUTPUT_PATH = BASE_DIR / "output" / "highlighted_keywords.json"
 
 if __name__ == "__main__":
 
+    try:
+        import fitz  # noqa: F401
+    except (ImportError, OSError) as exc:
+        print(
+            "Cannot rebuild the PDF-derived knowledge base because PyMuPDF "
+            "could not load its native _mupdf DLL."
+        )
+        print(
+            "The existing knowledge base is already available. Start the "
+            "API with: .\\venv\\Scripts\\python.exe server.py"
+        )
+        sys.exit(1)
 
     knowledge_base = build_knowledge_base()
 
@@ -766,7 +779,7 @@ if __name__ == "__main__":
     with open(REPORT_PATH, "w", encoding="utf-8") as file:
         json.dump(report, file, indent=4, ensure_ascii=False)
 
-    progress_structure = build_content_progress_structure(content_skills)
+    progress_structure = build_progress_structure(knowledge_base)
     with open(
         PROGRESS_STRUCTURE_PATH,
         "w",

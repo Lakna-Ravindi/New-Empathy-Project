@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+from learning.chatbot_practice import CHATBOT_PRACTICES
+
 
 class ProgressService:
     """Build objective, skill, and overall progress summaries."""
@@ -12,16 +14,36 @@ class ProgressService:
     def __init__(self, structure_path=None, structure=None):
         if structure is not None:
             self.structure = structure
-            return
+        else:
+            path = Path(
+                structure_path
+                or Path(__file__).resolve().parents[2]
+                / "output"
+                / "progress_structure.json"
+            )
+            with path.open("r", encoding="utf-8") as file:
+                self.structure = json.load(file)
+        self._add_chatbot_practice_items()
 
-        path = Path(
-            structure_path
-            or Path(__file__).resolve().parents[2]
-            / "output"
-            / "progress_structure.json"
-        )
-        with path.open("r", encoding="utf-8") as file:
-            self.structure = json.load(file)
+    def _add_chatbot_practice_items(self):
+        """Register chatbot-created practices as trackable objective items."""
+        for chapter in self.structure.get("chapters", []):
+            for objective in chapter.get("objectives", []):
+                practice = CHATBOT_PRACTICES.get(objective.get("objective_id"))
+                if not practice:
+                    continue
+                items = objective.setdefault("items", [])
+                if any(item.get("item_id") == practice["item_id"] for item in items):
+                    continue
+                items.append({
+                    **practice,
+                    "item_id": practice["item_id"],
+                    "skill_id": chapter.get("chapter_id"),
+                    "objective_id": objective.get("objective_id"),
+                })
+                required_ids = objective.setdefault("required_item_ids", [])
+                if practice["item_id"] not in required_ids:
+                    required_ids.append(practice["item_id"])
 
     def get_structure(self):
         return self.structure
@@ -58,7 +80,7 @@ class ProgressService:
             if not item_id:
                 continue
             item_type = str(item.get("type") or "").lower()
-            if item_type in {"activity", "practice"}:
+            if item_type in {"activity", "practice", "reflection"}:
                 activity_item_ids.append(item_id)
             elif item_type in {"quiz", "assessment"}:
                 passing_score = item.get("passing_score")
