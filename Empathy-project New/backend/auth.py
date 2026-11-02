@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+from pathlib import Path
 
 import secrets
 import bcrypt
@@ -14,7 +15,7 @@ from pymongo.errors import DuplicateKeyError, PyMongoError
 
 
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
