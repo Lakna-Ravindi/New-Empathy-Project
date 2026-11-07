@@ -15,9 +15,9 @@ from pymongo.errors import DuplicateKeyError, PyMongoError
 from dotenv import load_dotenv
 from mongo_config import MONGODB_DATABASE, MONGODB_URI
 
-# Authentication can be imported without server.py, so load the backend
-# configuration before reading JWT settings.
-load_dotenv(Path(__file__).resolve().parent / ".env")
+
+
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
