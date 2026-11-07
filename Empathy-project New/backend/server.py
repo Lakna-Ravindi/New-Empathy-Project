@@ -47,16 +47,28 @@ def is_greeting(text: str) -> bool:
 
 app = Flask(__name__)
 
+load_dotenv(Path(__file__).resolve().parent / ".env")
+CORS_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if origin.strip()
+]
+
 CORS(
     app,
-    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    resources={r"/api/*": {"origins": CORS_ORIGINS}},
     allow_headers=["Content-Type", "Authorization"],
 )
 
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    request_origin = request.headers.get("Origin")
+    if request_origin in CORS_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = request_origin
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
@@ -247,7 +259,10 @@ def attach_progress_item_id(learning_context):
         if item.get("item_id") and (
             not activity_type
             or activity_type not in known_item_types
-            or item.get("type") == activity_type
+            or type_aliases.get(
+                str(item.get("type") or "").lower(),
+                str(item.get("type") or "").lower(),
+            ) == activity_type
         )
     ]
     if not candidates:
@@ -749,7 +764,7 @@ def logout():
 def public_user(student):
     user = {
         "id": str(student["_id"]),
-        "name": student["name"],
+        "name": student.get("name"),
         "username": student["username"],
         "email": student["email"],
         "role": student.get("role", "student"),
@@ -1550,6 +1565,7 @@ def complete_objective(objective_id):
 # ---------------------------------------------------
 
 @app.post("/api/interactions/<interaction_id>/evaluation")
+@require_role("admin")
 def evaluate_interaction(interaction_id):
     body = request.get_json(silent=True) or {}
 
@@ -1567,7 +1583,7 @@ def evaluate_interaction(interaction_id):
     try:
         evaluation_id = learning_store.save_evaluation(
             interaction_id,
-            (body.get("reviewer_id") or "unassigned").strip(),
+            g.current_user.get("username") or str(g.current_user["_id"]),
             body,
         )
 
@@ -1587,6 +1603,7 @@ def evaluate_interaction(interaction_id):
 
 
 @app.get("/api/evaluations/summary")
+@require_role("admin")
 def evaluation_summary():
     try:
         return jsonify(learning_store.evaluation_summary()), 200

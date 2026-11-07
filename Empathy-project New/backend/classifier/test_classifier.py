@@ -1,4 +1,4 @@
-from rule_classifier import classify
+from .rule_classifier import classify
 
 
 blocks = [

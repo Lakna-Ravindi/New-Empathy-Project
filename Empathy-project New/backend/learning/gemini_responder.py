@@ -183,6 +183,8 @@ def _parse_response(
     answer = payload.get("answer") if isinstance(payload, dict) else None
     if not isinstance(answer, str) or not answer.strip():
         raise ValueError("Gemini response must contain a non-empty answer.")
+    if _has_repeated_paragraph(answer) or _looks_truncated(answer):
+        raise ValueError("Gemini answer was duplicated or truncated.")
 
     suggested_questions = (
         payload.get("suggested_questions") if isinstance(payload, dict) else None
@@ -231,15 +233,24 @@ def _parse_response(
             )
         if not isinstance(step.get("content"), str) or not step["content"].strip():
             raise ValueError(f"Step {index} must contain content.")
+        if (
+            _has_repeated_paragraph(step["content"])
+            or _looks_truncated(step["content"])
+        ):
+            raise ValueError(f"Step {index} was duplicated or truncated.")
+        if index == 3 and _contains_internal_activity_instruction(
+            step["content"]
+        ):
+            raise ValueError("Gemini exposed an internal activity instruction.")
 
     activity = steps[2].get("activity")
     selected_activity = _valid_activity_metadata(selected_activity)
     if selected_activity:
         if not isinstance(activity, dict):
             raise ValueError("The selected activity must include activity metadata.")
-        for field in ("id", "title", "type", "interaction_type"):
-            if not isinstance(activity.get(field), str) or not activity[field].strip():
-                raise ValueError(f"Activity metadata '{field}' is missing.")
+        activity = _valid_activity_metadata(activity)
+        if not activity:
+            raise ValueError("The selected activity metadata is invalid.")
         for field in ("id", "title", "type", "interaction_type"):
             if activity[field] != selected_activity.get(field):
                 raise ValueError(
@@ -302,6 +313,88 @@ def _parse_response(
     }
 
 
+def _deduplicate_content(items):
+    """Keep complete, unique approved chunks before sending them to Gemini."""
+    result = []
+    seen_ids = set()
+    seen_text = set()
+    for item in items or []:
+        if not isinstance(item, dict):
+            continue
+        candidate = dict(item)
+        content = str(candidate.get("content") or "").strip()
+        source = candidate.get("source")
+        source_text = source.get("text") if isinstance(source, dict) else None
+        if isinstance(source_text, str) and len(source_text.strip()) > len(content):
+            candidate["content"] = source_text.strip()
+            content = candidate["content"]
+        stable_id = (
+            candidate.get("item_id")
+            or candidate.get("content_id")
+            or candidate.get("id")
+        )
+        text_key = re.sub(r"\s+", " ", content).casefold()
+        if (stable_id and stable_id in seen_ids) or (
+            text_key and text_key in seen_text
+        ):
+            continue
+        if stable_id:
+            seen_ids.add(stable_id)
+        if text_key:
+            seen_text.add(text_key)
+        result.append(candidate)
+    return result
+
+
+def _compact_text(text):
+    """Remove repeated extracted sentences without inventing replacement text."""
+    sentences = re.split(r"(?<=[.!?])\s+", re.sub(r"\s+", " ", str(text or "").strip()))
+    unique = []
+    seen = set()
+    for sentence in sentences:
+        key = sentence.casefold().strip()
+        if key and key not in seen:
+            unique.append(sentence.strip())
+            seen.add(key)
+    return " ".join(unique)
+
+
+def _has_repeated_paragraph(text: str) -> bool:
+    paragraphs = [
+        re.sub(r"\s+", " ", paragraph).strip().casefold()
+        for paragraph in str(text).split("\n\n")
+        if paragraph.strip()
+    ]
+    return len(paragraphs) != len(set(paragraphs))
+
+
+def _looks_truncated(text: str) -> bool:
+    return not re.search(r"[.!?…][\"')\]]?$", str(text).strip())
+
+
+def _contains_internal_activity_instruction(text: str) -> bool:
+    normalized = re.sub(r"\s+", " ", str(text).casefold())
+    return any(
+        phrase in normalized
+        for phrase in (
+            "create one short",
+            "internal instruction",
+            "prompt template",
+            "generation instruction",
+        )
+    )
+
+
+def _strip_internal_activity_labels(text: str) -> str:
+    """Keep the complete approved instruction while hiding extraction labels."""
+    return re.sub(
+        r"^(?:tracking|activity|practice|reflection)\s+instruction\s*:\s*",
+        "",
+        re.sub(r"\s+", " ", str(text or "")).strip(),
+        flags=re.IGNORECASE,
+    ).strip()
+
+
 def _valid_activity_metadata(activity):
     """Return selectable activity metadata, or None for an unavailable activity."""
     if not isinstance(activity, dict):
@@ -343,9 +436,6 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
         or learning_context.get("learning_objective")
         or {}
     )
-    objective_title = (
-        objective.get("title") or objective.get("objective_title") or ""
-    ).strip()
     relevant_content = (
         learning_context.get("suggestion_relevant_content")
         or learning_context.get("question_relevant_content")
@@ -353,34 +443,63 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
     )
     if not isinstance(relevant_content, list):
         relevant_content = []
+    approved_text = " ".join(
+        str(item.get("content") or "")
+        for item in relevant_content
+        if isinstance(item, dict)
+    ).casefold()
+    if "affective" in approved_text and "cognitive" in approved_text:
+        return [
+            "What is affective empathy?",
+            "What is cognitive empathy?",
+            "How are affective and cognitive empathy different?",
+            "Can you give me an example of each?",
+        ]
 
     topics = []
     for item in relevant_content:
         if not isinstance(item, dict):
             continue
-        topic = re.sub(r"\s+", " ", str(item.get("title") or "").strip())
+        title = re.sub(r"\s+", " ", str(item.get("title") or "").strip())
+        content = _compact_text(item.get("content") or "")
+        topic = (
+            title
+            if title and len(title) <= 90 and title[-1:] in ".?!:" or
+            title and len(title) <= 45
+            else content.split(".")[0].strip()
+        )
+        if not topic:
+            topic = title
+        if len(topic) > 90:
+            topic = topic[:90].rsplit(" ", 1)[0].rstrip(" ,;:")
         if topic and topic.casefold() not in {value.casefold() for value in topics}:
             topics.append(topic)
         if len(topics) == 2:
             break
 
-    if not topics and objective_title:
-        topics.append(objective_title)
     if not topics:
+        objective_title = re.sub(
+            r"\s+",
+            " ",
+            str(objective.get("title") or "").strip(),
+        )
+        if objective_title:
+            return [
+                f"What does {objective_title} mean?",
+                f"Why is {objective_title} important?",
+                f"How can you apply {objective_title} in daily life?",
+            ]
         return []
 
     primary_topic = topics[0]
-    objective_reference = objective_title or primary_topic
     secondary_topic = topics[1] if len(topics) > 1 else primary_topic
     questions = [
-        f"What does the approved SEEK content say about {primary_topic}?",
-        f"How does {primary_topic} relate to {objective_reference}?",
-        f"What would you like to understand better about {secondary_topic}?",
+        f"What does {primary_topic} mean?",
+        f"How could {primary_topic} appear in everyday life?",
+        f"How is {secondary_topic} different from it?",
     ]
     if len(topics) > 1:
-        questions.append(
-            f"What does the approved content explain about {topics[1]}?"
-        )
+        questions.append(f"Can you give an example involving {topics[1]}?")
 
     unique_questions = []
     seen = set()
@@ -429,10 +548,12 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
     objective_title = objective.get("title")
     objective_content = objective.get("content")
     student_question = learning_context.get("student_question", "")
-    question_content = learning_context.get("question_relevant_content") or []
+    question_content = _deduplicate_content(
+        learning_context.get("question_relevant_content") or []
+    )
     related_topic = next(
         (
-            str(item.get("title") or item.get("content") or "").strip()
+            str(item.get("content") or item.get("title") or "").strip()
             for item in question_content
             if isinstance(item, dict)
             and (
@@ -442,8 +563,20 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
         ),
         "",
     )
-    if related_topic and len(related_topic) > 140:
-        related_topic = related_topic.split(".")[0].strip()
+    related_topic = _compact_text(related_topic)
+    if related_topic and len(related_topic) > 260:
+        related_topic = related_topic[:260].rsplit(" ", 1)[0].rstrip(" ,;:")
+    selected_activity = learning_context.get("recommended_activity") or {}
+    activity = _valid_activity_metadata(selected_activity)
+    practice_question = bool(
+        re.search(
+            r"\b(?:how can i|how do i|how to|practice|practise|apply|try)\b",
+            student_question.casefold(),
+        )
+    )
+    approved_activity_content = _strip_internal_activity_labels(
+        selected_activity.get("content")
+    )
     if _mentions_urgent_physical_symptom(student_question):
         answer = (
             "I'm sorry you're experiencing this. Severe chest tightness or "
@@ -451,28 +584,32 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             "help now or contact local emergency services, and tell a trusted "
             "person nearby if you can. I can't determine the cause here."
         )
+    elif practice_question and activity and approved_activity_content:
+        answer = approved_activity_content
     elif related_topic:
-        answer = (
-            "It makes sense to want to calm your mind. A gentle first step is "
-            "to pause and notice what feels unsettled. The approved SEEK "
-            f"material also covers {related_topic}."
-        )
+        answer = related_topic
     else:
         answer = (
             "That sounds difficult. I don't have enough approved information "
             "to guide you reliably yet. What part would you most like help with?"
         )
 
-    selected_activity = learning_context.get("recommended_activity") or {}
-    if activity and selected_activity.get("source") == "chatbot_generated":
-        activity_content = (
-            "Imagine you are getting ready for an exam and notice your "
-            "shoulders feel tense. Name the body sensation, then consider "
-            "which feeling it might help you notice. You can use this example "
-            "instead of sharing a personal experience."
-        )
-    elif activity:
-        activity_content = str(selected_activity.get("content") or "").strip()
+    if activity:
+        raw_activity_content = str(selected_activity.get("content") or "").strip()
+        if selected_activity.get("source") == "chatbot_generated":
+            activity_content = (
+                "Imagine you are getting ready for an exam and notice your "
+                "shoulders feel tense. Name the body sensation, then consider "
+                "which feeling it might help you notice. You can use this "
+                "example instead of sharing a personal experience."
+            )
+        elif _contains_internal_activity_instruction(raw_activity_content):
+            activity_content = (
+                f"Try the “{activity['title']}” exercise and confirm "
+                "when you have finished."
+            )
+        else:
+            activity_content = _strip_internal_activity_labels(raw_activity_content)
         if not activity_content:
             activity_content = (
                 f"The activity “{activity['title']}” was selected, but its "
@@ -481,8 +618,12 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
     else:
         activity_content = "No activity was selected for this response."
 
-    if objective_content:
-        objective_step_content = str(objective_content).strip()
+    if question_content:
+        objective_step_content = _compact_text(
+            str(question_content[0].get("content") or "").strip()
+        )
+    elif objective_content:
+        objective_step_content = _compact_text(objective_content)
     elif objective_title:
         objective_step_content = f"Approved learning objective: {objective_title}."
     else:
@@ -490,11 +631,44 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             "No approved learning objective was available for this response."
         )
 
-    practice_question = (
-        f"True or false: The learning objective we discussed is {objective_title}."
-        if objective_title
-        else "True or false: We discussed an approved learning objective."
-    )
+    taught_text = " ".join(
+        str(item.get("content") or "")
+        for item in question_content
+        if isinstance(item, dict)
+    ).casefold()
+    if "beneficial mental state" in taught_text:
+        practice_question = (
+            "True or false: Beneficial mental states are described as leading "
+            "toward happiness and away from suffering."
+        )
+    elif "body literacy" in taught_text:
+        practice_question = (
+            "True or false: Body literacy involves noticing physical sensations "
+            "to better understand emotional states."
+        )
+    elif "self-compassion" in taught_text or "self compassion" in taught_text:
+        practice_question = (
+            "True or false: Self-compassion includes recognizing your worth "
+            "and supporting your well-being."
+        )
+    elif "affective empathy" in taught_text and "cognitive empathy" in taught_text:
+        practice_question = (
+            "True or false: Affective empathy involves sharing another person's "
+            "feelings, while cognitive empathy involves understanding their "
+            "perspective."
+        )
+    else:
+        taught_statement = _compact_text(
+            str(question_content[0].get("content") or "")
+            if question_content
+            else ""
+        )
+        taught_statement = taught_statement.split(".")[0].strip()
+        practice_question = (
+            f"True or false: {taught_statement}."
+            if taught_statement
+            else "True or false: This concept is described in the lesson."
+        )
 
     return {
         "answer": answer,
@@ -537,11 +711,9 @@ def generate_educational_response(
     if learning_context["status"] != "learning_path_selected":
         return learning_context["message"]
 
-    question_relevant_content = (
+    question_relevant_content = _deduplicate_content(
         learning_context.get("question_relevant_content") or []
     )
-    if not isinstance(question_relevant_content, list):
-        question_relevant_content = []
     if not any(
         isinstance(item, dict)
         and isinstance(item.get("content"), str)
@@ -577,23 +749,53 @@ def generate_educational_response(
         ),
     }
 
+    suggestion_content = prompt_suggestion_content = _deduplicate_content(
+        learning_context.get(
+            "suggestion_relevant_content",
+            question_relevant_content,
+        )
+    )
+    question_content_keys = {
+        re.sub(r"\s+", " ", str(item.get("content") or "")).casefold()
+        for item in question_relevant_content
+        if isinstance(item, dict) and item.get("content")
+    }
+    if suggestion_content and all(
+        re.sub(r"\s+", " ", str(item.get("content") or "")).casefold()
+        in question_content_keys
+        for item in suggestion_content
+    ):
+        prompt_suggestion_content = [
+            {
+                key: item[key]
+                for key in ("id", "title", "page")
+                if item.get(key) is not None
+            }
+            for item in suggestion_content
+        ]
+
     prompt = {
         "student_question": learning_context["student_question"],
         "answer_style": answer_style,
         "response_style_instructions": style_instructions[answer_style],
         "selected_skill": learning_context["skill"],
         "selected_topic": learning_context.get("topic"),
-        "selected_learning_objective": learning_context.get("learning_objective"),
+        "selected_learning_objective": {
+            "id": (learning_context.get("learning_objective") or {}).get("id"),
+            "objective_id": (
+                learning_context.get("learning_objective") or {}
+            ).get("objective_id"),
+            "title": (
+                learning_context.get("learning_objective") or {}
+            ).get("title"),
+        },
         "selected_activity": selected_activity,
         "question_relevant_content": question_relevant_content,
         "suggestion_learning_objective": learning_context.get(
             "suggestion_learning_objective",
             learning_context.get("learning_objective"),
         ),
-        "suggestion_relevant_content": learning_context.get(
-            "suggestion_relevant_content",
-            question_relevant_content,
-        ),
+        "suggestion_relevant_content": prompt_suggestion_content,
         "matched_skills": learning_context.get("matched_skills", []),
         "matched_keywords": learning_context.get("matched_keywords", []),
         "source_page": learning_context.get("source_page"),

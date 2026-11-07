@@ -107,7 +107,10 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
     """Build progress data from the source-numbered SEEK objectives."""
     node_list = list(nodes)
     nodes_by_id = {node["id"]: node for node in node_list if node.get("id")}
-    chapters = [node for node in node_list if node.get("type") == "chapter"]
+    chapters = sorted(
+        (node for node in node_list if node.get("type") == "chapter"),
+        key=lambda node: (node.get("page") or 0, node.get("id") or ""),
+    )
     actionable = [node for node in node_list if node.get("type") in ACTIONABLE_TYPES]
 
     structure: list[dict[str, Any]] = []
@@ -128,7 +131,9 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
             and _chapter_for(node, nodes_by_id)
             and _chapter_for(node, nodes_by_id).get("id") == chapter["id"]
         ]
+        objectives.sort(key=lambda node: (node.get("page") or 0, node.get("id") or ""))
         seen_objectives: set[str] = set()
+        seen_item_ids: set[str] = set()
         for objective in objectives:
             objective_id = objective.get("objective_id")
             if not objective_id or objective_id in seen_objectives:
@@ -138,8 +143,13 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
             for item in actionable:
                 if item.get("objective_id") != objective_id:
                     continue
+                if item["id"] in seen_item_ids:
+                    continue
+                seen_item_ids.add(item["id"])
                 items.append({
                     "item_id": item["id"],
+                    "skill_id": chapter_entry["chapter_id"],
+                    "objective_id": objective_id,
                     "type": item.get("type"),
                     "interaction_type": item.get("interaction_type"),
                     "title": item.get("title", ""),
@@ -166,6 +176,10 @@ def build_progress_structure(nodes: Iterable[dict[str, Any]]) -> dict[str, Any]:
                     "page": objective.get("page"),
                     "items": items,
                     "required_item_ids": [item["item_id"] for item in items],
+                    "validation": {
+                        "actionable_item_count": len(items),
+                        "missing_actionable_content": not bool(items),
+                    },
                 }
             )
 

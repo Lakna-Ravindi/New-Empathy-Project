@@ -15,6 +15,18 @@ STOP_WORDS = {
 }
 
 NON_CONTENT_TYPES = {"chapter", "module", "topic", "objective_heading"}
+
+CANONICAL_OBJECTIVE_IDS = {
+    "skill_01": {1: "obj_01_01", 2: "obj_01_05", 3: "obj_01_02",
+                 4: "obj_01_06", 5: "obj_01_03", 6: "obj_01_04"},
+    "skill_02": {1: "obj_02_01", 2: "obj_02_02", 3: "obj_02_03",
+                 4: "obj_02_04", 5: "obj_02_05"},
+    "skill_03": {1: "obj_03_01", 2: "obj_03_05", 3: "obj_03_06",
+                 4: "obj_03_02", 5: "obj_03_03", 6: "obj_03_04"},
+    "skill_04": {1: "obj_04_01", 2: "obj_04_02", 3: "obj_04_05",
+                 4: "obj_04_06", 5: "obj_04_07", 6: "obj_04_03",
+                 7: "obj_04_04"},
+}
 def _tokens(value: str) -> set[str]:
     return {
         token
@@ -81,18 +93,7 @@ def _is_explicit_pdf_objective(node):
 
 
 def _objective_id_for_number(skill_id: str | None, number: int | None) -> str | None:
-    canonical = {
-        "skill_01": {1: "obj_01_01", 2: "obj_01_05", 3: "obj_01_02",
-                     4: "obj_01_06", 5: "obj_01_03", 6: "obj_01_04"},
-        "skill_02": {1: "obj_02_01", 2: "obj_02_02", 3: "obj_02_03",
-                     4: "obj_02_04", 5: "obj_02_05"},
-        "skill_03": {1: "obj_03_01", 2: "obj_03_05", 3: "obj_03_06",
-                     4: "obj_03_02", 5: "obj_03_03", 6: "obj_03_04"},
-        "skill_04": {1: "obj_04_01", 2: "obj_04_02", 3: "obj_04_05",
-                     4: "obj_04_06", 5: "obj_04_07", 6: "obj_04_03",
-                     7: "obj_04_04"},
-    }
-    return canonical.get(skill_id, {}).get(number)
+    return CANONICAL_OBJECTIVE_IDS.get(skill_id, {}).get(number)
 
 
 def _nearest_objective(node, nodes_by_id):

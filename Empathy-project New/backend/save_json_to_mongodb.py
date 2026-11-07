@@ -4,16 +4,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Any
 
-from dotenv import load_dotenv
 from pymongo import MongoClient
+from mongo_config import MONGODB_URI, MONGODB_DATABASE
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(Path(__file__).resolve().with_name(".env"))
 
 
 def load_json(path: Path) -> Any:
@@ -49,13 +47,12 @@ def save_json(
         return 0
 
     client = MongoClient(
-        os.getenv("MONGODB_URI", "mongodb://localhost:27017"),
+        MONGODB_URI,
         serverSelectionTimeoutMS=5000,
     )
     client.admin.command("ping")
 
-    database_name = os.getenv("MONGODB_DATABASE", "empathy_learning")
-    collection = client[database_name][collection_name]
+    collection = client[MONGODB_DATABASE][collection_name]
     imported = 0
 
     try:

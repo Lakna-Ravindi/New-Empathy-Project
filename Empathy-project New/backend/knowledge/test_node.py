@@ -1,4 +1,4 @@
-from node_builder import build_node
+from .node_builder import build_node
 
 
 block = {

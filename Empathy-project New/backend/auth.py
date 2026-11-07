@@ -1,24 +1,28 @@
 import os
+import logging
 from datetime import datetime, timedelta, timezone
 from functools import wraps
+from pathlib import Path
 
 import secrets
 import bcrypt
 import jwt
 from bson import ObjectId
 from bson.errors import InvalidId
-from dotenv import load_dotenv
 from flask import g, jsonify, request
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError, PyMongoError
+from dotenv import load_dotenv
+from mongo_config import MONGODB_DATABASE, MONGODB_URI
 
-
-
-load_dotenv()
+# Authentication can be imported without server.py, so load the backend
+# configuration before reading JWT settings.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 JWT_ALGORITHM = "HS256"
+logger = logging.getLogger(__name__)
 
 
 VALID_GENDERS = {"Male", "Female", "Prefer not to say"}
@@ -38,8 +42,8 @@ class UserStore:
         self.client = None
         self.db = None
         self.users = None
-        self.mongo_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
-        self.database_name = os.getenv("MONGODB_DATABASE", "empathy_learning")
+        self.mongo_uri = MONGODB_URI
+        self.database_name = MONGODB_DATABASE
 
         self._connect()
 
@@ -55,14 +59,24 @@ class UserStore:
             self.users = self.db["users"]
 
             # Usernames and emails must both be unique.
-            self.users.create_index("email", unique=True)
-            self.users.create_index("username", unique=True)
+            self.users.create_index(
+                "email",
+                unique=True,
+            )
+            self.users.create_index(
+                "username",
+                unique=True,
+            )
              # Keep the application-facing student identity separate from MongoDB _id.
-            self.users.create_index("student_id", unique=True, sparse=True)
+            self.users.create_index(
+                "student_id",
+                unique=True,
+                sparse=True,
+            )
             self.is_available = True
         except PyMongoError as error:
             self.is_available = False
-            print(f"WARNING: MongoDB unavailable for authentication: {error}")
+            logger.warning("MongoDB unavailable for authentication: %s", type(error).__name__)
 
     def _require_database(self):
         if not self.is_available:
@@ -167,7 +181,7 @@ def get_user_store():
 
 def create_access_token(student):
     if not JWT_SECRET_KEY:
-        raise RuntimeError("JWT_SECRET_KEY is missing from backend/.env")
+        raise RuntimeError("JWT_SECRET_KEY is not configured in the environment.")
 
     now = datetime.now(timezone.utc)
 
@@ -199,6 +213,11 @@ def require_auth(view_function):
             }), 401
 
         token = auth_header.split(" ", 1)[1].strip()
+
+        if not JWT_SECRET_KEY:
+            return jsonify({
+                "error": "Authentication service is unavailable."
+            }), 503
 
         try:
             payload = jwt.decode(
