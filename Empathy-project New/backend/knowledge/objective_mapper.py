@@ -26,6 +26,8 @@ CANONICAL_OBJECTIVE_IDS = {
     "skill_04": {1: "obj_04_01", 2: "obj_04_02", 3: "obj_04_05",
                  4: "obj_04_06", 5: "obj_04_07", 6: "obj_04_03",
                  7: "obj_04_04"},
+    "skill_07": {1: "obj_07_01", 2: "obj_07_02",
+                 3: "obj_07_03", 4: "obj_07_04"},
 }
 def _tokens(value: str) -> set[str]:
     return {

@@ -1,358 +1,389 @@
 {
-  "canonical_skill_ids": [
-    "skill_01",
-    "skill_02",
-    "skill_03",
-    "skill_04"
-  ],
-  "canonical_objective_ids": [
-    "obj_01_01",
-    "obj_01_02",
-    "obj_01_03",
-    "obj_01_04",
-    "obj_01_05",
-    "obj_01_06",
-    "obj_02_01",
-    "obj_02_02",
-    "obj_02_03",
-    "obj_02_04",
-    "obj_02_05",
-    "obj_03_01",
-    "obj_03_02",
-    "obj_03_03",
-    "obj_03_04",
-    "obj_03_05",
-    "obj_03_06",
-    "obj_04_01",
-    "obj_04_02",
-    "obj_04_03",
-    "obj_04_04",
-    "obj_04_05",
-    "obj_04_06",
-    "obj_04_07"
-  ],
-  "knowledge_base": {
-    "node_count": 205,
-    "duplicate_node_ids": false,
-    "invalid_node_ids": []
-  },
-  "progress_structure": {
-    "objective_count": 24,
-    "invalid_objectives": [],
-    "actionable_item_counts": {
-      "obj_01_01": 0,
-      "obj_01_05": 0,
-      "obj_01_02": 0,
-      "obj_01_06": 0,
-      "obj_01_03": 0,
-      "obj_01_04": 0,
-      "obj_02_01": 0,
-      "obj_02_02": 0,
-      "obj_02_03": 0,
-      "obj_02_04": 0,
-      "obj_02_05": 0,
-      "obj_03_01": 0,
-      "obj_03_05": 0,
-      "obj_03_06": 0,
-      "obj_03_02": 0,
-      "obj_03_03": 0,
-      "obj_03_04": 0,
-      "obj_04_01": 0,
-      "obj_04_02": 0,
-      "obj_04_05": 0,
-      "obj_04_06": 0,
-      "obj_04_07": 0,
-      "obj_04_03": 0,
-      "obj_04_04": 1
-    },
-    "objectives_without_actionable_items": [
-      "obj_01_01",
-      "obj_01_02",
-      "obj_01_03",
-      "obj_01_04",
-      "obj_01_05",
-      "obj_01_06",
-      "obj_02_01",
-      "obj_02_02",
-      "obj_02_03",
-      "obj_02_04",
-      "obj_02_05",
-      "obj_03_01",
-      "obj_03_02",
-      "obj_03_03",
-      "obj_03_04",
-      "obj_03_05",
-      "obj_03_06",
-      "obj_04_01",
-      "obj_04_02",
-      "obj_04_03",
-      "obj_04_05",
-      "obj_04_06",
-      "obj_04_07"
+    "total_nodes": 205,
+    "approved": 205,
+    "requires_review": 51,
+    "issues": [
+        {
+            "node_id": "node_0005",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0007",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0020",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0021",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0022",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0023",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0029",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0030",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0031",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0032",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0033",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0034",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0035",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0063",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0065",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0089",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0090",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0091",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0092",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0093",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0098",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0099",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0111",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0112",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0113",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0114",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0115",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0116",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0117",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0119",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0120",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0121",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0123",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0124",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0125",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0153",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0154",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0155",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0174",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0175",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0176",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0177",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0178",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0179",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0181",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0182",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0183",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0184",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0185",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0186",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0187",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        }
     ],
-    "duplicate_objective_ids": false,
-    "duplicate_item_ids": false,
-    "invalid_item_references": []
-  },
-  "content_skills": {
-    "skill_count": 8,
-    "out_of_scope_skill_ids": [
-      "skill_05",
-      "skill_06",
-      "skill_07",
-      "skill_08"
-    ]
-  },
-  "keyword_skill_map": {
-    "entry_count": 32,
-    "legacy_skill_ids": [],
-    "reconciled_fields": 0
-  },
-  "objective_validation": [
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_01",
-      "objective_title": "1. Discuss the importance of Body literacy and recognize the emotional state in a given situation.",
-      "related_knowledge_base_nodes": 5,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
+    "duplicate_ids": [],
+    "duplicate_content": [],
+    "invalid_objective_ids": [
+        "node_0005",
+        "node_0007",
+        "node_0020",
+        "node_0021",
+        "node_0022",
+        "node_0023",
+        "node_0029",
+        "node_0030",
+        "node_0031",
+        "node_0032",
+        "node_0033",
+        "node_0034",
+        "node_0035",
+        "node_0063",
+        "node_0065",
+        "node_0089",
+        "node_0090",
+        "node_0091",
+        "node_0092",
+        "node_0093",
+        "node_0098",
+        "node_0099",
+        "node_0111",
+        "node_0112",
+        "node_0113",
+        "node_0114",
+        "node_0115",
+        "node_0116",
+        "node_0117",
+        "node_0119",
+        "node_0120",
+        "node_0121",
+        "node_0123",
+        "node_0124",
+        "node_0125",
+        "node_0153",
+        "node_0154",
+        "node_0155",
+        "node_0174",
+        "node_0175",
+        "node_0176",
+        "node_0177",
+        "node_0178",
+        "node_0179",
+        "node_0181",
+        "node_0182",
+        "node_0183",
+        "node_0184",
+        "node_0185",
+        "node_0186",
+        "node_0187"
+    ],
+    "mapping_review": [],
+    "objective_mapping_review": [],
+    "content_mapping_review": [],
+    "objective_coverage": {
+        "source_explicit_objective_count": 24,
+        "generated_objective_node_count": 48,
+        "missing_source_objectives": [],
+        "objective_nodes_without_authored_mapping": []
     },
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_05",
-      "objective_title": "2. Identify the right vocabulary to name the different sensations in the body.",
-      "related_knowledge_base_nodes": 5,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_02",
-      "objective_title": "3. Define the resilient zone and its connection to emotional regulation.",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_06",
-      "objective_title": "4. Recognize when you are out of the resilience zone.",
-      "related_knowledge_base_nodes": 8,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_03",
-      "objective_title": "5. Discuss the role and importance of the parasympathetic nervous system.",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_01",
-      "objective_id": "obj_01_04",
-      "objective_title": "6. Use tools for better emotional regulation.",
-      "related_knowledge_base_nodes": 18,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_02",
-      "objective_id": "obj_02_01",
-      "objective_title": "1. Define Ethical Mindfulness.",
-      "related_knowledge_base_nodes": 4,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_02",
-      "objective_id": "obj_02_02",
-      "objective_title": "2. Identify the three components of ethical mindfulness.",
-      "related_knowledge_base_nodes": 9,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_02",
-      "objective_id": "obj_02_03",
-      "objective_title": "3. Describe the significance of attention stability.",
-      "related_knowledge_base_nodes": 4,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_02",
-      "objective_id": "obj_02_04",
-      "objective_title": "4. Demonstrate how to practice mindfulness in daily activities.",
-      "related_knowledge_base_nodes": 7,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_02",
-      "objective_id": "obj_02_05",
-      "objective_title": "5. Analyze scenarios to determine how ethical mindfulness can influence outcomes.",
-      "related_knowledge_base_nodes": 7,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_01",
-      "objective_title": "1. Define emotional awareness.",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_05",
-      "objective_title": "2. Explain the importance of emotional awareness.",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_06",
-      "objective_title": "3. Identify afflictive and beneficial mental states.",
-      "related_knowledge_base_nodes": 9,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_02",
-      "objective_title": "4. Identify the nature of your thoughts.",
-      "related_knowledge_base_nodes": 12,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_03",
-      "objective_title": "5. Create space between speech and action to have greater mental balance and be less reactive.",
-      "related_knowledge_base_nodes": 5,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_03",
-      "objective_id": "obj_03_04",
-      "objective_title": "6. Apply relevant tools to practice calmness.",
-      "related_knowledge_base_nodes": 7,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_01",
-      "objective_title": "1. Define self compassion",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_02",
-      "objective_title": "2. Identify the different thinking traps and how they impact well being",
-      "related_knowledge_base_nodes": 11,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_05",
-      "objective_title": "3. Recognize the importance of self compassion",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_06",
-      "objective_title": "4. Examine if you practice self compassion",
-      "related_knowledge_base_nodes": 6,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_07",
-      "objective_title": "5. Describe the three steps to cultivate compassion",
-      "related_knowledge_base_nodes": 4,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_03",
-      "objective_title": "6. Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations",
-      "related_knowledge_base_nodes": 5,
-      "actionable_progress_items": 0,
-      "mapping_status": "matched",
-      "missing_content_status": "approved_content_without_actionable_item",
-      "recommended_correction": "Review SEEK extraction and item classification; do not invent an item."
-    },
-    {
-      "skill_id": "skill_04",
-      "objective_id": "obj_04_04",
-      "objective_title": "7. Practice tools to develop greater self-compassion",
-      "related_knowledge_base_nodes": 13,
-      "actionable_progress_items": 1,
-      "mapping_status": "matched",
-      "missing_content_status": "supported",
-      "recommended_correction": "No correction required."
-    }
-  ],
-  "status": "valid",
-  "notes": [
-    "Out-of-scope authored skills were not merged into the canonical SEEK progress structure.",
-    "Objectives without actionable items remain unresolved pending approved SEEK source content."
-  ]
+    "intentional_duplicate_content": [
+        "node_0002",
+        "node_0003",
+        "node_0057",
+        "node_0058",
+        "node_0095",
+        "node_0096",
+        "node_0148",
+        "node_0149",
+        "node_0150"
+    ],
+    "possible_split_nodes": []
 }

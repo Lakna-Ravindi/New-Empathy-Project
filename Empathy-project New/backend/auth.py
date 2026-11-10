@@ -15,9 +15,9 @@ from pymongo.errors import DuplicateKeyError, PyMongoError
 from dotenv import load_dotenv
 from mongo_config import MONGODB_DATABASE, MONGODB_URI
 
-
-
-load_dotenv(Path(__file__).resolve().parents[1] / ".env")
+# Authentication can be imported without server.py, so load the backend
+# configuration before reading JWT settings.
+load_dotenv(Path(__file__).resolve().parent / ".env")
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
@@ -58,21 +58,28 @@ class UserStore:
             self.db = self.client[self.database_name]
             self.users = self.db["users"]
 
-            # Usernames and emails must both be unique.
-            self.users.create_index(
-                "email",
-                unique=True,
+            indexes = (
+                ([("email", 1)], {"unique": True, "name": "uq_users_email"}),
+                ([("username", 1)], {"unique": True, "name": "uq_users_username"}),
+                (
+                    [("student_id", 1)],
+                    {
+                        "unique": True,
+                        "sparse": True,
+                        "name": "uq_users_student_id",
+                    },
+                ),
             )
-            self.users.create_index(
-                "username",
-                unique=True,
-            )
-             # Keep the application-facing student identity separate from MongoDB _id.
-            self.users.create_index(
-                "student_id",
-                unique=True,
-                sparse=True,
-            )
+            existing_indexes = self.users.index_information()
+            for keys, options in indexes:
+                compatible = any(
+                    tuple(index.get("key", [])) == tuple(keys)
+                    and index.get("unique", False) == options["unique"]
+                    and index.get("sparse", False) == options.get("sparse", False)
+                    for index in existing_indexes.values()
+                )
+                if not compatible:
+                    self.users.create_index(keys, **options)
             self.is_available = True
         except PyMongoError as error:
             self.is_available = False

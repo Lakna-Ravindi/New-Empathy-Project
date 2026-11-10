@@ -47,28 +47,16 @@ def is_greeting(text: str) -> bool:
 
 app = Flask(__name__)
 
-load_dotenv(Path(__file__).resolve().parent / ".env")
-CORS_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173",
-    ).split(",")
-    if origin.strip()
-]
-
 CORS(
     app,
-    resources={r"/api/*": {"origins": CORS_ORIGINS}},
+    resources={r"/api/*": {"origins": "http://localhost:5173"}},
     allow_headers=["Content-Type", "Authorization"],
 )
 
 
 @app.after_request
 def add_cors_headers(response):
-    request_origin = request.headers.get("Origin")
-    if request_origin in CORS_ORIGINS:
-        response.headers["Access-Control-Allow-Origin"] = request_origin
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     return response
@@ -1030,6 +1018,22 @@ def learning_response():
         (learning_context.get("recommended_activity") or {}).get("id"),
     )
     steps = result.get("steps", [])
+    recommended_activity = learning_context.get("recommended_activity") or {}
+    if recommended_activity.get("progress_item_id"):
+        for step in steps:
+            if isinstance(step, dict) and step.get("type") == "activity":
+                step_activity = step.get("activity")
+                if isinstance(step_activity, dict):
+                    step["activity"] = {
+                        **step_activity,
+                        "progress_item_id": recommended_activity["progress_item_id"],
+                        "progress_item_type": recommended_activity.get(
+                            "progress_item_type"
+                        ),
+                        "progress_objective_id": recommended_activity.get(
+                            "progress_objective_id"
+                        ),
+                    }
     educational_response = result.get(
         "educational_response",
         result.get("answer", steps if steps else learning_context.get("message", "")),
@@ -1044,7 +1048,6 @@ def learning_response():
         )
 
         result["interaction_id"] = interaction_id
-        recommended_activity = learning_context.get("recommended_activity") or {}
         progress_item_id = recommended_activity.get("progress_item_id")
         if progress_item_id:
             learning_store.record_learning_event(

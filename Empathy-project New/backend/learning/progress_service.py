@@ -7,6 +7,16 @@ from learning.chatbot_practice import CHATBOT_PRACTICES
 from knowledge.objective_mapper import CANONICAL_OBJECTIVE_IDS
 
 
+def activity_metadata(activity):
+    """Return normalized metadata for a trackable activity."""
+    interaction_type = activity.get("interaction_type")
+    if interaction_type not in {"practical", "reflective", "combined"}:
+        interaction_type = (
+            "reflective" if activity.get("type") == "reflection" else "practical"
+        )
+    return {"interaction_type": interaction_type}
+
+
 class ProgressService:
     """Build objective, skill, and overall progress summaries."""
 
@@ -166,11 +176,13 @@ class ProgressService:
                 items = objective.setdefault("items", [])
                 if any(item.get("item_id") == practice["item_id"] for item in items):
                     continue
+                metadata = activity_metadata(practice)
                 items.append({
                     **practice,
                     "item_id": practice["item_id"],
                     "skill_id": chapter.get("chapter_id"),
                     "objective_id": objective.get("objective_id"),
+                    **metadata,
                 })
                 required_ids = objective.setdefault("required_item_ids", [])
                 if practice["item_id"] not in required_ids:
