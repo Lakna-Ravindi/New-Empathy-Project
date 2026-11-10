@@ -19,6 +19,8 @@ COLLECTIONS = (
     "learning_interactions",
     "student_progress",
     "controller_evaluations",
+    "safety_events",
+    "student_safety_status",
 )
 
 
@@ -79,6 +81,21 @@ def initialize_database() -> dict[str, object]:
                 }),
                 ([("reviewer_id", ASCENDING), ("timestamp", DESCENDING)], {
                     "name": "ix_evaluations_reviewer_timestamp",
+                }),
+            ],
+            "safety_events": [
+                ([("student_id", ASCENDING), ("request_id", ASCENDING)], {
+                    "unique": True,
+                    "name": "uq_safety_event_request",
+                }),
+                ([("student_id", ASCENDING), ("created_at", DESCENDING)], {
+                    "name": "ix_safety_event_student_created",
+                }),
+            ],
+            "student_safety_status": [
+                ([("student_id", ASCENDING)], {
+                    "unique": True,
+                    "name": "uq_student_safety_status",
                 }),
             ],
         }

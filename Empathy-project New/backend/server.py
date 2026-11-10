@@ -2,7 +2,9 @@
 import json
 import os
 import re
+from datetime import datetime, timezone
 from pathlib import Path
+from uuid import uuid4
 
 import bcrypt
 from flask import Flask, g, jsonify, request
@@ -19,6 +21,13 @@ from registration_assessment import (
     RegistrationAssessmentStore,
     score_pre_skill,
     score_screening,
+)
+from safety import (
+    SafetyStore,
+    detect_safety_risk,
+    safety_response,
+    support_payload,
+    validate_redflag_configuration,
 )
 
 from flask_cors import CORS
@@ -64,6 +73,10 @@ def add_cors_headers(response):
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 load_dotenv(BASE_DIR / "backend" / ".env")
+try:
+    validate_redflag_configuration()
+except RuntimeError as error:
+    raise RuntimeError(f"Invalid red-flag safety configuration: {error}") from error
 
 with open(BASE_DIR / "output" / "knowledge_base.json", "r", encoding="utf-8") as file:
     knowledge_base = json.load(file)
@@ -416,6 +429,45 @@ progress_service = ProgressService()
 
 # Screening / pre-skill results live in the SAME database as the users collection.
 assessment_store = RegistrationAssessmentStore(db=student_store.db)
+try:
+    safety_store = (
+        SafetyStore(student_store.db, client=student_store.client)
+        if student_store.db is not None
+        else None
+    )
+except PyMongoError:
+    safety_store = None
+
+
+def _safety_store_or_error():
+    if safety_store is None:
+        return None, (jsonify({"error": "Safety service is currently unavailable."}), 503)
+    return safety_store, None
+
+
+def _screening_status_response(status):
+    payload = {
+        "safety": True,
+        "restriction_active": bool(status.get("restriction_active")),
+        "screening_required": bool(status.get("screening_required")),
+        "qualifying_event_count": status.get("qualifying_event_count", 0),
+        "restriction_started_at": status.get("restriction_started_at"),
+        "restriction_expires_at": status.get("restriction_expires_at"),
+        **support_payload(),
+    }
+    if payload["restriction_active"]:
+        payload["message"] = (
+            "Chatbot access is temporarily paused for your safety. "
+            "Please contact a qualified counsellor or emergency service if you need urgent help."
+        )
+    elif payload["screening_required"]:
+        payload["message"] = (
+            "Your 24-hour safety pause has ended. Please complete the screening assessment "
+            "before chatbot access can be restored."
+        )
+    else:
+        payload["message"] = "Chat access is available."
+    return payload
 
 
 def get_skill_objectives(skill_id):
@@ -955,6 +1007,60 @@ def general_empathy_chat():
 # ---------------------------------------------------
 # Student learning APIs
 # ---------------------------------------------------
+@app.get("/api/safety/status")
+@require_auth
+def safety_status():
+    store, error = _safety_store_or_error()
+    if error:
+        return error
+    try:
+        return jsonify(_screening_status_response(store.get_status(g.student_id))), 200
+    except PyMongoError:
+        return jsonify({"error": "Could not load safety status."}), 503
+
+
+@app.post("/api/safety/screening")
+@require_auth
+def submit_safety_screening():
+    store, error = _safety_store_or_error()
+    if error:
+        return error
+    try:
+        current_status = store.get_status(g.student_id)
+    except PyMongoError:
+        return jsonify({"error": "Could not verify screening eligibility."}), 503
+    if current_status.get("restriction_active"):
+        return jsonify({
+            **_screening_status_response(current_status),
+            "error": "The screening becomes available after the 24-hour safety pause expires.",
+        }), 423
+    if not current_status.get("screening_required"):
+        return jsonify({
+            **_screening_status_response(current_status),
+            "error": "A screening assessment is not currently required.",
+        }), 409
+    body = request.get_json(silent=True) or {}
+    try:
+        result = score_screening(body)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    try:
+        assessment_store.screening.replace_one(
+            {"student_id": g.student_id},
+            {"student_id": g.student_id, **result, "created_at": datetime.now(timezone.utc)},
+            upsert=True,
+        )
+        store.save_screening_result(g.student_id, result)
+        status = store.get_status(g.student_id)
+        payload = _screening_status_response(status)
+        payload["screening_tier"] = result["tier"]
+        payload["access_restored"] = result["tier"] != "red"
+        return jsonify(payload), 200
+    except PyMongoError:
+        return jsonify({"error": "Could not save the screening result."}), 503
+
+
 @app.post("/api/learning-response")
 @require_auth
 def learning_response():
@@ -968,6 +1074,42 @@ def learning_response():
         return jsonify({
             "error": "Please enter a question."
         }), 400
+
+    student_id = g.student_id
+    store, error = _safety_store_or_error()
+    if error:
+        return error
+    try:
+        status = store.get_status(student_id)
+    except PyMongoError:
+        return jsonify({"error": "Could not verify chatbot safety status."}), 503
+
+    if status.get("restriction_active") or status.get("screening_required"):
+        payload = _screening_status_response(status)
+        payload["error"] = (
+            "Chatbot access is temporarily restricted."
+            if status.get("restriction_active")
+            else "A screening assessment is required before chatbot access can be restored."
+        )
+        return jsonify(payload), 423
+
+    safety = detect_safety_risk(question)
+    if safety["qualifies"]:
+        request_id = body.get("request_id")
+        if not isinstance(request_id, str) or not request_id.strip():
+            request_id = request.headers.get("Idempotency-Key")
+        if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 200:
+            request_id = str(uuid4())
+        try:
+            event, status, _ = store.record_event(
+                student_id,
+                question,
+                safety,
+                request_id.strip(),
+            )
+            return jsonify(safety_response(event, status)), 200
+        except PyMongoError:
+            return jsonify({"error": "Could not save the safety event."}), 503
 
     if is_greeting(question):
         return jsonify({
@@ -989,10 +1131,6 @@ def learning_response():
             "steps": [],
             "suggested_questions": [],
         })
-
-    # Do not accept student_id from frontend.
-    # The ID is securely read from the JWT token.
-    student_id = g.student_id
 
     try:
         progress_documents = learning_store.get_all_progress(student_id)
