@@ -1,4 +1,4 @@
-"""Safety detection, persistence, and chatbot access control."""
+ """Safety detection, persistence, and chatbot access control."""
 
 import hashlib
 import json
