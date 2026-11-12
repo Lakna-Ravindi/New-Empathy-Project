@@ -189,7 +189,6 @@ class GeminiResponderTests(unittest.TestCase):
             for question in fallback["suggested_questions"]
         ))
 
-    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.genai.Client")
     def test_missing_relevant_seek_content_skips_gemini(self, client_class):
         result = generate_educational_response({
@@ -311,6 +310,8 @@ class GeminiResponderTests(unittest.TestCase):
         self.assertEqual(len(result["suggested_questions"]), 3)
         self.assertEqual(result["steps"][2]["activity"], None)
 
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.time.sleep")
     @patch("learning.gemini_responder.genai.Client")
     @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
@@ -390,6 +391,7 @@ class GeminiResponderTests(unittest.TestCase):
         self.assertEqual(len(result["suggested_questions"]), 3)
         self.assertEqual(len(result["steps"]), 4)
 
+    @patch.dict(os.environ, {"GEMINI_API_KEY": "test-key"})
     @patch("learning.gemini_responder.time.sleep")
     @patch("learning.gemini_responder.genai.Client")
     def test_truncated_json_after_retries_returns_controlled_fallback(

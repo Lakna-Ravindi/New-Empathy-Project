@@ -1,11 +1,11 @@
 """MongoDB persistence for learning interactions, progress, and review data."""
 
 from datetime import datetime, timezone
-import os
 import uuid
 
 from bson import ObjectId
 from pymongo import MongoClient
+from mongo_config import MONGODB_DATABASE, MONGODB_URI
 
 
 class LearningStore:
@@ -22,13 +22,13 @@ class LearningStore:
 
         try:
             self.client = MongoClient(
-                uri or os.getenv("MONGODB_URI", "mongodb://localhost:27017"),
+                uri or MONGODB_URI,
                 serverSelectionTimeoutMS=5000,
             )
 
             self.db = self.client[
                 database_name
-                or os.getenv("MONGODB_DATABASE", "empathy_learning")
+                or MONGODB_DATABASE
             ]
 
             self.interactions = self.db["learning_interactions"]
@@ -557,8 +557,8 @@ class LearningStore:
             item_id in completed_item_ids
             and isinstance(quiz_scores.get(item_id), (int, float))
             and not isinstance(quiz_scores.get(item_id), bool)
-            and quiz_scores[item_id] >= passing_score
-            for item_id, passing_score in requirements.get(
+            and quiz_scores[item_id] >= required_score
+            for item_id, required_score in requirements.get(
                 "quiz_passing_scores", {}
             ).items()
         )

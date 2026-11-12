@@ -7,11 +7,11 @@ Scoring + storage for the two tests taken during registration:
 Scores are stored in their own collections, keyed by student_id, and are
 never returned to the frontend.
 """
-import os
 from datetime import datetime, timezone
 
 from pymongo import ASCENDING, MongoClient
 from pymongo.errors import PyMongoError
+from mongo_config import MONGODB_DATABASE, MONGODB_URI
 
 # ---------------------------------------------------------------
 # Screening
@@ -169,10 +169,10 @@ class RegistrationAssessmentStore:
         # variable names as auth.py.
         if db is None:
             client = MongoClient(
-                os.getenv("MONGODB_URI", "mongodb://localhost:27017"),
+                MONGODB_URI,
                 serverSelectionTimeoutMS=5000,
             )
-            db = client[os.getenv("MONGODB_DATABASE", "empathy_learning")]
+            db = client[MONGODB_DATABASE]
 
         self.screening = db["screening_results"]
         self.pre_skill = db["pre_skill_assessments"]

@@ -1,6 +1,10 @@
 import copy
+import json
+from pathlib import Path
+from unittest.mock import patch
 
 import server
+from learning.interaction_store import LearningStore
 from learning.pedagogical_controller import process_student_question
 from learning.progress_service import ProgressService
 
@@ -226,6 +230,63 @@ def test_completion_resolves_authored_grounding_item_and_updates_progress():
     assert status == 200
     assert store.complete_calls[0][2] == "activity_01_04"
     assert response.get_json()["completed_item_ids"] == ["activity_01_04"]
+
+
+def test_node_0194_activity_completion_persists_and_reads_back_once():
+    root = Path(__file__).resolve().parents[1]
+    with (root / "output" / "knowledge_base.json").open(encoding="utf-8") as file:
+        knowledge_base = json.load(file)
+    with (root / "output" / "keyword_skill_map.json").open(encoding="utf-8") as file:
+        keyword_map = json.load(file)
+
+    context = process_student_question(
+        "How can I practice self-compassion?",
+        knowledge_base,
+        keyword_map,
+        server.progress_service.get_structure(),
+    )
+    server.attach_progress_item_id(context)
+    activity = context["recommended_activity"]
+    assert activity["id"] == "node_0194"
+    assert activity["progress_item_id"] == "node_0194"
+    assert activity["progress_objective_id"] == "obj_04_04"
+
+    with patch(
+        "learning.interaction_store.MongoClient",
+        side_effect=RuntimeError("MongoDB unavailable for regression test"),
+    ):
+        store = LearningStore()
+    body = {
+        "skill_id": "skill_04",
+        "item_id": activity["progress_item_id"],
+        "item_type": activity["progress_item_type"],
+        "objective_id": activity["progress_objective_id"],
+        "source": "chatbot",
+    }
+
+    response, status = call_completion(
+        server.app.test_client(),
+        body,
+        store,
+        server.progress_service.get_structure(),
+    )
+    assert status == 200
+    assert response.get_json()["completed_item_ids"] == ["node_0194"]
+
+    response, status = call_completion(
+        server.app.test_client(),
+        body,
+        store,
+        server.progress_service.get_structure(),
+    )
+    assert status == 200
+    saved = store.get_progress("student-1", "skill_04")
+    assert saved["completed_item_ids"] == ["node_0194"]
+    assert len(saved["learning_events"]) == 1
+    event = saved["learning_events"][0]
+    assert event["content_item_id"] == "node_0194"
+    assert event["objective_id"] == "obj_04_04"
+    assert event["status"] == "completed"
 
 
 def test_activity_completion_keeps_objective_incomplete_until_quiz_is_passed():
@@ -454,7 +515,7 @@ def test_skill_four_objective_reports_actual_missing_items_after_activity_only()
     completed_progress = {
         **partial_progress,
         "completed_item_ids": ["activity_04_01", "quiz_04_01"],
-        "quiz_scores": {"quiz_04_01": 80},
+        "quiz_scores": {        "quiz_04_01": 90},
         "completed_objective_ids": ["obj_04_01"],
     }
     complete = progress_service.calculate([completed_progress])
@@ -541,7 +602,7 @@ def test_passing_quiz_without_activity_does_not_complete_objective():
             "skill_id": "skill_test",
             "item_id": "quiz_test",
             "item_type": "quiz",
-            "quiz_score": 75,
+            "quiz_score": 90,
         },
         store,
         _objective_rule_structure(),
@@ -580,7 +641,7 @@ def test_completion_persists_across_requests_and_recommends_next_objective():
             "skill_id": "skill_test",
             "item_id": "quiz_test",
             "item_type": "quiz",
-            "quiz_score": 75,
+            "quiz_score": 90,
         },
         store,
         structure,
