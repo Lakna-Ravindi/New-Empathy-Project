@@ -78,7 +78,7 @@ def test_quiz_attempts_are_saved_separately_and_objective_requires_activity_and_
     store = module.LearningStore()
     requirements = {
         "activity_item_ids": ["activity_1"],
-        "quiz_passing_scores": {"quiz_1": 75},
+        "quiz_passing_scores": {"quiz_1": 90},
     }
 
     failed = store.record_quiz_attempt(
@@ -98,12 +98,12 @@ def test_quiz_attempts_are_saved_separately_and_objective_requires_activity_and_
         "quiz_1",
         objective_id="objective-1",
         objective_completion_requirements=requirements,
-        quiz_score=80,
+        quiz_score=90,
     )
     quiz_only = store.get_progress("student-1", "skill-1")
     assert quiz_only["completed_item_ids"] == ["quiz_1"]
     assert quiz_only["completed_objective_ids"] == []
-    assert quiz_only["quiz_scores"]["quiz_1"] == 80
+    assert quiz_only["quiz_scores"]["quiz_1"] == 90
 
     completed = store.complete_item(
         "student-1",

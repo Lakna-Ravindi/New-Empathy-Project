@@ -47,7 +47,10 @@ class SemanticSearchTests(unittest.TestCase):
 
         self.assertEqual(result["skill"]["id"], "node_0094")
         self.assertEqual(result["learning_objective"]["objective_id"], "obj_03_02")
-        self.assertIn("Spark to Forest Fire", result["learning_objective"]["title"])
+        self.assertEqual(
+            result["learning_objective"]["title"],
+            "4. Identify the nature of your thoughts.",
+        )
 
 
 if __name__ == "__main__":

@@ -1,535 +1,378 @@
 {
     "total_nodes": 205,
     "approved": 205,
-    "requires_review": 62,
-    "issues": [],
+    "requires_review": 51,
+    "issues": [
+        {
+            "node_id": "node_0005",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0007",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0020",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0021",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0022",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0023",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0029",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0030",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0031",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0032",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0033",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0034",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0035",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0063",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0065",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0089",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0090",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0091",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0092",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0093",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0098",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0099",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0111",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0112",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0113",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0114",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0115",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0116",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0117",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0119",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0120",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0121",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0123",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0124",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0125",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0153",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0154",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0155",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0174",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0175",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0176",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0177",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0178",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0179",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0181",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0182",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0183",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0184",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0185",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0186",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0187",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        }
+    ],
     "duplicate_ids": [],
     "duplicate_content": [],
-    "invalid_objective_ids": [],
-    "mapping_review": [
-        {
-            "node_id": "node_0011",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0013",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0015",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0059",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0062",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0063",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0066",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0072",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0075",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0078",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0083",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0088",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0089",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0092",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0100",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0102",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0104",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0110",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0112",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0120",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0124",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0126",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0127",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0129",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0133",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0134",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0143",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0145",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0151",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0152",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0153",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0154",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0155",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0158",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0160",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0161",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0162",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0163",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0165",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0166",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0170",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0171",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0174",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0175",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0176",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0178",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0179",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0182",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0183",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0185",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0186",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0190",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0194",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0196",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0198",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0199",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0200",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0201",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0202",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0203",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0204",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0205",
-            "status": "unassigned"
-        }
+    "invalid_objective_ids": [
+        "node_0005",
+        "node_0007",
+        "node_0020",
+        "node_0021",
+        "node_0022",
+        "node_0023",
+        "node_0029",
+        "node_0030",
+        "node_0031",
+        "node_0032",
+        "node_0033",
+        "node_0034",
+        "node_0035",
+        "node_0063",
+        "node_0065",
+        "node_0089",
+        "node_0090",
+        "node_0091",
+        "node_0092",
+        "node_0093",
+        "node_0098",
+        "node_0099",
+        "node_0111",
+        "node_0112",
+        "node_0113",
+        "node_0114",
+        "node_0115",
+        "node_0116",
+        "node_0117",
+        "node_0119",
+        "node_0120",
+        "node_0121",
+        "node_0123",
+        "node_0124",
+        "node_0125",
+        "node_0153",
+        "node_0154",
+        "node_0155",
+        "node_0174",
+        "node_0175",
+        "node_0176",
+        "node_0177",
+        "node_0178",
+        "node_0179",
+        "node_0181",
+        "node_0182",
+        "node_0183",
+        "node_0184",
+        "node_0185",
+        "node_0186",
+        "node_0187"
     ],
-    "objective_mapping_review": [
-        {
-            "node_id": "node_0059",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0062",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0063",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0066",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0083",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0089",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0100",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0102",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0126",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0143",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0151",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0152",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0153",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0154",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0155",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0158",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0163",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0174",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0179",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0185",
-            "status": "review"
-        }
-    ],
-    "content_mapping_review": [
-        {
-            "node_id": "node_0011",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0013",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0015",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0072",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0075",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0078",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0088",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0092",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0104",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0110",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0112",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0120",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0124",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0127",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0129",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0133",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0134",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0145",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0160",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0161",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0162",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0165",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0166",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0170",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0171",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0175",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0176",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0178",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0182",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0183",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0186",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0190",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0196",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0198",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0199",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0200",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0201",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0202",
-            "status": "unassigned"
-        },
-        {
-            "node_id": "node_0203",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0204",
-            "status": "review"
-        },
-        {
-            "node_id": "node_0205",
-            "status": "unassigned"
-        }
-    ],
+    "mapping_review": [],
+    "objective_mapping_review": [],
+    "content_mapping_review": [],
     "objective_coverage": {
         "source_explicit_objective_count": 24,
         "generated_objective_node_count": 48,
         "missing_source_objectives": [],
-        "objective_nodes_without_authored_mapping": [
-            "node_0059",
-            "node_0062",
-            "node_0063",
-            "node_0066",
-            "node_0083",
-            "node_0089",
-            "node_0100",
-            "node_0102",
-            "node_0126",
-            "node_0143",
-            "node_0151",
-            "node_0152",
-            "node_0153",
-            "node_0154",
-            "node_0155",
-            "node_0158",
-            "node_0163",
-            "node_0174",
-            "node_0179",
-            "node_0185"
-        ]
+        "objective_nodes_without_authored_mapping": []
     },
     "intentional_duplicate_content": [
         "node_0002",
