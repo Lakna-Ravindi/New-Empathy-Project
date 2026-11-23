@@ -35,7 +35,10 @@ def validate_curriculum(output_dir: Path) -> dict[str, Any]:
     invalid_nodes = [
         node.get("id")
         for node in knowledge_base
-        if node.get("skill_id") not in canonical_skills
+        if (
+            node.get("skill_id") is not None
+            and node.get("skill_id") not in canonical_skills
+        )
         or (
             node.get("objective_id") is not None
             and node.get("objective_id") not in canonical_objectives

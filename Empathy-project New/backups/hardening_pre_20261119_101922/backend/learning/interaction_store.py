@@ -1,0 +1,904 @@
+"""MongoDB persistence for learning interactions, progress, and review data."""
+
+from datetime import datetime, timezone
+import uuid
+
+from bson import ObjectId
+from pymongo import MongoClient
+from mongo_config import MONGODB_DATABASE, MONGODB_URI
+
+
+class LearningStore:
+    """Stores application data; it never makes learning decisions."""
+
+    def __init__(self, uri=None, database_name=None):
+        self.is_available = True
+
+        self.local_storage = {
+            "interactions": [],
+            "progress": {},
+            "evaluations": [],
+        }
+
+        try:
+            self.client = MongoClient(
+                uri or MONGODB_URI,
+                serverSelectionTimeoutMS=5000,
+            )
+
+            self.db = self.client[
+                database_name
+                or MONGODB_DATABASE
+            ]
+
+            self.interactions = self.db["learning_interactions"]
+            self.progress = self.db["student_progress"]
+            self.evaluations = self.db["controller_evaluations"]
+            self.client.admin.command("ping")
+
+        except Exception as e:
+            self.is_available = False
+            print(
+                f"WARNING: MongoDB unavailable, "
+                f"using local fallback storage: {e}"
+            )
+
+    @staticmethod
+    def _now():
+        return datetime.now(timezone.utc)
+
+    # ---------------------------------------------------------
+    # Learning interactions
+    # ---------------------------------------------------------
+
+    def save_interaction(
+        self,
+        student_id,
+        learning_context,
+        educational_response,
+        learning_steps=None,
+    ):
+        """Store the controller decision and generated wording."""
+
+        document = {
+            "student_id": student_id,
+            "question": learning_context["student_question"],
+            "detected_emotion": learning_context.get(
+                "detected_emotion",
+                "unknown",
+            ),
+            "detected_terms": learning_context.get(
+                "detected_terms",
+                [],
+            ),
+            "status": learning_context["status"],
+            "selected_skill": learning_context.get("skill"),
+            "learning_objective": learning_context.get(
+                "learning_objective"
+            ),
+            "recommended_activity": learning_context.get(
+                "recommended_activity"
+            ),
+            "response": educational_response,
+            "timestamp": self._now(),
+        }
+        if learning_steps is not None:
+            document["learning_steps"] = learning_steps
+
+        if not self.is_available:
+            local_id = f"local-{uuid.uuid4()}"
+            document["_id"] = local_id
+
+            self.local_storage["interactions"].append(document)
+
+            return local_id
+
+        result = self.interactions.insert_one(document)
+
+        return str(result.inserted_id)
+
+    def get_interaction(self, student_id, interaction_id):
+        """Return a student's saved interaction, if it exists."""
+        if not isinstance(interaction_id, str) or not interaction_id:
+            return None
+
+        if not self.is_available:
+            return next(
+                (
+                    interaction
+                    for interaction in self.local_storage["interactions"]
+                    if interaction.get("student_id") == student_id
+                    and interaction.get("_id") == interaction_id
+                ),
+                None,
+            )
+
+        if not ObjectId.is_valid(interaction_id):
+            return None
+        return self.interactions.find_one({
+            "_id": ObjectId(interaction_id),
+            "student_id": student_id,
+        })
+
+    def list_interactions(self, student_id, limit=100):
+        """Return the authenticated student's most recent interactions."""
+
+        if not self.is_available:
+            interactions = [
+                interaction
+                for interaction in self.local_storage["interactions"]
+                if interaction.get("student_id") == student_id
+            ]
+            return list(reversed(interactions[-limit:]))
+
+        return list(
+            self.interactions.find(
+                {"student_id": student_id},
+                {"_id": 0},
+            )
+            .sort("timestamp", -1)
+            .limit(limit)
+        )
+
+    # ---------------------------------------------------------
+    # Progress helpers
+    # ---------------------------------------------------------
+
+    def _default_progress(self, student_id, skill_id):
+        return {
+            "student_id": student_id,
+            "skill_id": skill_id,
+            "completed_item_ids": [],
+            "completed_objective_ids": [],
+            "learning_events": [],
+            "quiz_scores": {},
+            "quiz_attempts": [],
+            "next_recommended_learning_objective": None,
+        }
+
+    @staticmethod
+    def _normalize_progress_document(document):
+        """Keep legacy progress documents compatible with update operations."""
+        if not isinstance(document.get("completed_item_ids"), list):
+            document["completed_item_ids"] = []
+        if not isinstance(document.get("completed_objective_ids"), list):
+            document["completed_objective_ids"] = []
+        if not isinstance(document.get("learning_events"), list):
+            document["learning_events"] = []
+        if not isinstance(document.get("quiz_scores"), dict):
+            document["quiz_scores"] = {}
+        if not isinstance(document.get("quiz_attempts"), list):
+            document["quiz_attempts"] = []
+        document.setdefault("next_recommended_learning_objective", None)
+        return document
+
+    def get_progress(self, student_id, skill_id):
+        """
+        Return progress for one student and one skill.
+
+        Progress is stored using completed item IDs and
+        completed objective IDs.
+        """
+
+        key = f"{student_id}:{skill_id}"
+
+        if not self.is_available:
+            return self.local_storage["progress"].get(
+                key,
+                self._default_progress(student_id, skill_id),
+            )
+
+        document = self.progress.find_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+            },
+            {
+                "_id": 0,
+            },
+        )
+
+        if not document:
+            return self._default_progress(
+                student_id,
+                skill_id,
+            )
+
+        return self._normalize_progress_document(document)
+
+    def get_all_progress(self, student_id):
+        """Return progress documents for every skill owned by a student."""
+
+        if not self.is_available:
+            return [
+                progress
+                for progress in self.local_storage["progress"].values()
+                if progress.get("student_id") == student_id
+            ]
+
+        documents = self.progress.find(
+            {"student_id": student_id},
+            {"_id": 0},
+        )
+
+        result = []
+        for document in documents:
+            result.append(self._normalize_progress_document(document))
+
+        return result
+
+    # ---------------------------------------------------------
+    # Complete learning item
+    # ---------------------------------------------------------
+
+    @staticmethod
+    def _merge_learning_event(
+        progress,
+        skill_id,
+        item_id,
+        objective_id,
+        source,
+        status,
+        timestamp,
+    ):
+        events = progress.setdefault("learning_events", [])
+        event = next(
+            (item for item in events if item.get("content_item_id") == item_id),
+            None,
+        )
+        if event is None:
+            event = {
+                "skill_id": skill_id,
+                "objective_id": objective_id,
+                "content_item_id": item_id,
+                "source": source,
+                "sources": [source],
+                "status": status,
+                "introduced_at": timestamp,
+            }
+            events.append(event)
+        else:
+            if objective_id and not event.get("objective_id"):
+                event["objective_id"] = objective_id
+            event.setdefault("sources", [])
+            if source not in event["sources"]:
+                event["sources"].append(source)
+            if status == "completed":
+                event["status"] = "completed"
+
+        if status == "completed":
+            event["status"] = "completed"
+            event["completed_at"] = timestamp
+
+    def record_learning_event(
+        self,
+        student_id,
+        skill_id,
+        item_id,
+        objective_id=None,
+        source="skills_page",
+        status="completed",
+    ):
+        """Record one deduplicated learning event for a curriculum item."""
+
+        timestamp = self._now()
+        key = f"{student_id}:{skill_id}"
+
+        if not self.is_available:
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(student_id, skill_id),
+                    "created_at": timestamp,
+                }
+            progress = self.local_storage["progress"][key]
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                status,
+                timestamp,
+            )
+            if status == "completed" and item_id not in progress["completed_item_ids"]:
+                progress["completed_item_ids"].append(item_id)
+            progress["updated_at"] = timestamp
+            return progress
+
+        current = self.get_progress(student_id, skill_id)
+        self._merge_learning_event(
+            current,
+            skill_id,
+            item_id,
+            objective_id,
+            source,
+            status,
+            timestamp,
+        )
+        update = {
+            "$set": {
+                "learning_events": current["learning_events"],
+                "updated_at": timestamp,
+            },
+            "$setOnInsert": {"created_at": timestamp},
+        }
+        if status == "completed":
+            update["$addToSet"] = {"completed_item_ids": item_id}
+        self.progress.update_one(
+            {"student_id": student_id, "skill_id": skill_id},
+            update,
+            upsert=True,
+        )
+        return self.get_progress(student_id, skill_id)
+
+    def complete_item(
+        self,
+        student_id,
+        skill_id,
+        item_id,
+        objective_id=None,
+        next_objective=None,
+        required_item_ids=None,
+        objective_completion_requirements=None,
+        quiz_score=None,
+        source="skills_page",
+    ):
+        """
+        Mark a learning item as completed.
+
+        Example item:
+            activity
+            practice
+            assessment
+            reflection
+        """
+
+        key = f"{student_id}:{skill_id}"
+        now = self._now()
+
+        if not self.is_available:
+
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(
+                        student_id,
+                        skill_id,
+                    ),
+                    "created_at": now,
+                }
+
+            progress = self.local_storage["progress"][key]
+
+            if quiz_score is not None:
+                scores = progress.setdefault("quiz_scores", {})
+                previous_score = scores.get(item_id)
+                scores[item_id] = (
+                    max(previous_score, quiz_score)
+                    if isinstance(previous_score, (int, float))
+                    and not isinstance(previous_score, bool)
+                    else quiz_score
+                )
+                progress.setdefault("quiz_attempts", []).append({
+                    "item_id": item_id,
+                    "score": quiz_score,
+                    "timestamp": now,
+                })
+
+            if item_id not in progress["completed_item_ids"]:
+                progress["completed_item_ids"].append(item_id)
+
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "completed",
+                now,
+            )
+
+            requirements = objective_completion_requirements
+            if requirements:
+                is_objective_complete = self._objective_requirements_met(
+                    requirements,
+                    progress["completed_item_ids"],
+                    progress.get("quiz_scores", {}),
+                )
+            else:
+                required_item_ids = set(required_item_ids or [])
+                is_objective_complete = required_item_ids.issubset(
+                    progress["completed_item_ids"]
+                )
+            if objective_id and is_objective_complete:
+                if objective_id not in progress[
+                    "completed_objective_ids"
+                ]:
+                    progress[
+                        "completed_objective_ids"
+                    ].append(objective_id)
+
+            progress[
+                "next_recommended_learning_objective"
+            ] = next_objective
+
+            progress["updated_at"] = now
+
+            return progress
+
+        update = {
+            "$addToSet": {
+                "completed_item_ids": item_id,
+            },
+            "$set": {
+                "updated_at": now,
+            },
+            "$setOnInsert": {
+                "created_at": now,
+            },
+        }
+
+        required_item_ids = set(required_item_ids or [])
+        current = self.get_progress(student_id, skill_id)
+        completed_item_ids = set(current.get("completed_item_ids", []))
+        completed_item_ids.add(item_id)
+        quiz_scores = current.get("quiz_scores", {})
+        if quiz_score is not None:
+            previous_score = quiz_scores.get(item_id)
+            quiz_scores = {
+                **quiz_scores,
+                item_id: (
+                    max(previous_score, quiz_score)
+                    if isinstance(previous_score, (int, float))
+                    and not isinstance(previous_score, bool)
+                    else quiz_score
+                ),
+            }
+
+        # Older documents may contain null progress fields. Repair those
+        # fields before using array/map update operators below.
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+                "$or": [
+                    {"completed_item_ids": {"$exists": False}},
+                    {"completed_item_ids": None},
+                    {"completed_objective_ids": {"$exists": False}},
+                    {"completed_objective_ids": None},
+                    {"learning_events": {"$exists": False}},
+                    {"learning_events": None},
+                    {"quiz_scores": {"$exists": False}},
+                    {"quiz_scores": None},
+                    {"quiz_attempts": {"$exists": False}},
+                    {"quiz_attempts": None},
+                ],
+            },
+            {
+                "$set": {
+                    "completed_item_ids": current["completed_item_ids"],
+                    "completed_objective_ids": current["completed_objective_ids"],
+                    "learning_events": current["learning_events"],
+                    "quiz_scores": current["quiz_scores"],
+                    "quiz_attempts": current.get("quiz_attempts", []),
+                }
+            },
+        )
+
+        if objective_completion_requirements:
+            is_objective_complete = self._objective_requirements_met(
+                objective_completion_requirements,
+                completed_item_ids,
+                quiz_scores,
+            )
+        else:
+            is_objective_complete = required_item_ids.issubset(
+                completed_item_ids
+            )
+        if objective_id and is_objective_complete:
+            update["$addToSet"][
+                "completed_objective_ids"
+            ] = objective_id
+
+        if next_objective is not None:
+            update["$set"][
+                "next_recommended_learning_objective"
+            ] = next_objective
+
+        if quiz_score is not None:
+            update["$set"][f"quiz_scores.{item_id}"] = quiz_scores[item_id]
+            update["$push"] = {
+                "quiz_attempts": {
+                    "item_id": item_id,
+                    "score": quiz_score,
+                    "timestamp": now,
+                }
+            }
+
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+            },
+            update,
+            upsert=True,
+        )
+
+        self.record_learning_event(
+            student_id,
+            skill_id,
+            item_id,
+            objective_id=objective_id,
+            source=source,
+            status="completed",
+        )
+
+        progress = self.get_progress(student_id, skill_id)
+        if objective_id and objective_completion_requirements and self._objective_requirements_met(
+            objective_completion_requirements,
+            progress.get("completed_item_ids", []),
+            progress.get("quiz_scores", {}),
+        ):
+            self.progress.update_one(
+                {"student_id": student_id, "skill_id": skill_id},
+                {"$addToSet": {"completed_objective_ids": objective_id}},
+            )
+            progress = self.get_progress(student_id, skill_id)
+        return progress
+
+    @staticmethod
+    def _objective_requirements_met(requirements, completed_item_ids, quiz_scores):
+        completed_item_ids = set(completed_item_ids or [])
+        quiz_scores = quiz_scores or {}
+        activity_completed = any(
+            item_id in completed_item_ids
+            for item_id in requirements.get("activity_item_ids", [])
+        )
+        quiz_passed = any(
+            item_id in completed_item_ids
+            and isinstance(quiz_scores.get(item_id), (int, float))
+            and not isinstance(quiz_scores.get(item_id), bool)
+            and quiz_scores[item_id] >= required_score
+            for item_id, required_score in requirements.get(
+                "quiz_passing_scores", {}
+            ).items()
+        )
+        return activity_completed and quiz_passed
+
+    def record_quiz_attempt(
+        self,
+        student_id,
+        skill_id,
+        item_id,
+        score,
+        objective_id=None,
+        source="skills_page",
+    ):
+        """Persist a quiz attempt without treating a failing score as completion."""
+        key = f"{student_id}:{skill_id}"
+        now = self._now()
+        attempt = {"item_id": item_id, "score": score, "timestamp": now}
+        if not self.is_available:
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(student_id, skill_id),
+                    "created_at": now,
+                }
+            progress = self.local_storage["progress"][key]
+            scores = progress.setdefault("quiz_scores", {})
+            previous_score = scores.get(item_id)
+            scores[item_id] = (
+                max(previous_score, score)
+                if isinstance(previous_score, (int, float))
+                and not isinstance(previous_score, bool)
+                else score
+            )
+            progress.setdefault("quiz_attempts", []).append(attempt)
+            self._merge_learning_event(
+                progress,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "quiz_attempt",
+                now,
+            )
+            progress["updated_at"] = now
+            return progress
+
+        current = self.get_progress(student_id, skill_id)
+        scores = current.get("quiz_scores", {})
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+                "$or": [
+                    {"quiz_attempts": {"$exists": False}},
+                    {"quiz_attempts": None},
+                ],
+            },
+            {"$set": {"quiz_attempts": current.get("quiz_attempts", [])}},
+        )
+        previous_score = scores.get(item_id)
+        if isinstance(previous_score, (int, float)) and not isinstance(
+            previous_score, bool
+        ):
+            score = max(previous_score, score)
+        scores = {**scores, item_id: score}
+        update = {
+            "$set": {
+                "quiz_scores": scores,
+                "learning_events": current["learning_events"],
+                "updated_at": now,
+            },
+            "$push": {"quiz_attempts": attempt},
+            "$setOnInsert": {"created_at": now},
+        }
+        if objective_id:
+            self._merge_learning_event(
+                current,
+                skill_id,
+                item_id,
+                objective_id,
+                source,
+                "quiz_attempt",
+                now,
+            )
+            update["$set"]["learning_events"] = current["learning_events"]
+        self.progress.update_one(
+            {"student_id": student_id, "skill_id": skill_id},
+            update,
+            upsert=True,
+        )
+        return self.get_progress(student_id, skill_id)
+
+    # ---------------------------------------------------------
+    # Complete objective
+    # ---------------------------------------------------------
+
+    def complete_objective(
+        self,
+        student_id,
+        skill_id,
+        objective,
+        next_objective,
+    ):
+        """
+        Mark an explicitly confirmed objective as complete.
+
+        Kept for compatibility with the existing API.
+        """
+
+        key = f"{student_id}:{skill_id}"
+        now = self._now()
+
+        objective_id = objective["id"]
+
+        if not self.is_available:
+
+            if key not in self.local_storage["progress"]:
+                self.local_storage["progress"][key] = {
+                    **self._default_progress(
+                        student_id,
+                        skill_id,
+                    ),
+                    "created_at": now,
+                }
+
+            progress = self.local_storage["progress"][key]
+
+            if objective_id not in progress[
+                "completed_objective_ids"
+            ]:
+                progress[
+                    "completed_objective_ids"
+                ].append(objective_id)
+
+            progress[
+                "next_recommended_learning_objective"
+            ] = next_objective
+
+            progress["updated_at"] = now
+
+            return progress
+
+        self.progress.update_one(
+            {
+                "student_id": student_id,
+                "skill_id": skill_id,
+            },
+            {
+                "$set": {
+                    "next_recommended_learning_objective":
+                        next_objective,
+                    "updated_at": now,
+                },
+                "$addToSet": {
+                    "completed_objective_ids":
+                        objective_id,
+                },
+                "$setOnInsert": {
+                    "created_at": now,
+                },
+            },
+            upsert=True,
+        )
+
+        return self.get_progress(
+            student_id,
+            skill_id,
+        )
+
+    # ---------------------------------------------------------
+    # Evaluation
+    # ---------------------------------------------------------
+
+    def save_evaluation(
+        self,
+        interaction_id,
+        reviewer_id,
+        evaluation,
+    ):
+        """Save human review data."""
+
+        document = {
+            "interaction_id": (
+                ObjectId(interaction_id)
+                if not interaction_id.startswith("local-")
+                else interaction_id
+            ),
+            "reviewer_id": reviewer_id,
+            "correct_skill_selected":
+                evaluation["correct_skill_selected"],
+            "activity_matches_emotion":
+                evaluation["activity_matches_emotion"],
+            "response_educationally_aligned":
+                evaluation[
+                    "response_educationally_aligned"
+                ],
+            "notes": evaluation.get("notes", ""),
+            "timestamp": self._now(),
+        }
+
+        if not self.is_available:
+            local_id = f"local-{uuid.uuid4()}"
+
+            document["_id"] = local_id
+
+            self.local_storage[
+                "evaluations"
+            ].append(document)
+
+            return local_id
+
+        result = self.evaluations.insert_one(document)
+
+        return str(result.inserted_id)
+
+    # ---------------------------------------------------------
+    # Evaluation summary
+    # ---------------------------------------------------------
+
+    def evaluation_summary(self):
+        """Return human-review percentages."""
+
+        if not self.is_available:
+
+            evaluations = self.local_storage[
+                "evaluations"
+            ]
+
+            if not evaluations:
+                return {
+                    "reviewed_interactions": 0
+                }
+
+            count = len(evaluations)
+
+            correct_count = sum(
+                1
+                for e in evaluations
+                if e.get("correct_skill_selected")
+            )
+
+            activity_match_count = sum(
+                1
+                for e in evaluations
+                if e.get(
+                    "activity_matches_emotion"
+                )
+            )
+
+            alignment_count = sum(
+                1
+                for e in evaluations
+                if e.get(
+                    "response_educationally_aligned"
+                )
+            )
+
+            return {
+                "reviewed_interactions": count,
+                "correct_skill_selection_rate":
+                    round(
+                        correct_count
+                        / count
+                        * 100,
+                        1,
+                    ),
+                "activity_emotion_match_rate":
+                    round(
+                        activity_match_count
+                        / count
+                        * 100,
+                        1,
+                    ),
+                "educational_alignment_rate":
+                    round(
+                        alignment_count
+                        / count
+                        * 100,
+                        1,
+                    ),
+            }
+
+        pipeline = [
+            {
+                "$group": {
+                    "_id": None,
+                    "reviewed_interactions": {
+                        "$sum": 1
+                    },
+                    "correct_skill_selection_rate": {
+                        "$avg": {
+                            "$cond": [
+                                "$correct_skill_selected",
+                                1,
+                                0,
+                            ]
+                        }
+                    },
+                    "activity_emotion_match_rate": {
+                        "$avg": {
+                            "$cond": [
+                                "$activity_matches_emotion",
+                                1,
+                                0,
+                            ]
+                        }
+                    },
+                    "educational_alignment_rate": {
+                        "$avg": {
+                            "$cond": [
+                                "$response_educationally_aligned",
+                                1,
+                                0,
+                            ]
+                        }
+                    },
+                }
+            }
+        ]
+
+        summary = next(
+            self.evaluations.aggregate(pipeline),
+            None,
+        )
+
+        if not summary:
+            return {
+                "reviewed_interactions": 0
+            }
+
+        summary.pop("_id", None)
+
+        for key in (
+            "correct_skill_selection_rate",
+            "activity_emotion_match_rate",
+            "educational_alignment_rate",
+        ):
+            summary[key] = round(
+                summary[key] * 100,
+                1,
+            )
+
+        return summary

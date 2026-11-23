@@ -12,11 +12,28 @@ from bson.errors import InvalidId
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from dotenv import load_dotenv
 
-from auth import VALID_AGE_GROUPS, VALID_GENDERS, create_access_token, get_user_store, require_auth, require_role
-from general_empathy_service import EmpathyServiceError, generate_empathy_response
-from learning.pedagogical_controller import answer_student_question, belongs_to_skill
+from auth import (
+    VALID_AGE_GROUPS,
+    VALID_GENDERS,
+    create_access_token,
+    get_user_store,
+    require_auth,
+    require_role,
+    revoke_current_token,
+    validate_jwt_secret,
+    is_production_mode,
+)
+from rate_limiter import rate_limit
+from learning.pedagogical_controller import answer_student_question, belongs_to_skill, answer_student_question as _default_answer_student_question
 from learning.interaction_store import LearningStore
 from learning.progress_service import ProgressService
+from learning.learning_recommendation_service import LearningRecommendationService
+from agents import (
+    AgentExecutionError,
+    EmpathyOrchestrator,
+    GeneralEmpathyAgent,
+    GeneralEmpathyInput,
+)
 from registration_assessment import (
     RegistrationAssessmentStore,
     score_pre_skill,
@@ -56,18 +73,44 @@ def is_greeting(text: str) -> bool:
 
 app = Flask(__name__)
 
+
+def configure_cors_origins() -> list[str]:
+    raw_origins = os.getenv("CORS_ALLOWED_ORIGINS", os.getenv("FRONTEND_URL", ""))
+    origins = [o.strip() for o in raw_origins.split(",") if o.strip()]
+
+    if is_production_mode():
+        if not origins:
+            raise RuntimeError("CRITICAL: CORS_ALLOWED_ORIGINS must be explicitly configured in production environment.")
+        if "*" in origins:
+            raise RuntimeError("CRITICAL: Wildcard '*' CORS origin is not permitted in production environment.")
+        return origins
+
+    if not origins:
+        origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    return origins
+
+
+ALLOWED_ORIGINS = configure_cors_origins()
+
+if is_production_mode():
+    validate_jwt_secret(is_production=True)
+
 CORS(
     app,
-    resources={r"/api/*": {"origins": "http://localhost:5173"}},
+    resources={r"/api/*": {"origins": ALLOWED_ORIGINS}},
     allow_headers=["Content-Type", "Authorization"],
 )
 
 
 @app.after_request
 def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
+    origin = request.headers.get("Origin")
+    if origin in ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+    elif not origin and ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = ALLOWED_ORIGINS[0]
     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS, PUT, DELETE"
     return response
 
 
@@ -427,6 +470,21 @@ learning_store = LearningStore()
 student_store = get_user_store()
 progress_service = ProgressService()
 
+orchestrator = EmpathyOrchestrator(
+    learning_store=learning_store,
+    progress_service=progress_service,
+    attach_metadata_fn=attach_progress_item_id,
+    fallback_answer_fn=lambda *args, **kwargs: answer_student_question(*args, **kwargs),
+    override_check_fn=lambda: answer_student_question != _default_answer_student_question,
+    learning_store_getter=lambda: learning_store,
+    progress_service_getter=lambda: progress_service,
+    knowledge_base=knowledge_base,
+    keyword_skill_map=keyword_skill_map,
+)
+
+general_empathy_agent = GeneralEmpathyAgent(fallback_on_error=False)
+learning_recommendation_service = LearningRecommendationService()
+
 # Screening / pre-skill results live in the SAME database as the users collection.
 assessment_store = RegistrationAssessmentStore(db=student_store.db)
 try:
@@ -437,6 +495,27 @@ try:
     )
 except PyMongoError:
     safety_store = None
+
+
+@app.get("/api/health")
+@app.get("/health")
+def health_check():
+    """Health check endpoint for container orchestrators, load balancers, and monitoring."""
+    db_status = "healthy"
+    try:
+        if student_store and student_store.client:
+            student_store.client.admin.command("ping")
+        else:
+            db_status = "unconnected"
+    except Exception:
+        db_status = "degraded"
+
+    return jsonify({
+        "status": "healthy" if db_status == "healthy" else "degraded",
+        "service": "empathy-guru-backend",
+        "database": db_status,
+        "version": "1.0.0",
+    }), (200 if db_status == "healthy" else 503)
 
 
 def _safety_store_or_error():
@@ -517,6 +596,7 @@ def next_uncompleted_objective(skill_id, completed_ids):
 # ---------------------------------------------------
 
 @app.post("/api/auth/register")
+@rate_limit("register", default_limit=5, window_seconds=60, env_var="RATELIMIT_REGISTER_LIMIT")
 def register_student():
     body = request.get_json(silent=True) or {}
 
@@ -630,6 +710,7 @@ def validate_registration():
 
 
 @app.post("/api/auth/register/complete")
+@rate_limit("register", default_limit=5, window_seconds=60, env_var="RATELIMIT_REGISTER_LIMIT")
 def register_with_assessments():
     """
     Final step of sign-up. Saves the account together with the screening and
@@ -711,6 +792,7 @@ def register_with_assessments():
 
 
 @app.post("/api/auth/login")
+@rate_limit("login", default_limit=10, window_seconds=60, env_var="RATELIMIT_LOGIN_LIMIT")
 def login_student():
     body = request.get_json(silent=True) or {}
 
@@ -798,6 +880,7 @@ def get_my_user():
 
 @app.post("/api/auth/logout")
 def logout():
+    revoke_current_token()
     return jsonify({"message": "Logged out successfully."}), 200
 
 
@@ -964,6 +1047,7 @@ def create_admin():
 # ---------------------------------------------------
 @app.post("/api/general-empathy-chat")
 @require_auth
+@rate_limit("general_chat", default_limit=30, window_seconds=60, env_var="RATELIMIT_CHAT_LIMIT")
 def general_empathy_chat():
     body = request.get_json(silent=True)
     if not isinstance(body, dict):
@@ -994,13 +1078,144 @@ def general_empathy_chat():
                 "error": "Each history message must have a user or assistant role and non-empty content of 4000 characters or fewer."
             }), 400
 
+    # Safety screening: same restriction check, detector, and event recording
+    # as /api/learning-response. Flagged or restricted requests never reach the LLM.
+    student_id = g.student_id
+    store, error = _safety_store_or_error()
+    if error:
+        return error
     try:
-        response = generate_empathy_response(message, history)
-        return jsonify({"response": response}), 200
-    except EmpathyServiceError:
+        status = store.get_status(student_id)
+    except PyMongoError:
+        return jsonify({"error": "Could not verify chatbot safety status."}), 503
+
+    if status.get("restriction_active") or status.get("screening_required"):
+        payload = _screening_status_response(status)
+        payload["error"] = (
+            "Chatbot access is temporarily restricted."
+            if status.get("restriction_active")
+            else "A screening assessment is required before chatbot access can be restored."
+        )
+        return jsonify(payload), 423
+
+    safety = detect_safety_risk(message)
+    if safety["qualifies"]:
+        request_id = body.get("request_id")
+        if not isinstance(request_id, str) or not request_id.strip():
+            request_id = request.headers.get("Idempotency-Key")
+        if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 200:
+            request_id = str(uuid4())
+        try:
+            event, status, _ = store.record_event(
+                student_id,
+                message,
+                safety,
+                request_id.strip(),
+            )
+            return jsonify(safety_response(event, status)), 200
+        except PyMongoError:
+            return jsonify({"error": "Could not save the safety event."}), 503
+
+    request_id = body.get("request_id")
+    if not isinstance(request_id, str) or not request_id.strip():
+        request_id = request.headers.get("Idempotency-Key")
+
+    try:
+        output = general_empathy_agent.execute(
+            GeneralEmpathyInput(
+                student_id=student_id,
+                authenticated_student_id=student_id,
+                current_message=message,
+                conversation_history=history,
+                request_id=request_id.strip() if isinstance(request_id, str) else None,
+                fallback_on_error=False,
+            )
+        )
+        return jsonify(output.to_frontend_dict()), 200
+    except AgentExecutionError:
         app.logger.warning("General empathy-support response generation failed.")
         return jsonify({
             "error": "The empathy-support service is currently unavailable."
+        }), 503
+
+
+@app.post("/api/general-empathy-chat/recommendations")
+@require_auth
+@rate_limit("general_chat_recommendations", default_limit=30, window_seconds=60, env_var="RATELIMIT_RECOMMENDATIONS_LIMIT")
+def general_empathy_recommendations():
+    body = request.get_json(silent=True)
+    if not isinstance(body, dict):
+        return jsonify({"error": "A JSON object is required."}), 400
+
+    history = body.get("history", [])
+    if not isinstance(history, list):
+        return jsonify({"error": "Conversation history must be a list."}), 400
+    if len(history) > 20:
+        return jsonify({"error": "Conversation history must contain at most 20 messages."}), 400
+
+    for entry in history:
+        if (
+            not isinstance(entry, dict)
+            or not isinstance(entry.get("role"), str)
+            or entry["role"] not in {"user", "assistant"}
+            or not isinstance(entry.get("content"), str)
+            or not entry["content"].strip()
+            or len(entry["content"]) > 4000
+        ):
+            return jsonify({
+                "error": "Each history message must have a user or assistant role and non-empty content of 4000 characters or fewer."
+            }), 400
+
+    student_id = g.student_id
+    store, error = _safety_store_or_error()
+    if error:
+        return error
+    try:
+        status = store.get_status(student_id)
+    except PyMongoError:
+        return jsonify({"error": "Could not verify chatbot safety status."}), 503
+
+    if status.get("restriction_active") or status.get("screening_required"):
+        payload = _screening_status_response(status)
+        payload["error"] = (
+            "Chatbot access is temporarily restricted."
+            if status.get("restriction_active")
+            else "A screening assessment is required before chatbot access can be restored."
+        )
+        return jsonify(payload), 423
+
+    # Scan user messages for safety escalation
+    for entry in history:
+        if entry.get("role") == "user":
+            safety = detect_safety_risk(entry["content"])
+            if safety["qualifies"]:
+                request_id = body.get("request_id")
+                if not isinstance(request_id, str) or not request_id.strip():
+                    request_id = request.headers.get("Idempotency-Key")
+                if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 200:
+                    request_id = str(uuid4())
+                try:
+                    event, status, _ = store.record_event(
+                        student_id,
+                        entry["content"],
+                        safety,
+                        request_id.strip(),
+                    )
+                    return jsonify(safety_response(event, status)), 200
+                except PyMongoError:
+                    return jsonify({"error": "Could not save the safety event."}), 503
+
+    # Generate recommendations using LearningRecommendationService
+    try:
+        recommendations_result = learning_recommendation_service.recommend(
+            conversation_history=history,
+            student_id=student_id,
+        )
+        return jsonify(recommendations_result), 200
+    except Exception:
+        app.logger.exception("Failed to generate learning recommendations.")
+        return jsonify({
+            "error": "The learning recommendation service is currently unavailable."
         }), 503
 
 
@@ -1063,6 +1278,7 @@ def submit_safety_screening():
 
 @app.post("/api/learning-response")
 @require_auth
+@rate_limit("learning_chat", default_limit=30, window_seconds=60, env_var="RATELIMIT_CHAT_LIMIT")
 def learning_response():
     body = request.get_json(silent=True) or {}
     question = (body.get("question") or "").strip()
@@ -1111,97 +1327,14 @@ def learning_response():
         except PyMongoError:
             return jsonify({"error": "Could not save the safety event."}), 503
 
-    if is_greeting(question):
-        return jsonify({
-            "educational_response": (
-                "Hey! 👋 I'm here to help you explore empathy and build your skills. "
-                "What would you like to learn about today?"
-            ),
-            "learning_context": {
-                "message": (
-                    "Hey! 👋 I'm here to help you explore empathy and build your skills. "
-                    "What would you like to learn about today?"
-                ),
-                "detected_emotion": "calm",
-                "status": "greeting",
-                "skill": None,
-                "topic": None,
-                "answer_style": answer_style,
-            },
-            "steps": [],
-            "suggested_questions": [],
-        })
-
-    try:
-        progress_documents = learning_store.get_all_progress(student_id)
-    except PyMongoError:
-        app.logger.warning("learning-response progress lookup unavailable.")
-        progress_documents = None
-
-    result = answer_student_question(
-        question,
-        knowledge_base,
-        keyword_skill_map,
-        answer_style,
-        progress_documents=progress_documents,
-        progress_structure=progress_service.get_structure(),
+    response_payload, status_code = orchestrator.orchestrate_turn(
+        student_id=student_id,
+        authenticated_student_id=student_id,
+        message=question,
+        answer_style=answer_style,
+        conversation_id=body.get("conversation_id", "default"),
     )
-
-    learning_context = result.get("learning_context", result)
-    result.setdefault("suggested_questions", [])
-    attach_progress_item_id(learning_context)
-    app.logger.info(
-        "learning-response recommendation skill=%s activity_id=%s",
-        (learning_context.get("skill") or {}).get("id"),
-        (learning_context.get("recommended_activity") or {}).get("id"),
-    )
-    steps = result.get("steps", [])
-    recommended_activity = learning_context.get("recommended_activity") or {}
-    if recommended_activity.get("progress_item_id"):
-        for step in steps:
-            if isinstance(step, dict) and step.get("type") == "activity":
-                step_activity = step.get("activity")
-                if isinstance(step_activity, dict):
-                    step["activity"] = {
-                        **step_activity,
-                        "progress_item_id": recommended_activity["progress_item_id"],
-                        "progress_item_type": recommended_activity.get(
-                            "progress_item_type"
-                        ),
-                        "progress_objective_id": recommended_activity.get(
-                            "progress_objective_id"
-                        ),
-                    }
-    educational_response = result.get(
-        "educational_response",
-        result.get("answer", steps if steps else learning_context.get("message", "")),
-    )
-
-    try:
-        interaction_id = learning_store.save_interaction(
-            student_id,
-            learning_context,
-            educational_response,
-            learning_steps=steps,
-        )
-
-        result["interaction_id"] = interaction_id
-        progress_item_id = recommended_activity.get("progress_item_id")
-        if progress_item_id:
-            learning_store.record_learning_event(
-                student_id,
-                learning_context["skill"]["id"],
-                progress_item_id,
-                objective_id=recommended_activity.get("progress_objective_id"),
-                source="chatbot",
-                status="introduced",
-            )
-        return jsonify(result), 200
-
-    except PyMongoError:
-        return jsonify({
-            "error": "Could not save the learning interaction."
-        }), 503
+    return jsonify(response_payload), status_code
 
 
 @app.get("/api/learning-history")
@@ -1543,12 +1676,7 @@ def progress_structure():
         }), 500
 
 
-@app.post("/api/objectives/<objective_id>/complete")
-@require_auth
-def complete_objective(objective_id):
-    student_id = g.student_id
-
-    body = request.get_json(silent=True) or {}
+def _legacy_complete_objective(objective_id, student_id, body):
     skill_id = (body.get("skill_id") or "").strip()
     chapter = next(
         (
@@ -1701,6 +1829,27 @@ def complete_objective(objective_id):
         }), 503
 
 
+@app.post("/api/objectives/<objective_id>/complete")
+@require_auth
+def complete_objective(objective_id):
+    student_id = g.student_id
+    body = request.get_json(silent=True) or {}
+
+    enable_agent = os.getenv("ENABLE_AGENT_OBJECTIVE_COMPLETION", "false").lower() in {"true", "1", "yes"}
+    if enable_agent:
+        target_student_id = body.get("student_id") or student_id
+        payload, status = orchestrator.complete_objective_http(
+            student_id=target_student_id,
+            authenticated_student_id=student_id,
+            skill_id=body.get("skill_id"),
+            objective_id=objective_id,
+            body=body,
+        )
+        return jsonify(payload), status
+
+    return _legacy_complete_objective(objective_id, student_id, body)
+
+
 # ---------------------------------------------------
 # Existing reviewer evaluation APIs
 # ---------------------------------------------------
@@ -1756,6 +1905,11 @@ def evaluation_summary():
 
 
 if __name__ == "__main__":
+    is_debug = (
+        os.getenv("FLASK_DEBUG", "false").lower() in {"true", "1", "yes"}
+        or os.getenv("FLASK_ENV", "").lower() == "development"
+    )
+    port = int(os.getenv("PORT", 5000))
     # The Werkzeug reloader can close the listening socket while its serving
     # thread is still polling it on Windows, producing WinError 10038.
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(host="0.0.0.0", port=port, debug=is_debug, use_reloader=False)

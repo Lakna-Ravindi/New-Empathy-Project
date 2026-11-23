@@ -30,22 +30,22 @@ def test_runtime_structure_keeps_only_canonical_skills_and_objectives():
     service = ProgressService(structure=structure)
 
     assert [chapter["chapter_id"] for chapter in service.structure["chapters"]] == [
-        "skill_01", "skill_02", "skill_03", "skill_04"
+        f"skill_{i:02d}" for i in range(1, 9)
     ]
     assert sum(
         len(chapter["objectives"]) for chapter in service.structure["chapters"]
-    ) == 24
+    ) == 46
 
 
 def test_objective_validation_reports_all_canonical_objectives():
     report = validate_curriculum(ROOT / "output")
 
-    assert len(report["objective_validation"]) == 24
+    assert len(report["objective_validation"]) == 46
     assert all(
         item["mapping_status"] == "matched"
         for item in report["objective_validation"]
     )
-    assert len(report["progress_structure"]["objectives_without_actionable_items"]) == 23
+    assert len(report["progress_structure"]["objectives_without_actionable_items"]) == 45
 
 
 def test_activity_eligibility_has_49_and_50_percent_boundaries():

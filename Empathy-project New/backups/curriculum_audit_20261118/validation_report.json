@@ -1,0 +1,1155 @@
+{
+    "total_nodes": 492,
+    "approved": 492,
+    "requires_review": 152,
+    "issues": [
+        {
+            "node_id": "node_0008",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0010",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0025",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0026",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0027",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0028",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0029",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0039",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0040",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0041",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0042",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0043",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0044",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0045",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0046",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0047",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0098",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0099",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0100",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0101",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0135",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0136",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0137",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0138",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0139",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0140",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0141",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0142",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0143",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0144",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0145",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0146",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0147",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0148",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0149",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0154",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0155",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0172",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0173",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0174",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0175",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0176",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0177",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0178",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0179",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0180",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0181",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0182",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0183",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0184",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0185",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0186",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0187",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0188",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0218",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0219",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0220",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0255",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0256",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0257",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0258",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0259",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0260",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0261",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0262",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0263",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0264",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0265",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0266",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0267",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0268",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0269",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0270",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0272",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0307",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0308",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0333",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0334",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0335",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0336",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0337",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0338",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0339",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0340",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0341",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0342",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0343",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0344",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0345",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0346",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0353",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0355",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0381",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0382",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0383",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0384",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0385",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0386",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0387",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0401",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0413",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0414",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0458",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0466",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0467",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0468",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0469",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0470",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        },
+        {
+            "node_id": "node_0471",
+            "issues": [
+                "Invalid objective_id"
+            ]
+        }
+    ],
+    "duplicate_ids": [],
+    "duplicate_content": [
+        [
+            "node_0291",
+            "node_0293",
+            "node_0295",
+            "node_0297"
+        ],
+        [
+            "node_0335",
+            "node_0398"
+        ]
+    ],
+    "invalid_objective_ids": [
+        "node_0008",
+        "node_0010",
+        "node_0025",
+        "node_0026",
+        "node_0027",
+        "node_0028",
+        "node_0029",
+        "node_0039",
+        "node_0040",
+        "node_0041",
+        "node_0042",
+        "node_0043",
+        "node_0044",
+        "node_0045",
+        "node_0046",
+        "node_0047",
+        "node_0098",
+        "node_0099",
+        "node_0100",
+        "node_0101",
+        "node_0135",
+        "node_0136",
+        "node_0137",
+        "node_0138",
+        "node_0139",
+        "node_0140",
+        "node_0141",
+        "node_0142",
+        "node_0143",
+        "node_0144",
+        "node_0145",
+        "node_0146",
+        "node_0147",
+        "node_0148",
+        "node_0149",
+        "node_0154",
+        "node_0155",
+        "node_0172",
+        "node_0173",
+        "node_0174",
+        "node_0175",
+        "node_0176",
+        "node_0177",
+        "node_0178",
+        "node_0179",
+        "node_0180",
+        "node_0181",
+        "node_0182",
+        "node_0183",
+        "node_0184",
+        "node_0185",
+        "node_0186",
+        "node_0187",
+        "node_0188",
+        "node_0218",
+        "node_0219",
+        "node_0220",
+        "node_0255",
+        "node_0256",
+        "node_0257",
+        "node_0258",
+        "node_0259",
+        "node_0260",
+        "node_0261",
+        "node_0262",
+        "node_0263",
+        "node_0264",
+        "node_0265",
+        "node_0266",
+        "node_0267",
+        "node_0268",
+        "node_0269",
+        "node_0270",
+        "node_0272",
+        "node_0307",
+        "node_0308",
+        "node_0333",
+        "node_0334",
+        "node_0335",
+        "node_0336",
+        "node_0337",
+        "node_0338",
+        "node_0339",
+        "node_0340",
+        "node_0341",
+        "node_0342",
+        "node_0343",
+        "node_0344",
+        "node_0345",
+        "node_0346",
+        "node_0353",
+        "node_0355",
+        "node_0381",
+        "node_0382",
+        "node_0383",
+        "node_0384",
+        "node_0385",
+        "node_0386",
+        "node_0387",
+        "node_0401",
+        "node_0413",
+        "node_0414",
+        "node_0458",
+        "node_0466",
+        "node_0467",
+        "node_0468",
+        "node_0469",
+        "node_0470",
+        "node_0471"
+    ],
+    "mapping_review": [
+        {
+            "node_id": "node_0001",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0002",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0003",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0128",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0129",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0130",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0131",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0132",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0133",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0134",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0170",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0171",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0287",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0288",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0289",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0290",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0291",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0292",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0293",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0294",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0295",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0296",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0297",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0298",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0299",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0348",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0365",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0366",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0367",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0368",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0369",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0370",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0371",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0372",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0373",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0374",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0375",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0445",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0446",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0447",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0448",
+            "status": "review"
+        }
+    ],
+    "objective_mapping_review": [
+        {
+            "node_id": "node_0128",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0131",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0134",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0170",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0287",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0365",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0370",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0374",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0445",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0446",
+            "status": "review"
+        }
+    ],
+    "content_mapping_review": [
+        {
+            "node_id": "node_0001",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0002",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0003",
+            "status": "unassigned"
+        },
+        {
+            "node_id": "node_0129",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0130",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0132",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0133",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0171",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0288",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0289",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0290",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0291",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0292",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0293",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0294",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0295",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0296",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0297",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0298",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0299",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0348",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0366",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0367",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0368",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0369",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0371",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0372",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0373",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0375",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0447",
+            "status": "review"
+        },
+        {
+            "node_id": "node_0448",
+            "status": "review"
+        }
+    ],
+    "objective_coverage": {
+        "source_explicit_objective_count": 42,
+        "generated_objective_node_count": 107,
+        "missing_source_objectives": [],
+        "objective_nodes_without_authored_mapping": [
+            "node_0128",
+            "node_0131",
+            "node_0134",
+            "node_0170",
+            "node_0287",
+            "node_0365",
+            "node_0370",
+            "node_0374",
+            "node_0445",
+            "node_0446"
+        ]
+    },
+    "intentional_duplicate_content": [
+        "node_0005",
+        "node_0006",
+        "node_0092",
+        "node_0093",
+        "node_0151",
+        "node_0152",
+        "node_0214",
+        "node_0215",
+        "node_0301",
+        "node_0302",
+        "node_0349",
+        "node_0350",
+        "node_0408",
+        "node_0409",
+        "node_0455",
+        "node_0456"
+    ],
+    "possible_split_nodes": []
+}

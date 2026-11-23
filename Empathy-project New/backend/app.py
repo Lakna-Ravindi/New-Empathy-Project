@@ -7,7 +7,7 @@ from collections import Counter
 
 from classifier.rule_classifier import classify
 from knowledge.node_builder import build_node
-from parser.metadata_extractor import extract_blocks
+from parser.metadata_extractor import extract_blocks, is_document_metadata
 from parser.highlight_extractor import (
     extract_highlighted_keywords,
 )
@@ -72,6 +72,10 @@ def build_knowledge_base():
     # -------------------------------
     for index, block in enumerate(merged_blocks, start=1):
 
+        raw_text = block.get("text", "")
+        if block.get("is_metadata") or is_document_metadata(raw_text):
+            continue
+
         # Clean extracted PDF text before classification and node creation.
         if "text" in block:
             block["text"] = clean_text(block["text"])
@@ -113,6 +117,9 @@ def build_knowledge_base():
 
             node_type = classification
             confidence = 0.5
+
+        if node_type in {"document_metadata", "metadata"}:
+            continue
 
         explicit_objective = (
             isinstance(classification, dict)
@@ -445,11 +452,21 @@ def clean_text(text):
     # Normalize whitespace
     text = re.sub(r"\s+", " ", text)
 
+    # The updated SEEK PDF merges the running page header with the skill
+    # title, e.g. "UNESCO MGIEP • MODULE 1 Skill 1: Calming the Body and Mind".
+    # Strip the header so the block is classified as a chapter ("Skill N:").
+    text = re.sub(
+        r"^\s*UNESCO\s+MGIEP\s*(?:MODULE\s+\d+\s*)?(?=Skill\s+\d+\s*:)",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+
     return text.strip()
 
 
 def is_valid_block(block):
-    """Reject blocks that contain only symbols or meaningless text."""
+    """Reject blocks that contain only symbols, meaningless text, or document metadata."""
 
     title = block.get("title", "")
     content = block.get("content", "")
@@ -457,6 +474,13 @@ def is_valid_block(block):
     combined = f"{title} {content} {text}".strip()
 
     if not combined:
+        return False
+
+    if (
+        is_document_metadata(text)
+        or is_document_metadata(title)
+        or is_document_metadata(content)
+    ):
         return False
 
     meaningful = re.sub(r"[^\w\s]", "", combined, flags=re.UNICODE)
