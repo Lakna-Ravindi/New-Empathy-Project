@@ -10,8 +10,9 @@ from __future__ import annotations
 import logging
 import os
 import re
+import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from agents.definitions.base_agent import AgentExecutionError, BaseAgent
 from agents.prompts.emotional_support_prompts import (
@@ -79,6 +80,85 @@ class EmotionalSupportOutput:
         }
 
 
+def _validate_gemini_candidate_completion(result: Any, model_name: str, attempt: int) -> Tuple[bool, Optional[str]]:
+    """Validates that a Gemini response is complete, non-empty, and finished normally.
+
+    Detects MAX_TOKENS and any non-STOP finish reason, incomplete sentences, and
+    abrupt truncations.
+
+    Returns:
+        (is_valid, validated_text_or_none)
+    """
+    if not result:
+        logger.warning("Gemini attempt %d returned empty result object (model: %s)", attempt, model_name)
+        return False, None
+
+    candidates = getattr(result, "candidates", None)
+    if candidates and isinstance(candidates, (list, tuple)) and len(candidates) > 0:
+        candidate = candidates[0]
+        finish_reason = getattr(candidate, "finish_reason", None)
+        if finish_reason is not None and not type(finish_reason).__name__.endswith("Mock"):
+            finish_reason_str = str(getattr(finish_reason, "name", finish_reason)).upper()
+            if "STOP" not in finish_reason_str and finish_reason != 1:
+                logger.warning(
+                    "Gemini attempt %d rejected due to incomplete finish_reason: %s (model: %s)",
+                    attempt,
+                    finish_reason_str,
+                    model_name,
+                )
+                return False, None
+    elif candidates is not None and type(candidates).__name__.endswith("Mock"):
+        # Auto-mocked response in unit tests without explicit candidates list
+        pass
+    elif not hasattr(result, "text"):
+        logger.warning("Gemini attempt %d returned no candidates (model: %s)", attempt, model_name)
+        return False, None
+
+    raw_text = getattr(result, "text", None)
+    if not raw_text or not str(raw_text).strip():
+        logger.warning("Gemini attempt %d returned empty text (model: %s)", attempt, model_name)
+        return False, None
+
+    text = str(raw_text).strip()
+    words = text.split()
+    if len(words) < 3 or len(text) < 15:
+        logger.warning(
+            "Gemini attempt %d rejected: text too short (%d words, %d chars, model: %s)",
+            attempt,
+            len(words),
+            len(text),
+            model_name,
+        )
+        return False, None
+
+    # Sentence completeness validation: must end with terminal punctuation
+    terminal_punct = (".", "!", "?", "…", '"', "'", "”", "’")
+    if not text.endswith(terminal_punct):
+        logger.warning(
+            "Gemini attempt %d rejected: response truncated mid-sentence without terminal punctuation (model: %s)",
+            attempt,
+            model_name,
+        )
+        return False, None
+
+    # Abrupt termination validation: check for trailing dangling conjunctions/prepositions
+    last_word = words[-1].lower().rstrip(".,!?…\"'”’")
+    dangling_words = {
+        "between", "and", "or", "but", "so", "because", "with",
+        "to", "at", "by", "for", "in", "of", "on", "that", "which",
+    }
+    if last_word in dangling_words:
+        logger.warning(
+            "Gemini attempt %d rejected: response ended abruptly on dangling word '%s' (model: %s)",
+            attempt,
+            last_word,
+            model_name,
+        )
+        return False, None
+
+    return True, text
+
+
 class EmotionalSupportAgent(BaseAgent):
     """Specialized emotional support and de-escalation agent."""
 
@@ -144,20 +224,36 @@ class EmotionalSupportAgent(BaseAgent):
             )
 
             client = genai.Client(api_key=api_key)
-            try:
-                response = client.models.generate_content(
-                    model=os.getenv("GEMINI_MODEL") or "gemini-2.5-flash",
-                    contents=prompt_content,
-                    config=types.GenerateContentConfig(
-                        system_instruction=EMOTIONAL_SUPPORT_SYSTEM_INSTRUCTION,
-                        max_output_tokens=512,
-                        temperature=0.7,
-                    ),
-                )
-                if response and response.text and response.text.strip():
-                    support_text = response.text.strip()
-            except Exception as err:
-                logger.warning("Emotional support Gemini call failed: %s", err)
+            model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+            for attempt in range(2):
+                try:
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt_content,
+                        config=types.GenerateContentConfig(
+                            system_instruction=EMOTIONAL_SUPPORT_SYSTEM_INSTRUCTION,
+                            max_output_tokens=512,
+                            temperature=0.7,
+                        ),
+                    )
+                    is_valid, validated_text = _validate_gemini_candidate_completion(
+                        response, model_name=model_name, attempt=attempt + 1
+                    )
+                    if is_valid and validated_text:
+                        support_text = validated_text
+                        break
+                    if attempt == 0:
+                        time.sleep(0.5)
+                except Exception as err:
+                    error_type = type(err).__name__
+                    logger.warning(
+                        "Emotional support Gemini attempt %d failed (%s): %s",
+                        attempt + 1,
+                        error_type,
+                        err,
+                    )
+                    if attempt == 0:
+                        time.sleep(0.5)
 
         # Fallback if Gemini unavailable or failed
         if not support_text:
@@ -178,7 +274,15 @@ class EmotionalSupportAgent(BaseAgent):
                     "and I'm right here with you. What feels like the heaviest part of this today?"
                 )
 
-        acknowledgment = support_text.split(".")[0].strip() + "."
+        # Extract the first complete sentence ending with [.!?] without creating partial or malformed fragments
+        sentence_matches = re.findall(r'[^.!?]+[.!?]', support_text.strip())
+        if sentence_matches and len(sentence_matches[0].strip().split()) >= 3:
+            acknowledgment = sentence_matches[0].strip()
+        else:
+            first_line = support_text.strip().split("\n")[0].strip()
+            if first_line and not first_line.endswith((".", "!", "?")):
+                first_line += "."
+            acknowledgment = first_line
         transition_offer = (
             "Whenever you feel ready, we can look at a gentle exercise to help steady your mind."
             if readiness

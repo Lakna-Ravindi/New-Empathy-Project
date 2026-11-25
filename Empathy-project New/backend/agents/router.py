@@ -15,6 +15,7 @@ import re
 from enum import Enum
 from typing import Any, Dict, Optional
 
+from agents.prompts.general_empathy_prompts import is_no_advice_requested
 from learning.pedagogical_controller import (
     EMOTION_KEYWORDS,
     MEANINGFUL_CONCEPTS,
@@ -26,6 +27,7 @@ from learning.pedagogical_controller import (
 GREETINGS = {
     "hi", "hii", "hiii", "hello", "helloo", "hey", "heyy",
     "hiya", "good morning", "good afternoon", "good evening",
+    "hello there", "hi there", "hey there",
 }
 
 DISTRESS_INDICATORS = {
@@ -33,6 +35,8 @@ DISTRESS_INDICATORS = {
     "exhausted", "hopeless", "sad", "upset", "crying", "angry",
     "mad", "frustrated", "lonely", "struggling", "scared",
     "nervous", "worried", "worry", "panic", "burnout", "burnt out",
+    "isolated", "alone", "ignored", "drained", "depressed", "hurting",
+    "pain", "tired", "down", "terrible", "awful",
 }
 
 # Emotion words present in MEANINGFUL_CONCEPTS that describe distress/state rather than SEEK curriculum topics
@@ -87,9 +91,38 @@ class AgentRouter:
         terms = get_terms(text)
         has_seek_concept = any(term in SEEK_CONCEPTS for term in terms)
 
-        # Check for emotional distress indicators
+        # Check for emotional distress and personal venting indicators
         words = set(cleaned.split())
-        has_distress = any(word in DISTRESS_INDICATORS for word in words) or detected_emotion in {"anxious", "sad", "angry"}
+        has_no_advice = is_no_advice_requested(text) or any(
+            phrase in cleaned
+            for phrase in (
+                "no advice", "don't give me advice", "dont give me advice",
+                "don't give me any advice", "dont give me any advice",
+                "just listen", "someone to listen", "need to vent", "just want to vent",
+            )
+        )
+        has_distress = (
+            has_no_advice
+            or any(word in DISTRESS_INDICATORS for word in words)
+            or detected_emotion in {"anxious", "sad", "angry"}
+            or any(
+                phrase in cleaned
+                for phrase in (
+                    "feel like", "struggling with", "crying", "upset with",
+                    "hurt by", "argument with", "conflict with", "ignored me",
+                    "don't know what to do", "dont know what to do",
+                    "nobody understands", "no one understands",
+                    "hate myself", "not good enough", "exhausted from",
+                    "don't listen", "dont listen", "doesn't listen", "doesnt listen",
+                    "not listening", "nobody listens", "no one listens",
+                    "feel lonely", "feeling lonely", "so lonely",
+                    "difficult day", "hard day", "bad day", "rough day", "tough day", "awful day",
+                    "feeling stressed", "feel stressed", "stressed out",
+                    "feeling down", "feel down", "feeling low", "feel low",
+                    "nobody cares", "no one cares", "having a hard time",
+                )
+            )
+        )
 
         # Check for explicit curriculum asking phrases ("what is", "how do I practice", "tell me about")
         curriculum_query = has_seek_concept or any(
@@ -102,8 +135,44 @@ class AgentRouter:
             )
         )
 
+        # Context-aware state evaluation
+        if state is not None:
+            stage = getattr(state, "current_learning_stage", None)
+            stage_val = stage.value if hasattr(stage, "value") else str(stage)
+
+            # If student is in emotional support and asks to learn or manage
+            if stage_val == "emotional_support" and any(
+                cue in cleaned
+                for cue in (
+                    "ready to learn", "can you teach me", "teach me", "what should i do",
+                    "how can i manage", "how to practice", "can we learn", "i want to learn",
+                    "tell me about",
+                )
+            ):
+                curriculum_query = True
+                if not any(w in words for w in {"crying", "hopeless", "panic"}):
+                    has_distress = False
+
+            # If student is in tutoring/assessment and answers a quick check
+            elif stage_val in {"tutoring", "assessment"} and cleaned in {"true", "false", "yes", "no", "a", "b", "c", "d"}:
+                return {
+                    "intent": StudentIntent.PRACTICE_CHECK.value,
+                    "detected_emotion": detected_emotion,
+                    "route_target": "tutor_agent",
+                    "has_seek_concept": True,
+                    "confidence": 0.98,
+                }
+
         # 3. Routing heuristic
-        if has_distress and curriculum_query:
+        if has_no_advice:
+            return {
+                "intent": StudentIntent.EMOTIONAL_DISTRESS.value,
+                "detected_emotion": detected_emotion,
+                "route_target": "emotional_support_agent",
+                "has_seek_concept": has_seek_concept,
+                "confidence": 0.95,
+            }
+        elif has_distress and curriculum_query:
             # Dual intent: distress + learning readiness -> support intro with tutorial
             return {
                 "intent": StudentIntent.EMOTIONAL_DISTRESS.value,
@@ -132,7 +201,7 @@ class AgentRouter:
             return {
                 "intent": StudentIntent.GENERAL_CHAT.value,
                 "detected_emotion": detected_emotion,
-                "route_target": "tutor_agent",
+                "route_target": "emotional_support_agent",
                 "has_seek_concept": False,
-                "confidence": 0.7,
+                "confidence": 0.75,
             }

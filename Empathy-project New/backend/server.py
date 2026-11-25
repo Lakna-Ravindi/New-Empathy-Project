@@ -469,6 +469,7 @@ def get_content_skill(skill_id):
 learning_store = LearningStore()
 student_store = get_user_store()
 progress_service = ProgressService()
+general_empathy_agent = GeneralEmpathyAgent(fallback_on_error=False)
 
 orchestrator = EmpathyOrchestrator(
     learning_store=learning_store,
@@ -480,9 +481,9 @@ orchestrator = EmpathyOrchestrator(
     progress_service_getter=lambda: progress_service,
     knowledge_base=knowledge_base,
     keyword_skill_map=keyword_skill_map,
+    general_empathy_agent=general_empathy_agent,
 )
 
-general_empathy_agent = GeneralEmpathyAgent(fallback_on_error=False)
 learning_recommendation_service = LearningRecommendationService()
 
 # Screening / pre-skill results live in the SAME database as the users collection.
@@ -1333,6 +1334,8 @@ def learning_response():
         message=question,
         answer_style=answer_style,
         conversation_id=body.get("conversation_id", "default"),
+        request_id=body.get("request_id"),
+        history=body.get("history"),
     )
     return jsonify(response_payload), status_code
 

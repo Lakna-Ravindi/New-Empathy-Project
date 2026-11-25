@@ -13,6 +13,7 @@ Tests verify:
 
 import pytest
 from agents.router import AgentRouter, StudentIntent
+from agents.state import AgentState, LearningStage
 from safety import detect_safety_risk
 
 
@@ -83,8 +84,23 @@ class TestAgentRouterIntentClassification:
         assert result["confidence"] == 0.85
 
     # -----------------------------------------------------------------
-    # 4. General Conversation
+    # 4. General Conversation & Everyday Emotional Disclosures
     # -----------------------------------------------------------------
+    @pytest.mark.parametrize(
+        "message",
+        [
+            "My friends don't listen to me.",
+            "I feel lonely.",
+            "I had a difficult day.",
+            "I'm feeling stressed.",
+        ],
+    )
+    def test_ordinary_emotional_disclosures_route_to_emotional_support(self, message):
+        result = AgentRouter.classify_intent(message)
+        assert result["route_target"] == "emotional_support_agent"
+        assert result["intent"] == StudentIntent.EMOTIONAL_DISTRESS.value
+        assert result["confidence"] >= 0.85
+
     @pytest.mark.parametrize(
         "message",
         [
@@ -94,11 +110,11 @@ class TestAgentRouterIntentClassification:
             "I enjoy programming and reading stories.",
         ],
     )
-    def test_general_chat_routes_to_tutor(self, message):
+    def test_general_chat_routes_to_emotional_support(self, message):
         result = AgentRouter.classify_intent(message)
-        assert result["route_target"] == "tutor_agent"
+        assert result["route_target"] == "emotional_support_agent"
         assert result["intent"] == StudentIntent.GENERAL_CHAT.value
-        assert result["confidence"] == 0.7
+        assert result["confidence"] == 0.75
         assert result["has_seek_concept"] is False
 
     # -----------------------------------------------------------------
@@ -115,11 +131,11 @@ class TestAgentRouterIntentClassification:
             "asdfghjkl",
         ],
     )
-    def test_ambiguous_messages_route_to_tutor_general_chat(self, message):
+    def test_ambiguous_messages_route_to_emotional_support_general_chat(self, message):
         result = AgentRouter.classify_intent(message)
-        assert result["route_target"] == "tutor_agent"
+        assert result["route_target"] == "emotional_support_agent"
         assert result["intent"] == StudentIntent.GENERAL_CHAT.value
-        assert result["confidence"] == 0.7
+        assert result["confidence"] == 0.75
 
     # -----------------------------------------------------------------
     # 6. Standalone Greetings
@@ -170,3 +186,44 @@ class TestSafetyGateInterception:
         risk = detect_safety_risk(crisis_message)
         assert risk["qualifies"] is True, f"Failed to qualify crisis message: {crisis_message}"
         assert risk["risk_level"] in {"high", "immediate"}
+
+
+class TestContextAwareRouting:
+    """Verifies state-aware and context-dependent routing logic."""
+
+    def test_emotional_stage_transitions_to_curriculum_on_learning_readiness(self):
+        state = AgentState(
+            student_id="STU-001",
+            current_learning_stage=LearningStage.EMOTIONAL_SUPPORT,
+        )
+        # Message with readiness cue
+        result = AgentRouter.classify_intent("I feel a bit better now and I'm ready to learn. What is grounding?", state=state)
+        assert result["route_target"] == "tutor_agent"
+        assert result["intent"] == StudentIntent.CURRICULUM_INQUIRY.value
+
+    def test_emotional_stage_transitions_to_curriculum_on_direct_topic_question(self):
+        state = AgentState(
+            student_id="STU-001",
+            current_learning_stage=LearningStage.EMOTIONAL_SUPPORT,
+        )
+        result = AgentRouter.classify_intent("Can you tell me about the resilient zone?", state=state)
+        assert result["route_target"] in {"tutor_agent", "support_then_tutor"}
+        assert result["has_seek_concept"] is True
+
+    def test_no_advice_preference_routes_to_emotional_support(self):
+        message = "I just need someone to listen, don't give me any advice please."
+        result = AgentRouter.classify_intent(message)
+        assert result["route_target"] == "emotional_support_agent"
+        assert result["intent"] == StudentIntent.EMOTIONAL_DISTRESS.value
+
+    def test_emotional_sharing_phrases_route_to_emotional_support(self):
+        phrases = [
+            "I feel like nobody understands what I am going through.",
+            "I am struggling with feeling accepted at school.",
+            "My friend ignored me and it really hurts.",
+            "I feel like a failure today.",
+        ]
+        for phrase in phrases:
+            result = AgentRouter.classify_intent(phrase)
+            assert result["route_target"] == "emotional_support_agent", f"Failed for phrase: {phrase}"
+            assert result["intent"] == StudentIntent.EMOTIONAL_DISTRESS.value

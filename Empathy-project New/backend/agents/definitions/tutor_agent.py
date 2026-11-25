@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import time
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
@@ -73,6 +74,22 @@ class TutorOutput:
             "is_fallback": self.is_fallback,
             "metadata": self.metadata,
         }
+
+
+def _already_contains_acknowledgment(target_text: str, intro: str) -> bool:
+    """Checks whether the target text already incorporates the empathetic acknowledgment."""
+    if not target_text or not intro:
+        return False
+    clean_target = " ".join(re.sub(r"[^\w\s]", " ", target_text.lower()).split())
+    clean_intro = " ".join(re.sub(r"[^\w\s]", " ", intro.lower()).split())
+    if clean_intro in clean_target:
+        return True
+    intro_words = [w for w in clean_intro.split() if len(w) > 3]
+    if not intro_words:
+        return False
+    first_target_sentence = clean_target.split(".")[0] if "." in target_text else clean_target[:180]
+    overlap = sum(1 for w in intro_words if w in first_target_sentence)
+    return (overlap / len(intro_words)) >= 0.6
 
 
 class TutorAgent(BaseAgent):
@@ -200,13 +217,13 @@ class TutorAgent(BaseAgent):
             intro = input_data.support_intro.strip()
             if intro:
                 current_answer = str(parsed_payload.get("answer") or "").strip()
-                if intro.lower() not in current_answer.lower():
+                if not _already_contains_acknowledgment(current_answer, intro):
                     parsed_payload["answer"] = f"{intro} {current_answer}" if current_answer else intro
 
                 steps = parsed_payload.get("steps") or []
                 if steps and isinstance(steps, list) and isinstance(steps[0], dict):
                     step_content = str(steps[0].get("content") or "").strip()
-                    if intro.lower() not in step_content.lower():
+                    if not _already_contains_acknowledgment(step_content, intro):
                         steps[0]["content"] = f"{intro} {step_content}" if step_content else intro
 
         output = TutorOutput(

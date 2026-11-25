@@ -23,6 +23,9 @@ from agents.definitions import (
     EmotionalSupportAgent,
     EmotionalSupportInput,
     EmotionalSupportOutput,
+    GeneralEmpathyAgent,
+    GeneralEmpathyInput,
+    GeneralEmpathyOutput,
     LearningPlannerAgent,
     LearningPlannerInput,
     LearningPlannerOutput,
@@ -30,6 +33,7 @@ from agents.definitions import (
     TutorInput,
     TutorOutput,
 )
+from agents.definitions.tutor_agent import _already_contains_acknowledgment
 from agents.router import AgentRouter, StudentIntent
 from agents.state import (
     AgentState,
@@ -62,6 +66,7 @@ class EmpathyOrchestrator:
         progress_service_getter: Optional[Callable[[], Any]] = None,
         knowledge_base: Optional[Any] = None,
         keyword_skill_map: Optional[Any] = None,
+        general_empathy_agent: Optional[GeneralEmpathyAgent] = None,
     ):
         self._learning_store = learning_store or LearningStore()
         self._progress_service = progress_service or ProgressService()
@@ -78,6 +83,10 @@ class EmpathyOrchestrator:
         # Initialize domain agents
         self.tutor_agent = TutorAgent(tool_registry=self.tool_registry)
         self.support_agent = EmotionalSupportAgent(tool_registry=self.tool_registry)
+        self.general_empathy_agent = general_empathy_agent or GeneralEmpathyAgent(
+            tool_registry=self.tool_registry,
+            fallback_on_error=True,
+        )
         self.planner_agent = LearningPlannerAgent(tool_registry=self.tool_registry)
         self.assessment_agent = AssessmentAgent(tool_registry=self.tool_registry)
 
@@ -109,6 +118,7 @@ class EmpathyOrchestrator:
         answer_style: str = "short",
         conversation_id: str = "default",
         request_id: Optional[str] = None,
+        history: Optional[List[Dict[str, Any]]] = None,
     ) -> Tuple[Dict[str, Any], int]:
         """Orchestrates an educational or emotional dialogue turn.
 
@@ -140,6 +150,35 @@ class EmpathyOrchestrator:
         )
         state.current_message = question
 
+        # Populate history if provided from request context and state has empty history
+        if history and isinstance(history, list) and not state.conversation_history:
+            for item in history:
+                if isinstance(item, dict):
+                    role = item.get("role") or item.get("sender") or ("user" if item.get("isUser") else "assistant")
+                    content = (
+                        item.get("content")
+                        or item.get("message")
+                        or item.get("response")
+                        or item.get("text")
+                        or ""
+                    )
+                    if str(content).strip():
+                        state.add_turn_to_history(str(role).lower(), str(content).strip())
+
+        # Record user turn into unified conversational history (avoiding duplicate user turns)
+        if not state.conversation_history or not (
+            state.conversation_history[-1].get("role") == "user"
+            and state.conversation_history[-1].get("content") == question
+        ):
+            state.add_turn_to_history("user", question)
+
+        # Reset completed stage if starting a new turn
+        if state.current_learning_stage == LearningStage.COMPLETED:
+            try:
+                state.transition_to(LearningStage.INITIALIZED, reason="New turn started")
+            except Exception:
+                state.current_learning_stage = LearningStage.INITIALIZED
+
         # 3. Intent Classification
         routing_decision = AgentRouter.classify_intent(question, state=state)
         intent = routing_decision["intent"]
@@ -160,6 +199,10 @@ class EmpathyOrchestrator:
 
             greeting_payload = {
                 "educational_response": greeting_text,
+                "answer": greeting_text,
+                "response": greeting_text,
+                "active_agent": "system",
+                "role": "system",
                 "learning_context": {
                     "message": greeting_text,
                     "student_question": question,
@@ -172,24 +215,69 @@ class EmpathyOrchestrator:
                 "steps": [],
                 "suggested_questions": [],
             }
+            if not state.conversation_history or not (
+                state.conversation_history[-1].get("role") == "assistant"
+                and state.conversation_history[-1].get("content") == greeting_text
+            ):
+                state.add_turn_to_history("assistant", greeting_text, extra={"active_agent": "system"})
             return greeting_payload, 200
 
-        # Branch B: Pure Emotional Distress / Venting
+        # Branch B: Pure Emotional Distress / Venting / General Empathy
         if route_target == "emotional_support_agent":
             try:
-                support_out: EmotionalSupportOutput = self.support_agent.execute(
-                    EmotionalSupportInput(
-                        student_id=student_id,
-                        authenticated_student_id=authenticated_student_id,
-                        current_message=question,
-                        conversation_history=state.conversation_history,
-                        emotional_context=state.emotional_context,
-                    ),
-                    state=state,
-                )
+                try:
+                    if state.current_learning_stage in {LearningStage.INITIALIZED, LearningStage.INTENT_ROUTING}:
+                        state.transition_to(LearningStage.EMOTIONAL_SUPPORT, reason="Emotional support selected")
+                except Exception:
+                    state.current_learning_stage = LearningStage.EMOTIONAL_SUPPORT
+
+                support_message = None
+                role_name = "general_empathy_agent"
+                active_agent = "general_empathy_agent"
+
+                # 1. Execute GeneralEmpathyAgent if available
+                if self.general_empathy_agent is not None:
+                    try:
+                        ge_out: GeneralEmpathyOutput = self.general_empathy_agent.execute(
+                            GeneralEmpathyInput(
+                                student_id=student_id,
+                                authenticated_student_id=authenticated_student_id,
+                                current_message=question,
+                                conversation_history=state.conversation_history,
+                                request_id=request_id,
+                                fallback_on_error=True,
+                            ),
+                            state=state,
+                        )
+                        support_message = ge_out.response
+                        role_name = ge_out.role or "general_empathy_agent"
+                    except Exception as ge_err:
+                        logger.warning(
+                            "GeneralEmpathyAgent execution failed, falling back to EmotionalSupportAgent: %s",
+                            ge_err,
+                        )
+
+                # 2. Fallback to EmotionalSupportAgent if needed
+                if not support_message:
+                    support_out: EmotionalSupportOutput = self.support_agent.execute(
+                        EmotionalSupportInput(
+                            student_id=student_id,
+                            authenticated_student_id=authenticated_student_id,
+                            current_message=question,
+                            conversation_history=state.conversation_history,
+                            emotional_context=state.emotional_context,
+                        ),
+                        state=state,
+                    )
+                    support_message = support_out.support_message
+                    role_name = "emotional_support_agent"
+
                 response_dict = {
-                    "educational_response": support_out.support_message,
-                    "answer": support_out.support_message,
+                    "educational_response": support_message,
+                    "answer": support_message,
+                    "response": support_message,
+                    "active_agent": active_agent,
+                    "role": role_name,
                     "learning_context": {
                         "student_question": question,
                         "detected_emotion": detected_emotion,
@@ -197,17 +285,17 @@ class EmpathyOrchestrator:
                         "skill": None,
                         "topic": None,
                         "answer_style": answer_style,
-                        "message": support_out.support_message,
+                        "message": support_message,
                     },
                     "steps": [],
                     "suggested_questions": [],
                 }
-                # Save interaction for conversational continuity
+                # Save interaction for conversational continuity (does NOT mutate student_progress)
                 try:
                     interaction_id = self.learning_store.save_interaction(
                         student_id=student_id,
                         learning_context=response_dict["learning_context"],
-                        educational_response=support_out.support_message,
+                        educational_response=support_message,
                         learning_steps=[],
                     )
                     response_dict["interaction_id"] = interaction_id
@@ -216,10 +304,20 @@ class EmpathyOrchestrator:
                 except Exception as save_err:
                     logger.warning("Could not persist emotional interaction: %s", save_err)
 
+                if not state.conversation_history or not (
+                    state.conversation_history[-1].get("role") == "assistant"
+                    and state.conversation_history[-1].get("content") == support_message
+                ):
+                    state.add_turn_to_history("assistant", support_message, extra={"active_agent": active_agent})
+                try:
+                    state.transition_to(LearningStage.COMPLETED, reason="Emotional support turn completed")
+                except Exception:
+                    state.current_learning_stage = LearningStage.COMPLETED
+
                 return response_dict, 200
 
             except Exception as err:
-                logger.error("EmotionalSupportAgent error: %s", err, exc_info=True)
+                logger.error("Emotional support routing error: %s", err, exc_info=True)
 
         # Branch C: Curriculum Planning & Tutoring Instruction
         support_intro: Optional[str] = None
@@ -289,6 +387,9 @@ class EmpathyOrchestrator:
 
             response_payload["learning_context"] = learning_context
             response_payload["educational_response"] = response_payload.get("answer", "")
+            response_payload["response"] = response_payload["educational_response"]
+            response_payload["active_agent"] = "tutor_agent"
+            response_payload["role"] = "tutor_agent"
 
             # 4d. Persist interaction to MongoDB
             try:
@@ -318,6 +419,16 @@ class EmpathyOrchestrator:
                 logger.error("Could not persist learning interaction: %s", store_err)
                 return {"error": "Could not save the learning interaction."}, 503
 
+            assistant_content = str(response_payload.get("educational_response", ""))
+            if not state.conversation_history or not (
+                state.conversation_history[-1].get("role") == "assistant"
+                and state.conversation_history[-1].get("content") == assistant_content
+            ):
+                state.add_turn_to_history(
+                    "assistant",
+                    assistant_content,
+                    extra={"active_agent": "tutor_agent"},
+                )
             return response_payload, 200
 
         except Exception as err:
@@ -371,16 +482,20 @@ class EmpathyOrchestrator:
             result.get("answer", steps if steps else learning_context.get("message", "")),
         )
 
+        result["active_agent"] = "tutor_agent"
+        result["role"] = "tutor_agent"
+        result["response"] = educational_response if isinstance(educational_response, str) else result.get("answer", "")
+
         if support_intro and isinstance(support_intro, str):
             intro = support_intro.strip()
             if intro:
-                if isinstance(educational_response, str) and intro.lower() not in educational_response.lower():
+                if isinstance(educational_response, str) and not _already_contains_acknowledgment(educational_response, intro):
                     educational_response = f"{intro} {educational_response}" if educational_response else intro
                     result["educational_response"] = educational_response
                     result["answer"] = educational_response
                 if steps and isinstance(steps, list) and isinstance(steps[0], dict):
                     step_content = str(steps[0].get("content") or "").strip()
-                    if intro.lower() not in step_content.lower():
+                    if not _already_contains_acknowledgment(step_content, intro):
                         steps[0]["content"] = f"{intro} {step_content}" if step_content else intro
 
         try:
