@@ -72,6 +72,7 @@ class GeminiResponderTests(unittest.TestCase):
             "id": "activity_01",
             "title": "Grounding",
             "type": "activity",
+            "interaction_type": "practical",
         }
         parsed = _parse_response(response_payload(selected), selected)
         self.assertEqual(parsed["steps"][2]["activity"], selected)

@@ -1,4 +1,47 @@
+import re
 from pathlib import Path
+
+
+RUNNING_HEADER_FOOTER_PATTERN = re.compile(
+    r"^\s*UNESCO\s+MGIEP\s*[—–-]\s*SEEK\s+Learning\s+Curriculum\s+Study\s+Guide\s*\(Skills\s+\d+[–-]\d+\)\s*Page\s+\d+\s+of\s+\d+\s*$",
+    re.IGNORECASE,
+)
+
+COVER_METADATA_PATTERNS = [
+    re.compile(
+        r"^\s*UNESCO\s+MGIEP\s*[—–-]\s*MAHATMA\s+GANDHI\s+INSTITUTE\s+OF\s+EDUCATION\s+FOR\s+PEACE\s+AND\s+SUSTAINABLE\s*$",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"^\s*DEVELOPMENT\s+SEEK\s+Learning\s+Curriculum\s+Study\s+Guide\s*$",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"^\s*Objective-by-Objective\s+Structured\s+Notes\s+Across\s+All\s+8\s+Skills\s*$",
+        re.IGNORECASE,
+    ),
+]
+
+
+def is_running_header_or_footer(text: str) -> bool:
+    """Detect running headers/footers with page numbers like 'Page X of 24'."""
+    if not text:
+        return False
+    cleaned = re.sub(r"\s+", " ", str(text)).strip()
+    return bool(RUNNING_HEADER_FOOTER_PATTERN.match(cleaned))
+
+
+def is_cover_metadata(text: str) -> bool:
+    """Detect PDF cover title banners that are not part of the curriculum body."""
+    if not text:
+        return False
+    cleaned = re.sub(r"\s+", " ", str(text)).strip()
+    return any(pat.match(cleaned) for pat in COVER_METADATA_PATTERNS)
+
+
+def is_document_metadata(text: str) -> bool:
+    """Check if block text is document metadata (running header/footer or cover title)."""
+    return is_running_header_or_footer(text) or is_cover_metadata(text)
 
 
 def _load_fitz():
@@ -14,13 +57,14 @@ def _load_fitz():
     return fitz
 
 
-def extract_blocks(pdf_path):
+def extract_blocks(pdf_path, include_metadata=True):
     """Extract logical paragraphs and activities from PDF text blocks.
 
     PyMuPDF exposes spans and visual lines, but a visual line is not a
     knowledge-base unit. PDF blocks are the closest paragraph boundary. The
     small bullet parser below also preserves separate list items when a block
-    contains an objectives or activity list.
+    contains an objectives or activity list. Running headers, footers, and
+    cover-only metadata are flagged with 'is_metadata'.
     """
     pdf_path = Path(pdf_path)
     fitz = _load_fitz()
@@ -49,6 +93,9 @@ def extract_blocks(pdf_path):
                     })
 
                 for item_index, item in enumerate(_logical_items(lines)):
+                    is_meta = is_document_metadata(item["text"])
+                    if not include_metadata and is_meta:
+                        continue
                     blocks.append({
                         "page": page_number + 1,
                         "block_index": block_index,
@@ -57,6 +104,7 @@ def extract_blocks(pdf_path):
                         "text": item["text"],
                         "font_size": item["font_size"],
                         "font_name": item["font_name"],
+                        "is_metadata": is_meta,
                     })
 
     return _merge_continuations(blocks)

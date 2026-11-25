@@ -1,4 +1,5 @@
 import re
+from parser.metadata_extractor import is_document_metadata
 
 
 def classify(block):
@@ -39,6 +40,16 @@ def classify(block):
         return {
             "type": "content",
             "confidence": 0.20
+        }
+
+    # ============================================================
+    # 1B. DOCUMENT METADATA (RUNNING HEADERS, FOOTERS, COVER BANNERS)
+    # ============================================================
+
+    if is_document_metadata(text):
+        return {
+            "type": "document_metadata",
+            "confidence": 0.99
         }
 
     # ============================================================
@@ -99,16 +110,16 @@ def classify(block):
     # SEEK objectives commonly start with action verbs.
 
     explicit_objective = bool(re.match(
-        r"^(?:objective\s+\d+\s*[:.)-]\s*|\d+\s*[.)]\s+)",
+        r"^(?:objective\s+\d+(?:\s*(?:&|and)\s*objective\s+\d+)?\s*[:.)-]\s*|\d+\s*[.)]\s+)",
         text,
         re.IGNORECASE,
     ))
     objective_start = re.compile(
-        r"^(?:objective\s+\d+\s*[:.)-]\s*|\d+\s*[.)]\s+)?"
+        r"^(?:objective\s+\d+(?:\s*(?:&|and)\s*objective\s+\d+)?\s*[:.)-]\s*|\d+\s*[.)]\s+)?"
         r"(define|identify|recognize|describe|explain|apply|"
         r"demonstrate|understand|list|compare|distinguish|use|"
         r"develop|practice|discuss|explore|evaluate|reflect|"
-        r"analyze|create|examine|"
+        r"analyze|create|examine|strategies|"
         r"describe|differentiate|summarize|identify|name)\b",
         re.IGNORECASE
     )

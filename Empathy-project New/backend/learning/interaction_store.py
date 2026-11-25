@@ -1,18 +1,35 @@
 """MongoDB persistence for learning interactions, progress, and review data."""
 
+import os
+import logging
 from datetime import datetime, timezone
 import uuid
 
 from bson import ObjectId
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 from mongo_config import MONGODB_DATABASE, MONGODB_URI
+
+logger = logging.getLogger(__name__)
+
+
+def is_production_mode() -> bool:
+    env = (os.getenv("FLASK_ENV") or os.getenv("APP_ENV") or os.getenv("ENVIRONMENT") or "").lower()
+    return env in {"production", "prod"} or os.getenv("DISABLE_IN_MEMORY_FALLBACK", "false").lower() in {"true", "1", "yes"}
 
 
 class LearningStore:
     """Stores application data; it never makes learning decisions."""
 
     def __init__(self, uri=None, database_name=None):
-        self.is_available = True
+        self.uri = uri or MONGODB_URI
+        self.database_name = database_name or MONGODB_DATABASE
+        self.is_available = False
+        self.client = None
+        self.db = None
+        self.interactions = None
+        self.progress = None
+        self.evaluations = None
 
         self.local_storage = {
             "interactions": [],
@@ -20,28 +37,84 @@ class LearningStore:
             "evaluations": [],
         }
 
+        self._connect()
+
+    def _connect(self):
         try:
             self.client = MongoClient(
-                uri or MONGODB_URI,
+                self.uri,
                 serverSelectionTimeoutMS=5000,
             )
-
-            self.db = self.client[
-                database_name
-                or MONGODB_DATABASE
-            ]
-
+            self.client.admin.command("ping")
+            self.db = self.client[self.database_name]
             self.interactions = self.db["learning_interactions"]
             self.progress = self.db["student_progress"]
             self.evaluations = self.db["controller_evaluations"]
-            self.client.admin.command("ping")
-
+            self.is_available = True
+            self._ensure_indexes()
         except Exception as e:
             self.is_available = False
-            print(
-                f"WARNING: MongoDB unavailable, "
-                f"using local fallback storage: {e}"
+            if is_production_mode():
+                logger.error("MongoDB unavailable in production mode: %s", e)
+            else:
+                logger.warning(
+                    "MongoDB unavailable, using local fallback storage: %s",
+                    e,
+                )
+
+    def _check_or_reconnect(self) -> bool:
+        """Attempt to reconnect to MongoDB if marked unavailable, rate-limited to once every 5 seconds."""
+        if not self.is_available:
+            now = datetime.now(timezone.utc).timestamp()
+            if getattr(self, "_last_reconnect_attempt", 0) + 5.0 <= now:
+                self._last_reconnect_attempt = now
+                self._connect()
+        return self.is_available
+
+    def _ensure_indexes(self):
+        """Safely ensure required database indexes without risking existing data."""
+        if not self.is_available or self.db is None:
+            return
+        try:
+            # 1. student_progress index: (student_id ASC, skill_id ASC)
+            progress_indexes = self.progress.index_information()
+            has_progress_idx = any(
+                tuple(idx.get("key", [])) == (("student_id", 1), ("skill_id", 1))
+                for idx in progress_indexes.values()
             )
+            if not has_progress_idx:
+                pipeline = [
+                    {"$group": {"_id": {"student_id": "$student_id", "skill_id": "$skill_id"}, "count": {"$sum": 1}}},
+                    {"$match": {"count": {"$gt": 1}}}
+                ]
+                has_duplicates = bool(list(self.progress.aggregate(pipeline)))
+                if not has_duplicates:
+                    self.progress.create_index(
+                        [("student_id", 1), ("skill_id", 1)],
+                        unique=True,
+                        name="uq_student_skill_progress",
+                    )
+                else:
+                    logger.warning("Duplicate student_progress records detected. Creating non-unique index to preserve data.")
+                    self.progress.create_index(
+                        [("student_id", 1), ("skill_id", 1)],
+                        unique=False,
+                        name="idx_student_skill_progress",
+                    )
+
+            # 2. learning_interactions index: (student_id ASC, timestamp DESC)
+            interactions_indexes = self.interactions.index_information()
+            has_interactions_idx = any(
+                tuple(idx.get("key", [])) == (("student_id", 1), ("timestamp", -1))
+                for idx in interactions_indexes.values()
+            )
+            if not has_interactions_idx:
+                self.interactions.create_index(
+                    [("student_id", 1), ("timestamp", -1)],
+                    name="idx_student_interactions_time",
+                )
+        except PyMongoError as e:
+            logger.warning("Could not verify or create MongoDB indexes: %s", e)
 
     @staticmethod
     def _now():
@@ -85,7 +158,9 @@ class LearningStore:
         if learning_steps is not None:
             document["learning_steps"] = learning_steps
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. In-memory fallback is disabled in production to prevent data loss.")
             local_id = f"local-{uuid.uuid4()}"
             document["_id"] = local_id
 
@@ -102,7 +177,9 @@ class LearningStore:
         if not isinstance(interaction_id, str) or not interaction_id:
             return None
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Cannot retrieve interaction in production mode.")
             return next(
                 (
                     interaction
@@ -123,7 +200,9 @@ class LearningStore:
     def list_interactions(self, student_id, limit=100):
         """Return the authenticated student's most recent interactions."""
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Cannot list interactions in production mode.")
             interactions = [
                 interaction
                 for interaction in self.local_storage["interactions"]
@@ -182,7 +261,9 @@ class LearningStore:
 
         key = f"{student_id}:{skill_id}"
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Cannot retrieve student progress in production mode.")
             return self.local_storage["progress"].get(
                 key,
                 self._default_progress(student_id, skill_id),
@@ -209,7 +290,9 @@ class LearningStore:
     def get_all_progress(self, student_id):
         """Return progress documents for every skill owned by a student."""
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Cannot retrieve student progress in production mode.")
             return [
                 progress
                 for progress in self.local_storage["progress"].values()
@@ -284,7 +367,9 @@ class LearningStore:
         timestamp = self._now()
         key = f"{student_id}:{skill_id}"
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Learning events cannot be saved in production.")
             if key not in self.local_storage["progress"]:
                 self.local_storage["progress"][key] = {
                     **self._default_progress(student_id, skill_id),
@@ -356,7 +441,9 @@ class LearningStore:
         key = f"{student_id}:{skill_id}"
         now = self._now()
 
-        if not self.is_available:
+        if not self.is_available and not self._check_or_reconnect():
+            if is_production_mode():
+                raise PyMongoError("MongoDB is unavailable. Student progress cannot be recorded in production.")
 
             if key not in self.local_storage["progress"]:
                 self.local_storage["progress"][key] = {

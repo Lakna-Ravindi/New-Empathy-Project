@@ -168,19 +168,26 @@ class RegistrationAssessmentStore:
         # database as the users collection. The fallback below uses the same
         # variable names as auth.py.
         if db is None:
-            client = MongoClient(
-                MONGODB_URI,
-                serverSelectionTimeoutMS=5000,
-            )
-            db = client[MONGODB_DATABASE]
+            try:
+                client = MongoClient(
+                    MONGODB_URI,
+                    serverSelectionTimeoutMS=5000,
+                )
+                db = client[MONGODB_DATABASE]
+            except PyMongoError:
+                db = None
 
-        self.screening = db["screening_results"]
-        self.pre_skill = db["pre_skill_assessments"]
-        try:
-            self.screening.create_index([("student_id", ASCENDING)], unique=True)
-            self.pre_skill.create_index([("student_id", ASCENDING)], unique=True)
-        except PyMongoError:
-            pass  # indexes are created on the next start if Mongo was unreachable
+        if db is not None:
+            self.screening = db["screening_results"]
+            self.pre_skill = db["pre_skill_assessments"]
+            try:
+                self.screening.create_index([("student_id", ASCENDING)], unique=True)
+                self.pre_skill.create_index([("student_id", ASCENDING)], unique=True)
+            except PyMongoError:
+                pass  # indexes are created on the next start if Mongo was unreachable
+        else:
+            self.screening = None
+            self.pre_skill = None
 
     @staticmethod
     def _now():

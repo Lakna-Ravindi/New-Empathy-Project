@@ -1,0 +1,2345 @@
+[
+  {
+    "_id": "progress_structure",
+    "version": 2,
+    "source": "output/content_skills.json",
+    "item_types": [
+      "activity",
+      "quiz",
+      "reflection",
+      "text",
+      "video"
+    ],
+    "chapters": [
+      {
+        "chapter_id": "skill_01",
+        "title": "Calming the Body and Mind",
+        "description": "Developing body literacy and mastering somatic regulation techniques to maintain autonomic equilibrium within the resilient zone.",
+        "objectives": [
+          {
+            "objective_id": "obj_01_01",
+            "title": "Identify and name physical body sensations associated with various emotional states.",
+            "content": "Identify and name physical body sensations associated with various emotional states.",
+            "items": [
+              {
+                "item_id": "content_01_01",
+                "type": "text",
+                "title": "Understanding Body Sensations",
+                "content": "Body literacy involves noticing, interpreting, and naming physical sensations..."
+              },
+              {
+                "item_id": "activity_01_01",
+                "type": "activity",
+                "title": "Tracking Palms Exercise",
+                "duration": "5 minutes",
+                "steps": [
+                  "Sit comfortably with an upright posture and feet flat on the floor.",
+                  "Rub the palms of your hands together back and forth for 15 seconds.",
+                  "Pause and observe internal sensations.",
+                  "Label each sensation as pleasant, neutral, or unpleasant."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_01_01",
+                "type": "video",
+                "title": "Introduction to Body Literacy",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_01_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_01_01_01",
+                    "question": "What is the primary purpose of tracking?",
+                    "options": [
+                      "Suppress physical sensations",
+                      "Observe and label bodily sensations",
+                      "Ignore discomfort",
+                      "Force relaxation"
+                    ],
+                    "answer": "Observe and label bodily sensations",
+                    "explanation": "Tracking involves noticing and categorizing bodily sensations without judgment."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_01_01",
+                "question": "What physical sensations do you notice when you experience stress?",
+                "type": "reflection",
+                "title": "What physical sensations do you notice when you experience stress?",
+                "content": "What physical sensations do you notice when you experience stress?"
+              }
+            ],
+            "required_item_ids": [
+              "content_01_01",
+              "activity_01_01",
+              "video_01_01",
+              "quiz_01_01"
+            ]
+          },
+          {
+            "objective_id": "obj_01_02",
+            "title": "Define the resilient zone and recognize signs of hyper-arousal and hypo-arousal dysregulation.",
+            "content": "Define the resilient zone and recognize signs of hyper-arousal and hypo-arousal dysregulation.",
+            "items": [
+              {
+                "item_id": "quiz_01_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_01_02",
+                "question": "What signs might indicate that you are outside your resilient zone?",
+                "type": "reflection",
+                "title": "What signs might indicate that you are outside your resilient zone?",
+                "content": "What signs might indicate that you are outside your resilient zone?"
+              }
+            ],
+            "required_item_ids": [
+              "quiz_01_02"
+            ]
+          },
+          {
+            "objective_id": "obj_01_03",
+            "title": "Distinguish between the alerting functions of the sympathetic nervous system and the calming functions of the parasympathetic nervous system.",
+            "content": "Distinguish between the alerting functions of the sympathetic nervous system and the calming functions of the parasympathetic nervous system.",
+            "items": [
+              {
+                "item_id": "quiz_01_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_01_03",
+                "question": "How can understanding your body's nervous-system responses help you respond to stress?",
+                "type": "reflection",
+                "title": "How can understanding your body's nervous-system responses help you respond to stress?",
+                "content": "How can understanding your body's nervous-system responses help you respond to stress?"
+              }
+            ],
+            "required_item_ids": [
+              "quiz_01_03"
+            ]
+          },
+          {
+            "objective_id": "obj_01_04",
+            "title": "Apply tracking, grounding, and resourcing techniques to restore emotional balance during stress.",
+            "content": "Apply tracking, grounding, and resourcing techniques to restore emotional balance during stress.",
+            "items": [
+              {
+                "item_id": "activity_01_04",
+                "type": "activity",
+                "title": "Contact Grounding Practice",
+                "duration": "5 minutes",
+                "steps": [
+                  "Select a comfortable seated or standing position.",
+                  "Direct attention to points of contact between your body and supportive objects.",
+                  "Rest focus on neutral or pleasant sensations."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "quiz_01_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_01_04",
+                "question": "Which grounding or resourcing technique feels most useful to you?",
+                "type": "reflection",
+                "title": "Which grounding or resourcing technique feels most useful to you?",
+                "content": "Which grounding or resourcing technique feels most useful to you?"
+              }
+            ],
+            "required_item_ids": [
+              "activity_01_04",
+              "quiz_01_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_02",
+        "title": "Ethical Mindfulness",
+        "description": "Aligning speech, actions, and attention with core values through heedfulness, mindfulness, and metacognitive awareness.",
+        "objectives": [
+          {
+            "objective_id": "obj_02_01",
+            "title": "Define ethical mindfulness and its role in value-aligned decision-making under pressure.",
+            "content": "Define ethical mindfulness and its role in value-aligned decision-making under pressure.",
+            "items": [
+              {
+                "item_id": "content_02_01",
+                "type": "text",
+                "title": "Core Principles of Ethical Mindfulness - Objective 1",
+                "content": "Aligning speech, actions, and attention with core values through heedfulness, mindfulness, and metacognitive awareness. Key objective: Define ethical mindfulness and its role in value-aligned decision-making under pressure."
+              },
+              {
+                "item_id": "activity_02_01",
+                "type": "activity",
+                "title": "Puppy and Leash Metaphor Reflection",
+                "duration": "10 minutes",
+                "steps": [
+                  "Visualize a playful puppy on a leash representing the wandering mind.",
+                  "Identify the ball held by the owner as your present object of focus.",
+                  "Practice recognizing the exact moment the mind strays and gently guiding it back to the target task."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_02_01",
+                "type": "video",
+                "title": "Overview of Ethical Mindfulness - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_02_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_02_01_01",
+                    "question": "Which component of ethical mindfulness is defined as active care and restraint regarding harmful actions?",
+                    "options": [
+                      "Awareness",
+                      "Heedfulness",
+                      "Metacognition",
+                      "Attention Drift"
+                    ],
+                    "answer": "Heedfulness",
+                    "explanation": "Heedfulness involves exercising deliberate caution and restraint to prevent speech or actions that cause harm."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_02_01",
+                "question": "In what recurring daily situation do you notice a gap between your core values and your immediate verbal reactions?",
+                "type": "reflection",
+                "title": "In what recurring daily situation do you notice a gap between your core values and your immediate verbal reactions?",
+                "content": "In what recurring daily situation do you notice a gap between your core values and your immediate verbal reactions?"
+              }
+            ],
+            "required_item_ids": [
+              "content_02_01",
+              "activity_02_01",
+              "video_02_01",
+              "quiz_02_01"
+            ]
+          },
+          {
+            "objective_id": "obj_02_02",
+            "title": "Explain the three core components of ethical mindfulness: heedfulness, mindfulness, and awareness.",
+            "content": "Explain the three core components of ethical mindfulness: heedfulness, mindfulness, and awareness.",
+            "items": [
+              {
+                "item_id": "content_02_02",
+                "type": "text",
+                "title": "Core Principles of Ethical Mindfulness - Objective 2",
+                "content": "Aligning speech, actions, and attention with core values through heedfulness, mindfulness, and metacognitive awareness. Key objective: Explain the three core components of ethical mindfulness: heedfulness, mindfulness, and awareness."
+              },
+              {
+                "item_id": "activity_02_02",
+                "type": "activity",
+                "title": "Oil Bowl Heedfulness Exercise",
+                "duration": "10 minutes",
+                "steps": [
+                  "Contemplate the ancient metaphor of carrying a full bowl of hot oil with total precision.",
+                  "Identify one daily situation where impulsive speech risks causing harm.",
+                  "Write down a specific boundary to exercise heedful restraint in that scenario."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_02_02",
+                "type": "video",
+                "title": "Overview of Ethical Mindfulness - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_02_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_02_02_01",
+                    "question": "In the puppy and leash metaphor, what does the ball represent?",
+                    "options": [
+                      "The wandering mind",
+                      "Metacognitive awareness",
+                      "The object of attention",
+                      "Harmful impulses"
+                    ],
+                    "answer": "The object of attention",
+                    "explanation": "The ball represents the chosen task or focal point that the mind (puppy) is trained to attend to."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_02_02",
+                "question": "How does recognizing mind-wandering in real time alter your ability to complete demanding tasks?",
+                "type": "reflection",
+                "title": "How does recognizing mind-wandering in real time alter your ability to complete demanding tasks?",
+                "content": "How does recognizing mind-wandering in real time alter your ability to complete demanding tasks?"
+              }
+            ],
+            "required_item_ids": [
+              "content_02_02",
+              "activity_02_02",
+              "video_02_02",
+              "quiz_02_02"
+            ]
+          },
+          {
+            "objective_id": "obj_02_03",
+            "title": "Analyze how metacognitive awareness stabilizes attention and prevents cognitive wandering.",
+            "content": "Analyze how metacognitive awareness stabilizes attention and prevents cognitive wandering.",
+            "items": [
+              {
+                "item_id": "content_02_03",
+                "type": "text",
+                "title": "Core Principles of Ethical Mindfulness - Objective 3",
+                "content": "Aligning speech, actions, and attention with core values through heedfulness, mindfulness, and metacognitive awareness. Key objective: Analyze how metacognitive awareness stabilizes attention and prevents cognitive wandering."
+              },
+              {
+                "item_id": "video_02_03",
+                "type": "video",
+                "title": "Overview of Ethical Mindfulness - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_02_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_02_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_02_03",
+              "video_02_03",
+              "quiz_02_03"
+            ]
+          },
+          {
+            "objective_id": "obj_02_04",
+            "title": "Demonstrate value-aligned behavioral choices across personal and professional scenarios.",
+            "content": "Demonstrate value-aligned behavioral choices across personal and professional scenarios.",
+            "items": [
+              {
+                "item_id": "content_02_04",
+                "type": "text",
+                "title": "Core Principles of Ethical Mindfulness - Objective 4",
+                "content": "Aligning speech, actions, and attention with core values through heedfulness, mindfulness, and metacognitive awareness. Key objective: Demonstrate value-aligned behavioral choices across personal and professional scenarios."
+              },
+              {
+                "item_id": "video_02_04",
+                "type": "video",
+                "title": "Overview of Ethical Mindfulness - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_02_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_02_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_02_04",
+              "video_02_04",
+              "quiz_02_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_03",
+        "title": "Emotional Awareness",
+        "description": "Observing internal emotional dynamics moment by moment to distinguish between beneficial and harmful mental states using the Spark to Forest Fire model.",
+        "objectives": [
+          {
+            "objective_id": "obj_03_01",
+            "title": "Define emotional awareness and distinguish between beneficial and harmful mental states.",
+            "content": "Define emotional awareness and distinguish between beneficial and harmful mental states.",
+            "items": [
+              {
+                "item_id": "content_03_01",
+                "type": "text",
+                "title": "Core Principles of Emotional Awareness - Objective 1",
+                "content": "Observing internal emotional dynamics moment by moment to distinguish between beneficial and harmful mental states using the Spark to Forest Fire model. Key objective: Define emotional awareness and distinguish between beneficial and harmful mental states."
+              },
+              {
+                "item_id": "activity_03_01",
+                "type": "activity",
+                "title": "Spark to Forest Fire Mapping",
+                "duration": "15 minutes",
+                "steps": [
+                  "Select a recent event where an emotional reaction escalated unexpectedly.",
+                  "Identify the Precondition (e.g., fatigue), Event, Perception Database, Trigger (Spark), Response, and Action.",
+                  "Pinpoint the exact point where Selective Filtering could have extinguished the spark."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_03_01",
+                "type": "video",
+                "title": "Overview of Emotional Awareness - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_03_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_03_01_01",
+                    "question": "In the Spark to Forest Fire model, what term describes the initial state of fatigue or stress prior to an event?",
+                    "options": [
+                      "Trigger",
+                      "Precondition",
+                      "Perception Database",
+                      "Selective Filter"
+                    ],
+                    "answer": "Precondition",
+                    "explanation": "Preconditions represent the background physical or mental state (such as exhaustion) existing before an event occurs."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_03_01",
+                "question": "What common physical preconditions (e.g., lack of sleep, hunger) make you most susceptible to emotional triggers?",
+                "type": "reflection",
+                "title": "What common physical preconditions (e.g., lack of sleep, hunger) make you most susceptible to emotional triggers?",
+                "content": "What common physical preconditions (e.g., lack of sleep, hunger) make you most susceptible to emotional triggers?"
+              }
+            ],
+            "required_item_ids": [
+              "content_03_01",
+              "activity_03_01",
+              "video_03_01",
+              "quiz_03_01"
+            ]
+          },
+          {
+            "objective_id": "obj_03_02",
+            "title": "Explain the stages of emotional escalation using the Spark to Forest Fire model.",
+            "content": "Explain the stages of emotional escalation using the Spark to Forest Fire model.",
+            "items": [
+              {
+                "item_id": "content_03_02",
+                "type": "text",
+                "title": "Core Principles of Emotional Awareness - Objective 2",
+                "content": "Observing internal emotional dynamics moment by moment to distinguish between beneficial and harmful mental states using the Spark to Forest Fire model. Key objective: Explain the stages of emotional escalation using the Spark to Forest Fire model."
+              },
+              {
+                "item_id": "video_03_02",
+                "type": "video",
+                "title": "Overview of Emotional Awareness - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_03_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_03_02_01",
+                    "question": "What is the primary function of selective filtering?",
+                    "options": [
+                      "To suppress all emotional expression permanently",
+                      "To create space between an emotional trigger and subsequent action",
+                      "To blame external circumstances for internal reactions",
+                      "To accelerate emotional escalation"
+                    ],
+                    "answer": "To create space between an emotional trigger and subsequent action",
+                    "explanation": "Selective filtering provides a conscious pause allowing an individual to choose a beneficial action over an automatic outburst."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_03_02",
+                "question": "How can inserting a three-second pause between a trigger and your reaction alter the outcome of a confrontation?",
+                "type": "reflection",
+                "title": "How can inserting a three-second pause between a trigger and your reaction alter the outcome of a confrontation?",
+                "content": "How can inserting a three-second pause between a trigger and your reaction alter the outcome of a confrontation?"
+              }
+            ],
+            "required_item_ids": [
+              "content_03_02",
+              "video_03_02",
+              "quiz_03_02"
+            ]
+          },
+          {
+            "objective_id": "obj_03_03",
+            "title": "Apply selective filtering to create cognitive space between emotional triggers and behavioral actions.",
+            "content": "Apply selective filtering to create cognitive space between emotional triggers and behavioral actions.",
+            "items": [
+              {
+                "item_id": "content_03_03",
+                "type": "text",
+                "title": "Core Principles of Emotional Awareness - Objective 3",
+                "content": "Observing internal emotional dynamics moment by moment to distinguish between beneficial and harmful mental states using the Spark to Forest Fire model. Key objective: Apply selective filtering to create cognitive space between emotional triggers and behavioral actions."
+              },
+              {
+                "item_id": "video_03_03",
+                "type": "video",
+                "title": "Overview of Emotional Awareness - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_03_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_03_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_03_03",
+              "video_03_03",
+              "quiz_03_03"
+            ]
+          },
+          {
+            "objective_id": "obj_03_04",
+            "title": "Identify personal triggers and preconditions to cultivate greater emotional stability.",
+            "content": "Identify personal triggers and preconditions to cultivate greater emotional stability.",
+            "items": [
+              {
+                "item_id": "content_03_04",
+                "type": "text",
+                "title": "Core Principles of Emotional Awareness - Objective 4",
+                "content": "Observing internal emotional dynamics moment by moment to distinguish between beneficial and harmful mental states using the Spark to Forest Fire model. Key objective: Identify personal triggers and preconditions to cultivate greater emotional stability."
+              },
+              {
+                "item_id": "video_03_04",
+                "type": "video",
+                "title": "Overview of Emotional Awareness - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_03_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_03_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_03_04",
+              "video_03_04",
+              "quiz_03_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_04",
+        "title": "Self-Compassion",
+        "description": "Recognizing intrinsic self-worth, overcoming cognitive thinking traps, and navigating the Eight Worldly Concerns to foster genuine well-being.",
+        "objectives": [
+          {
+            "objective_id": "obj_04_01",
+            "title": "Define self-compassion as the recognition of intrinsic self-worth independent of external conditions.",
+            "content": "Define self-compassion as the recognition of intrinsic self-worth independent of external conditions.",
+            "items": [
+              {
+                "item_id": "content_04_01",
+                "type": "text",
+                "title": "Core Principles of Self-Compassion - Objective 1",
+                "content": "Recognizing intrinsic self-worth, overcoming cognitive thinking traps, and navigating the Eight Worldly Concerns to foster genuine well-being. Key objective: Define self-compassion as the recognition of intrinsic self-worth independent of external conditions."
+              },
+              {
+                "item_id": "activity_04_01",
+                "type": "activity",
+                "title": "Letter to a Friend Exercise",
+                "duration": "15 minutes",
+                "steps": [
+                  "Write a supportive, encouraging letter to a friend facing a major personal failure.",
+                  "Read the letter aloud, directing the supportive tone and words toward yourself.",
+                  "Journal the emotional shifts experienced when receiving your own supportive words."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_04_01",
+                "type": "video",
+                "title": "Overview of Self-Compassion - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_04_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_04_01_01",
+                    "question": "What phenomenon describes the relentless pursuit of external goods that yields no lasting happiness?",
+                    "options": [
+                      "Hedonic Treadmill",
+                      "Inferiority Bias",
+                      "Selective Filtering",
+                      "Naikan Reflection"
+                    ],
+                    "answer": "Hedonic Treadmill",
+                    "explanation": "The Hedonic Treadmill describes how individuals adapt to external gains, requiring continuous novelty without achieving lasting fulfillment."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_04_01",
+                "question": "Which of the Eight Worldly Concerns exerts the strongest influence over your daily stress levels?",
+                "type": "reflection",
+                "title": "Which of the Eight Worldly Concerns exerts the strongest influence over your daily stress levels?",
+                "content": "Which of the Eight Worldly Concerns exerts the strongest influence over your daily stress levels?"
+              }
+            ],
+            "required_item_ids": [
+              "content_04_01",
+              "activity_04_01",
+              "video_04_01",
+              "quiz_04_01"
+            ]
+          },
+          {
+            "objective_id": "obj_04_02",
+            "title": "Identify common cognitive distortions, including the hedonic treadmill, perfectionism, and self-biases.",
+            "content": "Identify common cognitive distortions, including the hedonic treadmill, perfectionism, and self-biases.",
+            "items": [
+              {
+                "item_id": "content_04_02",
+                "type": "text",
+                "title": "Core Principles of Self-Compassion - Objective 2",
+                "content": "Recognizing intrinsic self-worth, overcoming cognitive thinking traps, and navigating the Eight Worldly Concerns to foster genuine well-being. Key objective: Identify common cognitive distortions, including the hedonic treadmill, perfectionism, and self-biases."
+              },
+              {
+                "item_id": "activity_04_02",
+                "type": "activity",
+                "title": "Aspiration vs. Expectation Inventory",
+                "duration": "10 minutes",
+                "steps": [
+                  "List three major goals currently creating stress in your life.",
+                  "Classify each item as either a healthy aspiration or a rigid expectation.",
+                  "Reframe rigid expectations into flexible growth targets."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_04_02",
+                "type": "video",
+                "title": "Overview of Self-Compassion - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_04_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_04_02_01",
+                    "question": "Which dualities constitute the Eight Worldly Concerns?",
+                    "options": [
+                      "Gain/Loss, Pleasure/Pain, Praise/Blame, Status/Insignificance",
+                      "Anger/Calm, Joy/Sadness, Fear/Courage, Pride/Humility",
+                      "Mindfulness/Unawareness, Focus/Drift, Clarity/Confusion, Peace/Stress",
+                      "Tracking/Grounding, Resourcing/Meltdown, Focus/Distraction, Care/Harm"
+                    ],
+                    "answer": "Gain/Loss, Pleasure/Pain, Praise/Blame, Status/Insignificance",
+                    "explanation": "The Eight Worldly Concerns consist of four pairs of external attachments and aversions that disturb mental balance."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_04_02",
+                "question": "In what ways does your internal monologue differ when speaking to yourself versus speaking to a loved one?",
+                "type": "reflection",
+                "title": "In what ways does your internal monologue differ when speaking to yourself versus speaking to a loved one?",
+                "content": "In what ways does your internal monologue differ when speaking to yourself versus speaking to a loved one?"
+              }
+            ],
+            "required_item_ids": [
+              "content_04_02",
+              "activity_04_02",
+              "video_04_02",
+              "quiz_04_02"
+            ]
+          },
+          {
+            "objective_id": "obj_04_03",
+            "title": "Analyze how fixation on the Eight Worldly Concerns drives psychological suffering.",
+            "content": "Analyze how fixation on the Eight Worldly Concerns drives psychological suffering.",
+            "items": [
+              {
+                "item_id": "content_04_03",
+                "type": "text",
+                "title": "Core Principles of Self-Compassion - Objective 3",
+                "content": "Recognizing intrinsic self-worth, overcoming cognitive thinking traps, and navigating the Eight Worldly Concerns to foster genuine well-being. Key objective: Analyze how fixation on the Eight Worldly Concerns drives psychological suffering."
+              },
+              {
+                "item_id": "video_04_03",
+                "type": "video",
+                "title": "Overview of Self-Compassion - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_04_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_04_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_04_03",
+              "video_04_03",
+              "quiz_04_03"
+            ]
+          },
+          {
+            "objective_id": "obj_04_04",
+            "title": "Apply structured self-compassion tools to replace harsh self-criticism with constructive encouragement.",
+            "content": "Apply structured self-compassion tools to replace harsh self-criticism with constructive encouragement.",
+            "items": [
+              {
+                "item_id": "content_04_04",
+                "type": "text",
+                "title": "Core Principles of Self-Compassion - Objective 4",
+                "content": "Recognizing intrinsic self-worth, overcoming cognitive thinking traps, and navigating the Eight Worldly Concerns to foster genuine well-being. Key objective: Apply structured self-compassion tools to replace harsh self-criticism with constructive encouragement."
+              },
+              {
+                "item_id": "video_04_04",
+                "type": "video",
+                "title": "Overview of Self-Compassion - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_04_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_04_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_04_04",
+              "video_04_04",
+              "quiz_04_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_05",
+        "title": "Impartiality and Common Humanity",
+        "description": "Expanding compassion beyond immediate in-groups by recognizing universal human desires for happiness and freedom from suffering.",
+        "objectives": [
+          {
+            "objective_id": "obj_05_01",
+            "title": "Define common humanity as the shared desire of all human beings to seek well-being and avoid suffering.",
+            "content": "Define common humanity as the shared desire of all human beings to seek well-being and avoid suffering.",
+            "items": [
+              {
+                "item_id": "content_05_01",
+                "type": "text",
+                "title": "Core Principles of Impartiality and Common Humanity - Objective 1",
+                "content": "Expanding compassion beyond immediate in-groups by recognizing universal human desires for happiness and freedom from suffering. Key objective: Define common humanity as the shared desire of all human beings to seek well-being and avoid suffering."
+              },
+              {
+                "item_id": "activity_05_01",
+                "type": "activity",
+                "title": "Who Are You Mind Mapping",
+                "duration": "10 minutes",
+                "steps": [
+                  "In Round 1, write 'Who Are You' in a central circle and map out descriptive roles, titles, and social labels for 90 seconds.",
+                  "In Round 2, repeat the exercise for 90 seconds without using any external social, occupational, or cultural labels.",
+                  "Reflect on the underlying human presence that remains once external categories are removed."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_05_01",
+                "type": "video",
+                "title": "Overview of Impartiality and Common Humanity - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_05_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_05_01_01",
+                    "question": "What metaphor illustrates impartiality by illuminating all beings without excluding any group?",
+                    "options": [
+                      "The playful puppy",
+                      "The sun shining equally",
+                      "The forest fire spark",
+                      "The oil bowl guard"
+                    ],
+                    "answer": "The sun shining equally",
+                    "explanation": "The sun metaphor demonstrates impartiality—providing warmth universally to all, regardless of status or proximity."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_05_01",
+                "question": "What social or demographic categories trigger automatic out-group assumptions in your daily environment?",
+                "type": "reflection",
+                "title": "What social or demographic categories trigger automatic out-group assumptions in your daily environment?",
+                "content": "What social or demographic categories trigger automatic out-group assumptions in your daily environment?"
+              }
+            ],
+            "required_item_ids": [
+              "content_05_01",
+              "activity_05_01",
+              "video_05_01",
+              "quiz_05_01"
+            ]
+          },
+          {
+            "objective_id": "obj_05_02",
+            "title": "Differentiate between impartiality and treating everyone identically.",
+            "content": "Differentiate between impartiality and treating everyone identically.",
+            "items": [
+              {
+                "item_id": "content_05_02",
+                "type": "text",
+                "title": "Core Principles of Impartiality and Common Humanity - Objective 2",
+                "content": "Expanding compassion beyond immediate in-groups by recognizing universal human desires for happiness and freedom from suffering. Key objective: Differentiate between impartiality and treating everyone identically."
+              },
+              {
+                "item_id": "video_05_02",
+                "type": "video",
+                "title": "Overview of Impartiality and Common Humanity - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_05_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_05_02_01",
+                    "question": "How is common humanity defined in the SEEK curriculum?",
+                    "options": [
+                      "Forcing all people to adopt identical cultural practices",
+                      "Recognizing that all human beings share the basic desire for happiness and freedom from suffering",
+                      "Eliminating all personal relationships in favor of complete neutrality",
+                      "Ignoring individual accomplishments in favor of group identity"
+                    ],
+                    "answer": "Recognizing that all human beings share the basic desire for happiness and freedom from suffering",
+                    "explanation": "Common humanity centers on the universal human condition and shared fundamental aspirations for well-being."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_05_02",
+                "question": "How does stripping away professional and social titles during the 'Who Are You' exercise alter your view of personal identity?",
+                "type": "reflection",
+                "title": "How does stripping away professional and social titles during the 'Who Are You' exercise alter your view of personal identity?",
+                "content": "How does stripping away professional and social titles during the 'Who Are You' exercise alter your view of personal identity?"
+              }
+            ],
+            "required_item_ids": [
+              "content_05_02",
+              "video_05_02",
+              "quiz_05_02"
+            ]
+          },
+          {
+            "objective_id": "obj_05_03",
+            "title": "Analyze the origins and consequences of in-group bias, stereotypes, and prejudice.",
+            "content": "Analyze the origins and consequences of in-group bias, stereotypes, and prejudice.",
+            "items": [
+              {
+                "item_id": "content_05_03",
+                "type": "text",
+                "title": "Core Principles of Impartiality and Common Humanity - Objective 3",
+                "content": "Expanding compassion beyond immediate in-groups by recognizing universal human desires for happiness and freedom from suffering. Key objective: Analyze the origins and consequences of in-group bias, stereotypes, and prejudice."
+              },
+              {
+                "item_id": "video_05_03",
+                "type": "video",
+                "title": "Overview of Impartiality and Common Humanity - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_05_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_05_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_05_03",
+              "video_05_03",
+              "quiz_05_03"
+            ]
+          },
+          {
+            "objective_id": "obj_05_04",
+            "title": "Apply perspective-taking exercises to weaken implicit categorical bias.",
+            "content": "Apply perspective-taking exercises to weaken implicit categorical bias.",
+            "items": [
+              {
+                "item_id": "content_05_04",
+                "type": "text",
+                "title": "Core Principles of Impartiality and Common Humanity - Objective 4",
+                "content": "Expanding compassion beyond immediate in-groups by recognizing universal human desires for happiness and freedom from suffering. Key objective: Apply perspective-taking exercises to weaken implicit categorical bias."
+              },
+              {
+                "item_id": "video_05_04",
+                "type": "video",
+                "title": "Overview of Impartiality and Common Humanity - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_05_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_05_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_05_04",
+              "video_05_04",
+              "quiz_05_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_06",
+        "title": "Forgiveness and Gratitude",
+        "description": "Releasing resentment through contextual understanding and cultivating enduring personal and trait gratitude using structured reflective practices like Naikan.",
+        "objectives": [
+          {
+            "objective_id": "obj_06_01",
+            "title": "Define forgiveness as letting go of resentment without condoning, forgetting, or excusing harmful behavior.",
+            "content": "Define forgiveness as letting go of resentment without condoning, forgetting, or excusing harmful behavior.",
+            "items": [
+              {
+                "item_id": "content_06_01",
+                "type": "text",
+                "title": "Core Principles of Forgiveness and Gratitude - Objective 1",
+                "content": "Releasing resentment through contextual understanding and cultivating enduring personal and trait gratitude using structured reflective practices like Naikan. Key objective: Define forgiveness as letting go of resentment without condoning, forgetting, or excusing harmful behavior."
+              },
+              {
+                "item_id": "activity_06_01",
+                "type": "activity",
+                "title": "Naikan Three-Question Journaling",
+                "duration": "15 minutes",
+                "steps": [
+                  "Select a key person in your life over a specific time frame.",
+                  "List specific items or support you received from this person.",
+                  "List specific items or assistance you provided to this person in return.",
+                  "List specific difficulties or trouble you caused this person.",
+                  "Omit listing the trouble they caused you to bypass natural negativity bias."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_06_01",
+                "type": "video",
+                "title": "Overview of Forgiveness and Gratitude - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_06_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_06_01_01",
+                    "question": "What key element is intentionally omitted during the Japanese Naikan reflective practice?",
+                    "options": [
+                      "What I have received from the person",
+                      "What trouble the other person caused me",
+                      "What trouble I have caused the person",
+                      "What I have given to the person"
+                    ],
+                    "answer": "What trouble the other person caused me",
+                    "explanation": "Naikan omits listing the trouble others caused us to counter natural negativity bias and build genuine gratitude."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_06_01",
+                "question": "How does analyzing the external stress factors operating on someone who hurt you change your emotional reaction toward them?",
+                "type": "reflection",
+                "title": "How does analyzing the external stress factors operating on someone who hurt you change your emotional reaction toward them?",
+                "content": "How does analyzing the external stress factors operating on someone who hurt you change your emotional reaction toward them?"
+              }
+            ],
+            "required_item_ids": [
+              "content_06_01",
+              "activity_06_01",
+              "video_06_01",
+              "quiz_06_01"
+            ]
+          },
+          {
+            "objective_id": "obj_06_02",
+            "title": "Apply contextual analysis (causes and conditions) to counter fatal attribution errors and reductive thinking.",
+            "content": "Apply contextual analysis (causes and conditions) to counter fatal attribution errors and reductive thinking.",
+            "items": [
+              {
+                "item_id": "content_06_02",
+                "type": "text",
+                "title": "Core Principles of Forgiveness and Gratitude - Objective 2",
+                "content": "Releasing resentment through contextual understanding and cultivating enduring personal and trait gratitude using structured reflective practices like Naikan. Key objective: Apply contextual analysis (causes and conditions) to counter fatal attribution errors and reductive thinking."
+              },
+              {
+                "item_id": "video_06_02",
+                "type": "video",
+                "title": "Overview of Forgiveness and Gratitude - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_06_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_06_02_01",
+                    "question": "Which cognitive error involves blaming an individual's character while ignoring external situational stress?",
+                    "options": [
+                      "Hedonic Treadmill",
+                      "Fatal Attribution Error",
+                      "Selective Filtering",
+                      "Affective Empathy"
+                    ],
+                    "answer": "Fatal Attribution Error",
+                    "explanation": "Fatal attribution error occurs when behavior is attributed strictly to internal flaws while disregarding situational factors."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_06_02",
+                "question": "What insights emerge when focusing exclusively on the trouble you have caused others rather than the trouble they caused you?",
+                "type": "reflection",
+                "title": "What insights emerge when focusing exclusively on the trouble you have caused others rather than the trouble they caused you?",
+                "content": "What insights emerge when focusing exclusively on the trouble you have caused others rather than the trouble they caused you?"
+              }
+            ],
+            "required_item_ids": [
+              "content_06_02",
+              "video_06_02",
+              "quiz_06_02"
+            ]
+          },
+          {
+            "objective_id": "obj_06_03",
+            "title": "Distinguish between state gratitude and trait gratitude.",
+            "content": "Distinguish between state gratitude and trait gratitude.",
+            "items": [
+              {
+                "item_id": "content_06_03",
+                "type": "text",
+                "title": "Core Principles of Forgiveness and Gratitude - Objective 3",
+                "content": "Releasing resentment through contextual understanding and cultivating enduring personal and trait gratitude using structured reflective practices like Naikan. Key objective: Distinguish between state gratitude and trait gratitude."
+              },
+              {
+                "item_id": "video_06_03",
+                "type": "video",
+                "title": "Overview of Forgiveness and Gratitude - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_06_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_06_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_06_03",
+              "video_06_03",
+              "quiz_06_03"
+            ]
+          },
+          {
+            "objective_id": "obj_06_04",
+            "title": "Execute the three-question Japanese Naikan reflective practice to recognize systemic interdependence.",
+            "content": "Execute the three-question Japanese Naikan reflective practice to recognize systemic interdependence.",
+            "items": [
+              {
+                "item_id": "content_06_04",
+                "type": "text",
+                "title": "Core Principles of Forgiveness and Gratitude - Objective 4",
+                "content": "Releasing resentment through contextual understanding and cultivating enduring personal and trait gratitude using structured reflective practices like Naikan. Key objective: Execute the three-question Japanese Naikan reflective practice to recognize systemic interdependence."
+              },
+              {
+                "item_id": "video_06_04",
+                "type": "video",
+                "title": "Overview of Forgiveness and Gratitude - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_06_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_06_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_06_04",
+              "video_06_04",
+              "quiz_06_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_07",
+        "title": "Empathic Concern",
+        "description": "Distinguishing between affective and cognitive empathy, overcoming empathic distress, and transforming emotional contagion into active empathic concern and sympathetic joy.",
+        "objectives": [
+          {
+            "objective_id": "obj_07_01",
+            "title": "Define empathy and differentiate affective empathy from cognitive empathy.",
+            "content": "Define empathy and differentiate affective empathy from cognitive empathy.",
+            "items": [
+              {
+                "item_id": "content_07_01",
+                "type": "text",
+                "title": "Core Principles of Empathic Concern - Objective 1",
+                "content": "Distinguishing between affective and cognitive empathy, overcoming empathic distress, and transforming emotional contagion into active empathic concern and sympathetic joy. Key objective: Define empathy and differentiate affective empathy from cognitive empathy."
+              },
+              {
+                "item_id": "activity_07_01",
+                "type": "activity",
+                "title": "Sympathetic Joy Cultivation",
+                "duration": "10 minutes",
+                "steps": [
+                  "Identify an acquaintance or colleague who recently achieved major success.",
+                  "Acknowledge any initial envy or comparison thoughts without judgment.",
+                  "Contemplate the unseen effort and dedication required for their achievement.",
+                  "Express genuine mental or verbal congratulations, celebrating their happiness."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_07_01",
+                "type": "video",
+                "title": "Overview of Empathic Concern - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_07_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_07_01_01",
+                    "question": "What term describes the automatic, instinctive copying of another person's emotional state?",
+                    "options": [
+                      "Cognitive Empathy",
+                      "Emotional Contagion",
+                      "Sympathetic Joy",
+                      "Naikan Practice"
+                    ],
+                    "answer": "Emotional Contagion",
+                    "explanation": "Emotional contagion is the rapid, automatic spread of feelings (such as panic or yawning) across individuals."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_07_01",
+                "question": "In what situations do you notice affective empathy transitioning into overwhelming empathic distress?",
+                "type": "reflection",
+                "title": "In what situations do you notice affective empathy transitioning into overwhelming empathic distress?",
+                "content": "In what situations do you notice affective empathy transitioning into overwhelming empathic distress?"
+              }
+            ],
+            "required_item_ids": [
+              "content_07_01",
+              "activity_07_01",
+              "video_07_01",
+              "quiz_07_01"
+            ]
+          },
+          {
+            "objective_id": "obj_07_02",
+            "title": "Explain the evolutionary mechanism of emotional contagion.",
+            "content": "Explain the evolutionary mechanism of emotional contagion.",
+            "items": [
+              {
+                "item_id": "content_07_02",
+                "type": "text",
+                "title": "Core Principles of Empathic Concern - Objective 2",
+                "content": "Distinguishing between affective and cognitive empathy, overcoming empathic distress, and transforming emotional contagion into active empathic concern and sympathetic joy. Key objective: Explain the evolutionary mechanism of emotional contagion."
+              },
+              {
+                "item_id": "video_07_02",
+                "type": "video",
+                "title": "Overview of Empathic Concern - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_07_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_07_02_01",
+                    "question": "How does empathic concern differ from empathic distress?",
+                    "options": [
+                      "Empathic concern focuses on caring for others without becoming emotionally paralyzed",
+                      "Empathic distress leads to direct constructive action",
+                      "Empathic concern is restricted entirely to immediate family members",
+                      "Empathic distress creates permanent happiness"
+                    ],
+                    "answer": "Empathic concern focuses on caring for others without becoming emotionally paralyzed",
+                    "explanation": "Empathic concern maintains outward care and constructive motivation without falling into personal burnout or paralysis."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_07_02",
+                "question": "How does celebrating a rival's success through sympathetic joy impact your personal mental well-being?",
+                "type": "reflection",
+                "title": "How does celebrating a rival's success through sympathetic joy impact your personal mental well-being?",
+                "content": "How does celebrating a rival's success through sympathetic joy impact your personal mental well-being?"
+              }
+            ],
+            "required_item_ids": [
+              "content_07_02",
+              "video_07_02",
+              "quiz_07_02"
+            ]
+          },
+          {
+            "objective_id": "obj_07_03",
+            "title": "Analyze cognitive traps affecting empathy, including in-group bias, the one-over-many trap, and empathic distress.",
+            "content": "Analyze cognitive traps affecting empathy, including in-group bias, the one-over-many trap, and empathic distress.",
+            "items": [
+              {
+                "item_id": "content_07_03",
+                "type": "text",
+                "title": "Core Principles of Empathic Concern - Objective 3",
+                "content": "Distinguishing between affective and cognitive empathy, overcoming empathic distress, and transforming emotional contagion into active empathic concern and sympathetic joy. Key objective: Analyze cognitive traps affecting empathy, including in-group bias, the one-over-many trap, and empathic distress."
+              },
+              {
+                "item_id": "video_07_03",
+                "type": "video",
+                "title": "Overview of Empathic Concern - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_07_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_07_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_07_03",
+              "video_07_03",
+              "quiz_07_03"
+            ]
+          },
+          {
+            "objective_id": "obj_07_04",
+            "title": "Apply sympathetic joy techniques to counter jealousy and celebrate the success of others.",
+            "content": "Apply sympathetic joy techniques to counter jealousy and celebrate the success of others.",
+            "items": [
+              {
+                "item_id": "content_07_04",
+                "type": "text",
+                "title": "Core Principles of Empathic Concern - Objective 4",
+                "content": "Distinguishing between affective and cognitive empathy, overcoming empathic distress, and transforming emotional contagion into active empathic concern and sympathetic joy. Key objective: Apply sympathetic joy techniques to counter jealousy and celebrate the success of others."
+              },
+              {
+                "item_id": "video_07_04",
+                "type": "video",
+                "title": "Overview of Empathic Concern - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_07_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_07_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_07_04",
+              "video_07_04",
+              "quiz_07_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_08",
+        "title": "Compassion",
+        "description": "Translating empathic concern into active, courageous efforts to relieve suffering across three distinct levels: wishing, aspiring, and engaged compassion.",
+        "objectives": [
+          {
+            "objective_id": "obj_08_01",
+            "title": "Define compassion as the courageous motivation to relieve suffering backed by agency and critical inquiry.",
+            "content": "Define compassion as the courageous motivation to relieve suffering backed by agency and critical inquiry.",
+            "items": [
+              {
+                "item_id": "content_08_01",
+                "type": "text",
+                "title": "Core Principles of Compassion - Objective 1",
+                "content": "Translating empathic concern into active, courageous efforts to relieve suffering across three distinct levels: wishing, aspiring, and engaged compassion. Key objective: Define compassion as the courageous motivation to relieve suffering backed by agency and critical inquiry."
+              },
+              {
+                "item_id": "activity_08_01",
+                "type": "activity",
+                "title": "Three Levels of Compassion Mapping",
+                "duration": "15 minutes",
+                "steps": [
+                  "Select a major issue or suffering currently observed in your community.",
+                  "Formulate a Wishing Compassion statement reflecting passive hope.",
+                  "Formulate an Aspiring Compassion plan involving indirect or small-scale support.",
+                  "Formulate an Engaged Compassion strategy detailing direct, hands-on action."
+                ],
+                "content": ""
+              },
+              {
+                "item_id": "video_08_01",
+                "type": "video",
+                "title": "Overview of Compassion - Part 1",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_08_01",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_08_01_01",
+                    "question": "Which level of compassion involves taking direct, sustained personal action to relieve suffering?",
+                    "options": [
+                      "Wishing Compassion",
+                      "Aspiring Compassion",
+                      "Engaged Compassion",
+                      "Passive Compassion"
+                    ],
+                    "answer": "Engaged Compassion",
+                    "explanation": "Engaged compassion is characterized by direct personal responsibility and active measures to alleviate suffering."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_08_01",
+                "question": "In what areas of your life do you remain stuck in 'wishing compassion' rather than advancing to 'aspiring' or 'engaged' action?",
+                "type": "reflection",
+                "title": "In what areas of your life do you remain stuck in 'wishing compassion' rather than advancing to 'aspiring' or 'engaged' action?",
+                "content": "In what areas of your life do you remain stuck in 'wishing compassion' rather than advancing to 'aspiring' or 'engaged' action?"
+              }
+            ],
+            "required_item_ids": [
+              "content_08_01",
+              "activity_08_01",
+              "video_08_01",
+              "quiz_08_01"
+            ]
+          },
+          {
+            "objective_id": "obj_08_02",
+            "title": "Identify and dismantle misconceptions framing compassion as weakness or passivity.",
+            "content": "Identify and dismantle misconceptions framing compassion as weakness or passivity.",
+            "items": [
+              {
+                "item_id": "content_08_02",
+                "type": "text",
+                "title": "Core Principles of Compassion - Objective 2",
+                "content": "Translating empathic concern into active, courageous efforts to relieve suffering across three distinct levels: wishing, aspiring, and engaged compassion. Key objective: Identify and dismantle misconceptions framing compassion as weakness or passivity."
+              },
+              {
+                "item_id": "video_08_02",
+                "type": "video",
+                "title": "Overview of Compassion - Part 2",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_08_02",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [
+                  {
+                    "question_id": "q_08_02_01",
+                    "question": "What are the three essential components of compassion in the SEEK framework?",
+                    "options": [
+                      "Noticing Suffering, Empathic Concern, Sense of Agency",
+                      "Tracking, Grounding, Resourcing",
+                      "Heedfulness, Mindfulness, Awareness",
+                      "Precondition, Trigger, Action"
+                    ],
+                    "answer": "Noticing Suffering, Empathic Concern, Sense of Agency",
+                    "explanation": "Compassion requires perceiving distress (noticing), valuing the sufferer (empathic concern), and possessing confidence to act (sense of agency)."
+                  }
+                ],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_08_02",
+                "question": "How does combining critical inquiry with compassion prevent well-intentioned actions from causing unintended harm?",
+                "type": "reflection",
+                "title": "How does combining critical inquiry with compassion prevent well-intentioned actions from causing unintended harm?",
+                "content": "How does combining critical inquiry with compassion prevent well-intentioned actions from causing unintended harm?"
+              }
+            ],
+            "required_item_ids": [
+              "content_08_02",
+              "video_08_02",
+              "quiz_08_02"
+            ]
+          },
+          {
+            "objective_id": "obj_08_03",
+            "title": "Explain the three essential components of compassion: noticing suffering, empathic concern, and sense of agency.",
+            "content": "Explain the three essential components of compassion: noticing suffering, empathic concern, and sense of agency.",
+            "items": [
+              {
+                "item_id": "content_08_03",
+                "type": "text",
+                "title": "Core Principles of Compassion - Objective 3",
+                "content": "Translating empathic concern into active, courageous efforts to relieve suffering across three distinct levels: wishing, aspiring, and engaged compassion. Key objective: Explain the three essential components of compassion: noticing suffering, empathic concern, and sense of agency."
+              },
+              {
+                "item_id": "video_08_03",
+                "type": "video",
+                "title": "Overview of Compassion - Part 3",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_08_03",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_08_03",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_08_03",
+              "video_08_03",
+              "quiz_08_03"
+            ]
+          },
+          {
+            "objective_id": "obj_08_04",
+            "title": "Distinguish between wishing, aspiring, and engaged levels of compassion across personal and social spheres.",
+            "content": "Distinguish between wishing, aspiring, and engaged levels of compassion across personal and social spheres.",
+            "items": [
+              {
+                "item_id": "content_08_04",
+                "type": "text",
+                "title": "Core Principles of Compassion - Objective 4",
+                "content": "Translating empathic concern into active, courageous efforts to relieve suffering across three distinct levels: wishing, aspiring, and engaged compassion. Key objective: Distinguish between wishing, aspiring, and engaged levels of compassion across personal and social spheres."
+              },
+              {
+                "item_id": "video_08_04",
+                "type": "video",
+                "title": "Overview of Compassion - Part 4",
+                "duration": null,
+                "url": null,
+                "content": ""
+              },
+              {
+                "item_id": "quiz_08_04",
+                "type": "quiz",
+                "passing_score": 80,
+                "questions": [],
+                "title": "Quiz",
+                "content": ""
+              },
+              {
+                "item_id": "reflection_08_04",
+                "question": "How does this objective apply to your personal experience?",
+                "type": "reflection",
+                "title": "How does this objective apply to your personal experience?",
+                "content": "How does this objective apply to your personal experience?"
+              }
+            ],
+            "required_item_ids": [
+              "content_08_04",
+              "video_08_04",
+              "quiz_08_04"
+            ]
+          }
+        ],
+        "unassigned_items": []
+      }
+    ],
+    "summary": {
+      "chapter_count": 8,
+      "objective_count": 32,
+      "actionable_item_count": 133,
+      "assigned_item_count": 133,
+      "unassigned_item_count": 0
+    }
+  },
+  {
+    "_id": "json_document",
+    "version": 3,
+    "source": "output/knowledge_base.json",
+    "item_types": [
+      "practice"
+    ],
+    "chapters": [
+      {
+        "chapter_id": "skill_01",
+        "title": "Skill 1: Calming the Body and Mind",
+        "page": 1,
+        "objectives": [
+          {
+            "objective_id": "obj_01_01",
+            "title": "1. Discuss the importance of Body literacy and recognize the emotional state in a given situation.",
+            "content": "1. Discuss the importance of Body literacy and recognize the emotional state in a given situation. 1. Discuss the importance of Body literacy and recognize the emotional state in a given situation. 1. Discuss the importance of Body literacy and recognize the emotional state in a given situation. Objective 1: Discuss the importance of Body literacy and recognize the emotional state in a given situation Objective 1: Discuss the importance of Body literacy and recognize the emotional state in a given situation Definition of Body Literacy: Body literacy is the ability to understand and interpret sensations in our bodies. It invol Definition of Body Literacy: Body literacy is the ability to understand and interpret sensations in our bodies. It involves recognizing and responding to physical signals and cues, which helps in identifying emotional states and maintaining overall well-being. Recognizing Emotional States via Bodily Signals: Difficult emotions or thoughts do not appear out of nowhere; they usual Recognizing Emotional States via Bodily Signals: Difficult emotions or thoughts do not appear out of nowhere; they usually begin as bodily sensations. Because the nervous system reacts rapidly to internal and external stimuli, physical sensations serve as leading indicators for emotional states such as stress, anxiety, fear, depression, joy, calm, and clarity. Importance & Benefits: Developing body literacy improves your self-awareness and enhances your ability to manage emotion Importance & Benefits: Developing body literacy improves your self-awareness and enhances your ability to manage emotions effectively. By paying attention to your body's physical signals, you can cultivate a greater degree of inner calm, self-control, emotional intelligence, and selfcompassion.",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_01_05",
+            "title": "2. Identify the right vocabulary to name the different sensations in the body.",
+            "content": "2. Identify the right vocabulary to name the different sensations in the body. 2. Identify the right vocabulary to name the different sensations in the body. 2. Identify the right vocabulary to name the different sensations in the body. Objective 2: Identify the right vocabulary to name the different sensations in the body Objective 2: Identify the right vocabulary to name the different sensations in the body Sensation Words vs. Emotion Words: Sensation words refer to the language of our autonomic nervous system, which register Sensation Words vs. Emotion Words: Sensation words refer to the language of our autonomic nervous system, which registers safety and regulates our organs accordingly. While emotion words express how we are feeling emotionally, body sensation words provide additional physical information registered by the nervous system. Role in Emotional Regulation: Calming our body and mind starts with observing these physical sensations using precise vo Role in Emotional Regulation: Calming our body and mind starts with observing these physical sensations using precise vocabulary. Categorizing Physical Sensations: Sensation vocabulary helps us categorize physical experience into pleasant, unpleasant Categorizing Physical Sensations: Sensation vocabulary helps us categorize physical experience into pleasant, unpleasant, or neutral states. Identifying specific physical sensations (such as warmth, tightness, tingling, or firmness) rather than jumping directly to abstract emotions or thoughts allows  (such as warmth, tightness, tingling, or firmness) rather than jumping directly to abstract emotions or thoughts allows us to stay connected to bodily signals.",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_01_02",
+            "title": "3. Define the resilient zone and its connection to emotional regulation.",
+            "content": "3. Define the resilient zone and its connection to emotional regulation. 3. Define the resilient zone and its connection to emotional regulation. 3. Define the resilient zone and its connection to emotional regulation. Objective 3: Define the resilient zone and its connection to emotional regulation Objective 3: Define the resilient zone and its connection to emotional regulation Definition of the Resilient Zone: According to Elaine Miller of the Trauma Research Institute, a resilient zone is defin Definition of the Resilient Zone: According to Elaine Miller of the Trauma Research Institute, a resilient zone is defined as a state of equilibrium where we feel balanced and capable of dealing with stressful or traumatic experiences. It does not stop us from experiencing emotions such as anger or sadness, but it helps us retain control over our thoughts and actions during those moments. Connection to Emotional Regulation: Being in the resilient zone is closely linked to emotional regulation. When in our r Connection to Emotional Regulation: Being in the resilient zone is closely linked to emotional regulation. When in our resilient zone, we can handle stress, bounce back from challenges effectively, manage emotions so we do not overreact, and stay calm and focused. Everyday Examples of Being In the Zone: Everyday Examples of Being In the Zone: Staying calm during a tough exam. Staying calm during a tough exam. Not losing your temper in a heated argument. Not losing your temper in a heated argument. Managing anxiety before a big presentation. Managing anxiety before a big presentation. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 2 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 2 of 24 The \"Okay Zone\": As depicted in the wave model, the Resilient Zone is where we experience the full range of emotions whi The \"Okay Zone\": As depicted in the wave model, the Resilient Zone is where we experience the full range of emotions while staying balanced and in control. In this zone, we are calm, strong, and able to make our best decisions. It is not necessarily a \"happy place\" because we can still feel sadness while remaining resilient and calm—hence it can be called the \"okay zone.\"",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_01_06",
+            "title": "4. Recognize when you are out of the resilience zone.",
+            "content": "4. Recognize when you are out of the resilience zone. 4. Recognize when you are out of the resilience zone. 4. Recognize when you are out of the resilience zone. Objective 4: Recognize when you are out of the resilience zone Objective 4: Recognize when you are out of the resilience zone Triggers and Leaving the Zone: We do not always stay in our resilient zone. Daily stressful situations, a tough exam, an Triggers and Leaving the Zone: We do not always stay in our resilient zone. Daily stressful situations, a tough exam, an argument with a friend, or a loud noise can throw the nervous system out of balance and bump us out of our resilient zone. Nervous System Rhythm & Triggers: The natural rhythm of the nervous system can be bumped out of the Resilient Zone by a  Nervous System Rhythm & Triggers: The natural rhythm of the nervous system can be bumped out of the Resilient Zone by a trigger or a traumatic/stressful event (represented visually as a thunderbolt knocking the nervous system line out of the zone). Triggers can range from sudden loud noises to reminders of past trauma. Patterns of Dysregulation: When knocked out of the resilient zone, individuals typically display specific patterns: Patterns of Dysregulation: When knocked out of the resilient zone, individuals typically display specific patterns: \"Stuck on High\": Feeling constantly on edge, where everything seems to irritate you and you cannot relax. \"Stuck on High\": Feeling constantly on edge, where everything seems to irritate you and you cannot relax. \"Stuck on Low\": Feeling depressed and tired, lacking energy and motivation. \"Stuck on Low\": Feeling depressed and tired, lacking energy and motivation. Roller Coaster Pattern: Fluctuating back and forth between high and low extremes, making it hard to maintain normalcy or Roller Coaster Pattern: Fluctuating back and forth between high and low extremes, making it hard to maintain normalcy or balance. Sensory Triggers: Dysregulation can be triggered even without conscious awareness by anything that reminds a person of a Sensory Triggers: Dysregulation can be triggered even without conscious awareness by anything that reminds a person of a traumatic or stressful event, including a smell, sight, sound, touch, body position, or a particular song. Consequences of Dysregulation: When out of the zone, we may feel overwhelmed, nervous, anxious, or overly stressed, maki Consequences of Dysregulation: When out of the zone, we may feel overwhelmed, nervous, anxious, or overly stressed, making it significantly harder to think clearly and make good decisions.",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_01_03",
+            "title": "5. Discuss the role and importance of the parasympathetic nervous system.",
+            "content": "5. Discuss the role and importance of the parasympathetic nervous system. 5. Discuss the role and importance of the parasympathetic nervous system. 5. Discuss the role and importance of the parasympathetic nervous system. Objective 5: Discuss the role and importance of the parasympathetic nervous system Objective 5: Discuss the role and importance of the parasympathetic nervous system Two Branches of the Autonomic Nervous System: Two Branches of the Autonomic Nervous System: Sympathetic Nervous System: The alerting, stressed-out part of the nervous system. Sympathetic Nervous System: The alerting, stressed-out part of the nervous system. Activated when we are stressed or when the brain perceives danger, leading to the fight, flight, or freeze response, inc Activated when we are stressed or when the brain perceives danger, leading to the fight, flight, or freeze response, increasing heartbeat and shifting blood flow to limbs to prepare for action. Parasympathetic Nervous System: The calming, relaxing part of the body. It provides the capacity to calm us down after a Parasympathetic Nervous System: The calming, relaxing part of the body. It provides the capacity to calm us down after a stressful incident, helping the body relax and recover. Importance of Training the Parasympathetic Response: The part of our nervous system we use the most becomes the stronges Importance of Training the Parasympathetic Response: The part of our nervous system we use the most becomes the strongest. Therefore, it is vital to intentionally train our bodies to strengthen the parasympathetic response. Without this intentional training, the nervous system can become unhealthy and constantly stuck in a state of stress. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 3 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 3 of 24 Healthy vs. Unhealthy Nervous Systems: Healthy vs. Unhealthy Nervous Systems: Healthy Nervous System: Can flexibly and effectively use both the activating (sympathetic) Healthy Nervous System: Can flexibly and effectively use both the activating (sympathetic) response and the calming (parasympathetic) response. response and the calming (parasympathetic) response. Unhealthy Nervous System: Sees threats everywhere and gets stuck in hyper-arousal Unhealthy Nervous System: Sees threats everywhere and gets stuck in hyper-arousal (always on edge) or hypo-arousal (feeling numb and disconnected). (always on edge) or hypo-arousal (feeling numb and disconnected). Promoting Well-Being: Spending more time in a calm state strengthens the parasympathetic nervous system, allowing us to  Promoting Well-Being: Spending more time in a calm state strengthens the parasympathetic nervous system, allowing us to remain in the resilient zone for longer periods.",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_01_04",
+            "title": "6. Use tools for better emotional regulation.",
+            "content": "6. Use tools for better emotional regulation. 6. Use tools for better emotional regulation. 6. Use tools for better emotional regulation. Introduction & Foundational Framework Introduction & Foundational Framework The Road Trip Analogy: Imagine you are about to go on a fun weekend road trip with packed bags, a full tank, and your pl The Road Trip Analogy: Imagine you are about to go on a fun weekend road trip with packed bags, a full tank, and your playlist ready. There is some traffic, but thirty minutes in, smoke comes out of your engine, forcing you to stop. You regret skipping car servicing, get angry when the driver behind honks, and feel annoyed at the driver, your car, and yourself. Mind-Body Maintenance: Our minds and bodies are like that car engine—they need regular care and attention. Focusing on y Mind-Body Maintenance: Our minds and bodies are like that car engine—they need regular care and attention. Focusing on your own well-being is the first step to improving your life and relationships. Foundational Skills for Well-Being: You can focus on your well-being by developing inner calm, self-control, emotional i Foundational Skills for Well-Being: You can focus on your well-being by developing inner calm, self-control, emotional intelligence, and self-compassion. These skills build a strong foundation for being kinder to others and creating a peaceful society. The Body and Mind Connection: The nervous system reacts to external and internal stimuli very quickly. Difficult emotion The Body and Mind Connection: The nervous system reacts to external and internal stimuli very quickly. Difficult emotions or thoughts usually begin as bodily sensations and are leading indicators of stress, anxiety, fear, and depression, as well as states of joy, calm, and clarity. Anything experienced in either the body or mind immediately and automatically affects the other. Anything experienced in either the body or mind immediately and automatically affects the other. Pacing & Future Integration: Mastering this skill paves the way for other skills in this course, such as developing mind Pacing & Future Integration: Mastering this skill paves the way for other skills in this course, such as developing mindfulness, compassion, gratitude, and common humanity. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 1 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 1 of 24 Objective 6: Use tools for better emotional regulation Objective 6: Use tools for better emotional regulation Three primary tools assist us when we are bumped out of the resilient zone: tracking, grounding, and resourcing. These t Three primary tools assist us when we are bumped out of the resilient zone: tracking, grounding, and resourcing. These tools increase body awareness, anchor us in the present, and draw on positive resources. Tool 1: Tracking Tool 1: Tracking Definition & Purpose: Tracking involves noticing or paying attention to what is happening inside your body in the presen Definition & Purpose: Tracking involves noticing or paying attention to what is happening inside your body in the present moment. It helps determine whether a physical sensation is pleasant, unpleasant, or neutral. Staying with pleasant or neutral sensations builds a stronger connection to body signals and fosters resilience. Step-by-Step Tracking Activity: Step-by-Step Tracking Activity: 1. Activity Prep: Download the sensation words list before starting. 1. Activity Prep: Download the sensation words list before starting. 2. Sit in a comfortable position. 2. Sit in a comfortable position. 3. Place the palms of your hands together and keep rubbing them back and forth. 3. Place the palms of your hands together and keep rubbing them back and forth. 4. Observe what you experience on the inside of your body and identify pleasant or neutral sensations. 4. Observe what you experience on the inside of your body and identify pleasant or neutral sensations. 5. Focus on identifying physical sensations rather than emotions or thoughts. 5. Focus on identifying physical sensations rather than emotions or thoughts. 6. Refer to the downloaded sensation words list and note the different sensations experienced in your journal. 6. Refer to the downloaded sensation words list and note the different sensations experienced in your journal. Benefits: Enhances the ability to stay present, deepens body awareness, and improves emotional regulation. Benefits: Enhances the ability to stay present, deepens body awareness, and improves emotional regulation. Tool 2: Grounding Tool 2: Grounding Definition & Purpose: Grounding involves noticing the direct physical contact of an object with your body that provides  Definition & Purpose: Grounding involves noticing the direct physical contact of an object with your body that provides support and stability. Focusing on a grounded or supported body part helps regulate a dysregulated nervous system (e.g., feeling feet firm on the floor while sitting). When to Use: Particularly useful during high stress, anxiety, or feeling overwhelmed to anchor attention back to the pre When to Use: Particularly useful during high stress, anxiety, or feeling overwhelmed to anchor attention back to the present moment. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 4 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 4 of 24 Step-by-Step Grounding Practice: Step-by-Step Grounding Practice: 1. Find a comfortable position (sitting on a chair, cushion on the floor, or standing against a wall). 1. Find a comfortable position (sitting on a chair, cushion on the floor, or standing against a wall). 2. Bring attention to the part of your body contacting another object (back against chair/wall, feet on floor, hands on  2. Bring attention to the part of your body contacting another object (back against chair/wall, feet on floor, hands on lap). 3. Notice body sensations, focus on pleasant or neutral sensations, and rest attention there. 3. Notice body sensations, focus on pleasant or neutral sensations, and rest attention there. 4. Continue as long as comfortable to experience support and stability. 4. Continue as long as comfortable to experience support and stability. Real-World Applications: Can be used in crowded markets, during exams, interviews, or meetings by focusing attention on  Real-World Applications: Can be used in crowded markets, during exams, interviews, or meetings by focusing attention on contacting objects like a chair, holding a pen, or touching jewelry. Tool 3: Resourcing Tool 3: Resourcing Definition & Purpose: A Resource is any person, place, thing, memory, or part of yourself that brings feelings of calm,  Definition & Purpose: A Resource is any person, place, thing, memory, or part of yourself that brings feelings of calm, pleasantness, peace, strength, or resilience. Bringing a resource to mind as vividly as possible provides support and enhances emotional regulation. Step-by-Step \"Build Your Own Resource\" Activity: Step-by-Step \"Build Your Own Resource\" Activity: 1. Think of a resource (a past place you loved, a favorite person, or an enjoyable activity). 1. Think of a resource (a past place you loved, a favorite person, or an enjoyable activity). 2. Picture/imagine it clearly in vivid detail using as many senses as appropriate (colors, textures, sounds, tastes, etc 2. Picture/imagine it clearly in vivid detail using as many senses as appropriate (colors, textures, sounds, tastes, etc.). 3. Notice the body sensations that arise and focus/rest attention on pleasant or neutral sensations. 3. Notice the body sensations that arise and focus/rest attention on pleasant or neutral sensations. 4. Write down the observed sensations in your journal. 4. Write down the observed sensations in your journal. Benefits & Real-World Applications: Creates calm and stability to manage stress. Useful when feeling low on energy or mo Benefits & Real-World Applications: Creates calm and stability to manage stress. Useful when feeling low on energy or motivation, before a stressful event, or after a difficult experience.",
+            "page": 1,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_02",
+        "title": "Skill 2: Ethical Mindfulness",
+        "page": 5,
+        "objectives": [
+          {
+            "objective_id": "obj_02_01",
+            "title": "1. Define Ethical Mindfulness.",
+            "content": "1. Define Ethical Mindfulness. 1. Define Ethical Mindfulness. 1. Define Ethical Mindfulness. Objective 1: Define Ethical Mindfulness Objective 1: Define Ethical Mindfulness Core Definition: Ethical Mindfulness is defined as the ability to maintain one's identity and core values while speaking Core Definition: Ethical Mindfulness is defined as the ability to maintain one's identity and core values while speaking and acting accordingly. It involves living in a way that consistently reflects our principles, even under stress or pressure. Role & Impact: Ethical mindfulness combines heedfulness, mindfulness, and awareness to help us act in ways that align wi Role & Impact: Ethical mindfulness combines heedfulness, mindfulness, and awareness to help us act in ways that align with our principles, even when our mind tries to wander. Practicing this allows us to improve focus, make better decisions, and avoid actions that might harm ourselves or others.",
+            "page": 5,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_02_02",
+            "title": "2. Identify the three components of ethical mindfulness.",
+            "content": "2. Identify the three components of ethical mindfulness. 2. Identify the three components of ethical mindfulness. 2. Identify the three components of ethical mindfulness. Objective 2: Identify the three components of ethical mindfulness Objective 2: Identify the three components of ethical mindfulness Ethical Mindfulness comprises three key components: Heedfulness, Mindfulness, and Awareness. Ethical Mindfulness comprises three key components: Heedfulness, Mindfulness, and Awareness. 1. Heedfulness 1. Heedfulness Definition: The first step in ethical mindfulness is being aware of how our thoughts and actions can cause harm to ourse Definition: The first step in ethical mindfulness is being aware of how our thoughts and actions can cause harm to ourselves and others. We often pay less attention to how we speak or act and only realize our mistakes in hindsight. Ancient Indian Metaphor: An ancient Indian metaphor teaches heedfulness through the story of a person ordered to carry a Ancient Indian Metaphor: An ancient Indian metaphor teaches heedfulness through the story of a person ordered to carry a bowl filled to the brim with hot sesame oil while a guard holding a drawn sword walks behind him. If even a single drop of oil is spilled, the guard is instructed to chop off his head. This metaphor illustrates heedfulness as a sense of extreme care and restraint regarding things recognized as dangerous. 2. Mindfulness 2. Mindfulness Definition in SEEK: In SEEK, mindfulness is defined as focusing your attention on something intentionally to remember it Definition in SEEK: In SEEK, mindfulness is defined as focusing your attention on something intentionally to remember it better. Function: It means being conscious of the values and behaviors we want to adopt or avoid. While heedfulness helps us rea Function: It means being conscious of the values and behaviors we want to adopt or avoid. While heedfulness helps us realize that critical or upsetting words cause harm, mindfulness allows us to remember our values during stressful times and actively change our behavior accordingly. 3. Awareness 3. Awareness Definition: Awareness is being conscious of our thoughts and actions in the present moment. Definition: Awareness is being conscious of our thoughts and actions in the present moment. Function: Without real-time awareness, we can still cause harm to ourselves and others even if we possess heedfulness an Function: Without real-time awareness, we can still cause harm to ourselves and others even if we possess heedfulness and mindfulness. It provides the present-moment recognition needed to ensure our speech and actions match our intended values right as they happen. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 6 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 6 of 24",
+            "page": 5,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_02_03",
+            "title": "3. Describe the significance of attention stability.",
+            "content": "3. Describe the significance of attention stability. 3. Describe the significance of attention stability. 3. Describe the significance of attention stability. Objective 3: Describe the significance of attention stability Objective 3: Describe the significance of attention stability Significance & Metacognitive Awareness: The significance of attention stability is understood through metacognitive awar Significance & Metacognitive Awareness: The significance of attention stability is understood through metacognitive awareness (also called introspective awareness), which involves being aware of where our attention is at any given moment. Practicing attention stability ensures we stay focused, make better decisions, and remain aligned with our goals and values. The Playful Puppy Metaphor: The Playful Puppy Metaphor: The Wandering Mind: The mind is like a playful puppy that wanders and jumps from thought to thought (e.g., worrying abou The Wandering Mind: The mind is like a playful puppy that wanders and jumps from thought to thought (e.g., worrying about the future or past instead of studying or working). The Ball: Represents the object of attention—what we are trying to focus on. The Ball: Represents the object of attention—what we are trying to focus on. The Leash: Represents our capacity for mindfulness or attention, helping us keep our focus on the ball. The Leash: Represents our capacity for mindfulness or attention, helping us keep our focus on the ball. The Owner Calling the Puppy Back: Represents metacognition / introspective awareness, where we recognize that our attent The Owner Calling the Puppy Back: Represents metacognition / introspective awareness, where we recognize that our attention has drifted and gently bring it back to the task at hand.",
+            "page": 5,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_02_04",
+            "title": "4. Demonstrate how to practice mindfulness in daily activities.",
+            "content": "4. Demonstrate how to practice mindfulness in daily activities. 4. Demonstrate how to practice mindfulness in daily activities. 4. Demonstrate how to practice mindfulness in daily activities. Objective 4: Demonstrate how to practice mindfulness in daily activities Objective 4: Demonstrate how to practice mindfulness in daily activities The module provides specific reflection activities to practice applying the three components of ethical mindfulness duri The module provides specific reflection activities to practice applying the three components of ethical mindfulness during daily life: Daily Activity 1 (Applying Heedfulness): Daily Activity 1 (Applying Heedfulness): Scenario: You are scrolling through social media and see a post that makes you angry, prompting an urge to leave a harsh Scenario: You are scrolling through social media and see a post that makes you angry, prompting an urge to leave a harsh comment.",
+            "page": 5,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_02_05",
+            "title": "5. Analyze scenarios to determine how ethical mindfulness can influence outcomes.",
+            "content": "5. Analyze scenarios to determine how ethical mindfulness can influence outcomes. 5. Analyze scenarios to determine how ethical mindfulness can influence outcomes. 5. Analyze scenarios to determine how ethical mindfulness can influence outcomes. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 5 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 5 of 24 Introduction to Ethical Mindfulness Introduction to Ethical Mindfulness Think of a time when you said something in a fit of anger that you did not mean, leaving you feeling regret and embarras Think of a time when you said something in a fit of anger that you did not mean, leaving you feeling regret and embarrassment afterwards. Many people experience this and wish they had acted differently. Skill 2 addresses how to act in accordance with our core values even in challenging situations. Objective 5: Analyze scenarios to determine how ethical mindfulness can influence outcomes Objective 5: Analyze scenarios to determine how ethical mindfulness can influence outcomes The following real-world scenarios demonstrate how ethical mindfulness changes outcomes under pressure: The following real-world scenarios demonstrate how ethical mindfulness changes outcomes under pressure: UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 7 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 7 of 24 Scenario 1: Workplace Criticism Scenario 1: Workplace Criticism Situation: You receive unexpected criticism from your boss. Situation: You receive unexpected criticism from your boss. Impulsive Reaction: Defending yourself, lashing out, or showing anger. Impulsive Reaction: Defending yourself, lashing out, or showing anger. Ethically Mindful Outcome: Taking a moment to breathe, reflecting on your core values, and responding calmly and constru Ethically Mindful Outcome: Taking a moment to breathe, reflecting on your core values, and responding calmly and constructively. Scenario 2: Interpersonal Hurt Scenario 2: Interpersonal Hurt Situation: A friend says something hurtful. Situation: A friend says something hurtful. Impulsive Reaction: Reacting impulsively and starting a conflict. Impulsive Reaction: Reacting impulsively and starting a conflict. Ethically Mindful Outcome: Pausing, remembering your value of maintaining strong relationships, responding with understa Ethically Mindful Outcome: Pausing, remembering your value of maintaining strong relationships, responding with understanding, and working toward a solution. Scenario 3: Academic & High-Pressure Situations Scenario 3: Academic & High-Pressure Situations Situation: Being under immense pressure before an exam. Situation: Being under immense pressure before an exam. Impulsive Reaction: Giving in to stress and taking unethical shortcuts or cheating. Impulsive Reaction: Giving in to stress and taking unethical shortcuts or cheating. Ethically Mindful Outcome: Managing stress in alignment with your core value of integrity, avoiding dishonest shortcuts. Ethically Mindful Outcome: Managing stress in alignment with your core value of integrity, avoiding dishonest shortcuts.",
+            "page": 5,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_03",
+        "title": "Skill 3: Emotional Awareness",
+        "page": 8,
+        "objectives": [
+          {
+            "objective_id": "obj_03_01",
+            "title": "1. Define emotional awareness.",
+            "content": "1. Define emotional awareness. 1. Define emotional awareness. 1. Define emotional awareness. Objective 1: Define emotional awareness Objective 1: Define emotional awareness Core Definition: Emotional Awareness is the ability to be aware of our mental experiences at each moment and differentia Core Definition: Emotional Awareness is the ability to be aware of our mental experiences at each moment and differentiate between beneficial and potentially harmful mental states. Observational Capacity: Being emotionally aware means having the ability to observe our thoughts, feelings, emotions, an Observational Capacity: Being emotionally aware means having the ability to observe our thoughts, feelings, emotions, and bodily sensations with awareness as they arise in the mind. What Emotional Awareness Is NOT: It does not mean ignoring our thoughts or pushing away emotions. What Emotional Awareness Is NOT: It does not mean ignoring our thoughts or pushing away emotions. Core Functions of Awareness: Emotional awareness is used to: Core Functions of Awareness: Emotional awareness is used to: Observe our mental states with less attachment. Observe our mental states with less attachment. Investigate whether our thoughts and feelings are permanent or temporary. Investigate whether our thoughts and feelings are permanent or temporary.",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_03_05",
+            "title": "2. Explain the importance of emotional awareness.",
+            "content": "2. Explain the importance of emotional awareness. 2. Explain the importance of emotional awareness. 2. Explain the importance of emotional awareness. Objective 2: Explain the importance of emotional awareness Objective 2: Explain the importance of emotional awareness Impact on Life and Relationships: Without emotional awareness, unobserved feelings lead to emotional overwhelm and prolo Impact on Life and Relationships: Without emotional awareness, unobserved feelings lead to emotional overwhelm and prolonged dysregulation, damaging personal and professional relationships. Resilience & Wise Decision-Making: Developing emotional awareness enables us to become less reactive and more resilient. Resilience & Wise Decision-Making: Developing emotional awareness enables us to become less reactive and more resilient. Making proper assessments of our present mental states empowers us to respond with wisdom and conscious intention rather than impulse. Scientific & Practical Evidence: Both scientific research and common sense demonstrate clear outcomes based on our menta Scientific & Practical Evidence: Both scientific research and common sense demonstrate clear outcomes based on our mental focus: Negative Impact: Increasing lack of satisfaction, resentment, and stinginess lead to lower levels of happiness and poore Negative Impact: Increasing lack of satisfaction, resentment, and stinginess lead to lower levels of happiness and poorer relationships. Positive Impact: Cultivating gratitude, forgiveness, and generosity leads to greater overall happiness and better relati Positive Impact: Cultivating gratitude, forgiveness, and generosity leads to greater overall happiness and better relationships with others.",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_03_06",
+            "title": "3. Identify afflictive and beneficial mental states.",
+            "content": "3. Identify afflictive and beneficial mental states. 3. Identify afflictive and beneficial mental states. 3. Identify afflictive and beneficial mental states. Objective 3: Identify afflictive and beneficial mental states Objective 3: Identify afflictive and beneficial mental states Emotional awareness requires differentiating between two primary categories of mental states: Emotional awareness requires differentiating between two primary categories of mental states: 1. Beneficial Mental States 1. Beneficial Mental States Definition: Beneficial mental states are the attitudes, emotions, and perspectives that lead us toward happiness and awa Definition: Beneficial mental states are the attitudes, emotions, and perspectives that lead us toward happiness and away from suffering. Key Examples: Gratitude, forgiveness, and generosity. Key Examples: Gratitude, forgiveness, and generosity. Outcomes: Cultivating these states fosters greater well-being, personal happiness, and stronger interpersonal connection Outcomes: Cultivating these states fosters greater well-being, personal happiness, and stronger interpersonal connections. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 9 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 9 of 24 2. Afflictive / Harmful Mental States 2. Afflictive / Harmful Mental States Definition: Harmful or afflictive mental states distort reality and lead to suffering and problems for ourselves and oth Definition: Harmful or afflictive mental states distort reality and lead to suffering and problems for ourselves and others (such as prejudice or hatred). Key Examples: Anger, resentment, jealousy, stinginess, and lack of satisfaction. Key Examples: Anger, resentment, jealousy, stinginess, and lack of satisfaction. Outcomes: Allowing these states to persist causes bitterness, unhappiness, distorted perception, and strained relationsh Outcomes: Allowing these states to persist causes bitterness, unhappiness, distorted perception, and strained relationships.",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_03_02",
+            "title": "4. Identify the nature of your thoughts.",
+            "content": "4. Identify the nature of your thoughts. 4. Identify the nature of your thoughts. 4. Identify the nature of your thoughts. Objective 4: Identify the nature of your thoughts Objective 4: Identify the nature of your thoughts Understanding the nature of thoughts involves recognizing how individual thoughts form rapid chain reactions that dictat Understanding the nature of thoughts involves recognizing how individual thoughts form rapid chain reactions that dictate our emotional state. The \"Spark to Forest Fire\" Metaphor The \"Spark to Forest Fire\" Metaphor Uncontrolled Thought Chains: A small upsetting conversation in the morning (e.g., with a boss or teacher) can occupy you Uncontrolled Thought Chains: A small upsetting conversation in the morning (e.g., with a boss or teacher) can occupy your mind all day if left unobserved. You may become angry at the person, angry at yourself for unfinished work, and carry that frustration home—eventually lashing out at a family member over a minor comment. The Mechanism: A single frustration starts as a tiny, easily manageable spark. If ignored, it rapidly accelerates into a The Mechanism: A single frustration starts as a tiny, easily manageable spark. If ignored, it rapidly accelerates into an uncontrolled mental and emotional wildfire that causes widespread damage. Emotional awareness allows us to catch thoughts while they are still small sparks. The Psychological Model (Atlas of Emotions) The Psychological Model (Atlas of Emotions) Inspired by Paul and Eve Ekman's Atlas of Emotions, this 6-step model explains how an emotional spark develops: Inspired by Paul and Eve Ekman's Atlas of Emotions, this 6-step model explains how an emotional spark develops: 1. Precondition: The state of your body and mind before an event occurs (e.g., waking up late, feeling tired and stresse 1. Precondition: The state of your body and mind before an event occurs (e.g., waking up late, feeling tired and stressed due to lack of sleep). 2. Event: An external or internal occurrence (e.g., hurrying while running late for work/college and accidentally spilli 2. Event: An external or internal occurrence (e.g., hurrying while running late for work/college and accidentally spilling tea all over yourself). 3. Perception Database: The filter of past experiences and personal history through which every event passes, causing un 3. Perception Database: The filter of past experiences and personal history through which every event passes, causing unique individual reactions (e.g., memories of past stressful, rushed mornings make spilling tea feel catastrophic). 4. Trigger (The Spark): The combination of precondition, event, and perception database creates an automatic emotional s 4. Trigger (The Spark): The combination of precondition, event, and perception database creates an automatic emotional spark (e.g., immediate frustration and stress). 5. Emotional Response: The resulting physical changes (racing heart, sweating, trembling) and psychological/mental chang 5. Emotional Response: The resulting physical changes (racing heart, sweating, trembling) and psychological/mental changes (feelings of anger/anxiety, accompanied by thoughts like \"Why does this always happen to me?\" or \"I can't ever be on time!\"). 6. Action (Beneficial or Harmful): The emotional state drives an action: 6. Action (Beneficial or Harmful): The emotional state drives an action: Harmful Action: Leaving home in a bad mood, arguing with classmates, or losing focus. Harmful Action: Leaving home in a bad mood, arguing with classmates, or losing focus. Beneficial Action: Regulating emotions to proceed calmly with the day. Beneficial Action: Regulating emotions to proceed calmly with the day. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 10 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 10 of 24",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_03_03",
+            "title": "5. Create space between speech and action to have greater mental balance and be less reactive.",
+            "content": "5. Create space between speech and action to have greater mental balance and be less reactive. 5. Create space between speech and action to have greater mental balance and be less reactive. 5. Create space between speech and action to have greater mental balance and be less reactive. Objective 5: Create space between speech and action to have greater mental balance and be less reactive Objective 5: Create space between speech and action to have greater mental balance and be less reactive Selective Filtering (Putting Out the Spark): Although it feels as though we automatically jump straight from emotion to  Selective Filtering (Putting Out the Spark): Although it feels as though we automatically jump straight from emotion to action, there is always a crucial pause point called selective filtering. Creating Space: Selective filtering is the exact moment where we choose whether to act in a beneficial or harmful way, p Creating Space: Selective filtering is the exact moment where we choose whether to act in a beneficial or harmful way, putting out the spark before it turns into a wildfire. Achieving Mental Balance (Equanimity): By using emotional awareness to create space between internal triggers and extern Achieving Mental Balance (Equanimity): By using emotional awareness to create space between internal triggers and external responses, we prevent automatic outbursts, maintain mental balance, and make wise, conscious choices.",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_03_04",
+            "title": "6. Apply relevant tools to practice calmness.",
+            "content": "6. Apply relevant tools to practice calmness. 6. Apply relevant tools to practice calmness. 6. Apply relevant tools to practice calmness. Introduction to Emotional Awareness Introduction to Emotional Awareness The \"I'm Fine\" Habit: When asked how you are feeling, regardless of what is happening, you might automatically respond w The \"I'm Fine\" Habit: When asked how you are feeling, regardless of what is happening, you might automatically respond with \"I'm fine.\" However, it is not realistic or possible to always feel fine. Consequences of Unmanaged Feelings: When we fail to observe, accept, and manage how we feel, emotions can become overwhe Consequences of Unmanaged Feelings: When we fail to observe, accept, and manage how we feel, emotions can become overwhelming. We risk remaining stuck in the \"high zone\" or \"low zone\" for extended periods, which negatively impacts our personal life, professional life, and relationships with others. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 8 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 8 of 24 Objective 6: Apply relevant tools to practice calmness Objective 6: Apply relevant tools to practice calmness Integrating Self-Regulation Tools: During the selective filtering phase, we can deliberately apply regulation tools lear Integrating Self-Regulation Tools: During the selective filtering phase, we can deliberately apply regulation tools learned in the course (such as grounding or resourcing) to restore balance. Practical Application Example: After spilling tea, instead of letting frustration dictate the day, you pause, ground you Practical Application Example: After spilling tea, instead of letting frustration dictate the day, you pause, ground yourself, change into fresh clothes, and reset your mood before leaving home. Daily Reflection Exercise: Apply the Atlas of Emotions model to your daily experiences and actively track the exact poin Daily Reflection Exercise: Apply the Atlas of Emotions model to your daily experiences and actively track the exact point at which you choose to intervene and put out the emotional spark.",
+            "page": 8,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_04",
+        "title": "Skill 4: Self-Compassion",
+        "page": 11,
+        "objectives": [
+          {
+            "objective_id": "obj_04_01",
+            "title": "1. Define self-compassion.",
+            "content": "1. Define self-compassion. 1. Define self-compassion. 1. Define self-compassion. Objective 1: Define self-compassion Objective 1: Define self-compassion Core Definition: Self-compassion is about recognizing our own worth, understanding what truly makes us happy or unhappy, Core Definition: Self-compassion is about recognizing our own worth, understanding what truly makes us happy or unhappy, and finding ways to improve our well-being. Understanding Growth and Adaptation: Practicing self-compassion means realizing that you can change by understanding you Understanding Growth and Adaptation: Practicing self-compassion means realizing that you can change by understanding yourself better, developing new skills, and adopting positive attitudes. Goal of Self-Compassion: The goal of self-compassion is to build confidence in your ability to achieve lasting happiness Goal of Self-Compassion: The goal of self-compassion is to build confidence in your ability to achieve lasting happiness, resilience, and inner peace. Foundation for Interpersonal Compassion: By being kinder and more compassionate to yourself, you lay the foundation to s Foundation for Interpersonal Compassion: By being kinder and more compassionate to yourself, you lay the foundation to show more forgiveness, gratitude, empathy, and compassion to others.",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_02",
+            "title": "2. Identify the different thinking traps and how they impact well-being.",
+            "content": "2. Identify the different thinking traps and how they impact well-being. 2. Identify the different thinking traps and how they impact well-being. 2. Identify the different thinking traps and how they impact well-being. Objective 2: Identify the different thinking traps and how they impact well-being Objective 2: Identify the different thinking traps and how they impact well-being Definition of Thinking Traps: Thinking traps, or cognitive distortions, are ways our mind can trick us into believing th Definition of Thinking Traps: Thinking traps, or cognitive distortions, are ways our mind can trick us into believing things that are not true (e.g., thinking \"I'm not good enough\" or \"I always mess up\" despite evidence to the contrary). Mechanism & Impact on Well-Being: While our brain uses these thinking traps to protect us, they are harmful mental state Mechanism & Impact on Well-Being: While our brain uses these thinking traps to protect us, they are harmful mental states that twist reality. They affect how we feel, think, and sense things around us, ultimately making us feel worse and blocking our path to true happiness and wellbeing. Perceptual Distortion Example (Müller-Lyer Illusion): Perceptual Distortion Example (Müller-Lyer Illusion): Visual Demonstration: Two horizontal line segments—one with outward-pointing arrows at the ends (>--<) and one with inwa Visual Demonstration: Two horizontal line segments—one with outward-pointing arrows at the ends (>--<) and one with inward-pointing arrows (<-->). Perceptual Trap: While many people think the top line is longer, both lines are identical in length. Even when measured  Perceptual Trap: While many people think the top line is longer, both lines are identical in length. Even when measured manually, the top line continues to appear longer because it represents a persistent perceptual distortion. Specific Thinking Traps & Biases Specific Thinking Traps & Biases 1. Thinking Trap 1: The Hedonic Treadmill 1. Thinking Trap 1: The Hedonic Treadmill Definition: A thinking trap where we continuously chase money, status, pleasure, and praise without ever feeling fully s Definition: A thinking trap where we continuously chase money, status, pleasure, and praise without ever feeling fully satisfied—similar to running on a treadmill where you keep moving but never get anywhere. Example: Thinking \"If I just get that promotion, I'll be happy,\" but wanting something else as soon as you get it. Example: Thinking \"If I just get that promotion, I'll be happy,\" but wanting something else as soon as you get it. How to Overcome: Practice realism, contentment, and appreciation. While working toward goals, learn to appreciate what y How to Overcome: Practice realism, contentment, and appreciation. While working toward goals, learn to appreciate what you have in the present moment (e.g., finding contentment in current possessions rather than endlessly chasing new gadgets). UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 12 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 12 of 24 2. Thinking Trap 2: Unrealistic Expectations 2. Thinking Trap 2: Unrealistic Expectations Definition: Society surrounds us with images of the rich, famous, beautiful, and talented as the ultimate success, makin Definition: Society surrounds us with images of the rich, famous, beautiful, and talented as the ultimate success, making us believe we must match them to be happy. This leads to chasing wealth, status, praise, and pleasure while fearing financial loss, insignificance, blame, and pain. Distortion & Impact: Believing we must live up to these high standards distorts reality and leads to disappointment, str Distortion & Impact: Believing we must live up to these high standards distorts reality and leads to disappointment, stress, and suffering (e.g., thinking \"If I don't have a lot of money or a perfect body, I won't be happy\"). How to Overcome: Examine why you have these expectations (e.g., asking \"Why do I feel the need to be like these celebrit How to Overcome: Examine why you have these expectations (e.g., asking \"Why do I feel the need to be like these celebrities?\") and shift to a caring, realistic view focused on health, relationships, and personal growth. 3. Types of Unrealistic Expectation Biases 3. Types of Unrealistic Expectation Biases Superiority Bias: Thinking we are better, more unique, or overly optimistic about ourselves. Superiority Bias: Thinking we are better, more unique, or overly optimistic about ourselves. When reality fails to match this view (such as assuming you are always right and others are wrong), it leads to low self When reality fails to match this view (such as assuming you are always right and others are wrong), it leads to low self-esteem or self-hatred when things go wrong. Inferiority Bias: Underestimating our abilities or worth. This causes us to set goals that are too hard to prove ourselv Inferiority Bias: Underestimating our abilities or worth. This causes us to set goals that are too hard to prove ourselves or goals that are too easy because we expect failure. Perfectionism: Expecting ourselves or others to be perfect at all times. Judging oneself harshly over small mistakes (e. Perfectionism: Expecting ourselves or others to be perfect at all times. Judging oneself harshly over small mistakes (e.g., a single low mark on an exam) leads to frustration, strained relationships, and unnecessary stress. 4. The Eight Worldly Concerns (as Thinking Traps) 4. The Eight Worldly Concerns (as Thinking Traps) Status vs. Insignificance: Striving for societal roles, positions, or titles to be known as important/powerful, while fe Status vs. Insignificance: Striving for societal roles, positions, or titles to be known as important/powerful, while fearing loss of status or being overlooked by peers. Financial Gain vs. Financial Loss: Assuming money and possessions bring lasting happiness, leading to constant striving  Financial Gain vs. Financial Loss: Assuming money and possessions bring lasting happiness, leading to constant striving or hoarding out of fear of loss. Praise vs. Blame: Seeking compliments and approval, while feeling worthless or disappointed when criticized. Praise vs. Blame: Seeking compliments and approval, while feeling worthless or disappointed when criticized. Pleasure vs. Pain: Constantly chasing external pleasures or being made miserable by the fear/focus on real or potential  Pleasure vs. Pain: Constantly chasing external pleasures or being made miserable by the fear/focus on real or potential physical pain. 2. Understand and define what happiness means to you. 2. Understand and define what happiness means to you.",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_05",
+            "title": "3. Recognize the importance of self-compassion.",
+            "content": "3. Recognize the importance of self-compassion. 3. Recognize the importance of self-compassion. 3. Recognize the importance of self-compassion. Objective 3: Recognize the importance of self-compassion Objective 3: Recognize the importance of self-compassion Interrogating Distress: On tough, overwhelming days, pausing to ask: \"Is this feeling helping or hurting me? If it's hur Interrogating Distress: On tough, overwhelming days, pausing to ask: \"Is this feeling helping or hurting me? If it's hurting, what's causing it?\" helps reveal the root of our distress. Flawed Pursuits of Happiness: Thoughts and emotions stem from a desire to avoid suffering, but we mistakenly rely on mat Flawed Pursuits of Happiness: Thoughts and emotions stem from a desire to avoid suffering, but we mistakenly rely on material objects or short-term pleasures. Constantly chasing external validation or worrying about not being good enough increases stress. Linking Suffering to Expectations: Recognizing whether suffering is tied to expecting too much from yourself or looking  Linking Suffering to Expectations: Recognizing whether suffering is tied to expecting too much from yourself or looking externally for happiness instead of inward. Building Lasting Inner Strength: Self-compassion builds confidence in achieving lasting happiness, resilience, and inner Building Lasting Inner Strength: Self-compassion builds confidence in achieving lasting happiness, resilience, and inner peace, providing the foundation to show empathy, forgiveness, and kindness to others. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 13 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 13 of 24 3. Examine your way of thinking and acting and identify where you need to change. 3. Examine your way of thinking and acting and identify where you need to change.",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_06",
+            "title": "4. Examine if you practice self-compassion.",
+            "content": "4. Examine if you practice self-compassion. 4. Examine if you practice self-compassion. 4. Examine if you practice self-compassion. Objective 4: Examine if you practice self-compassion Objective 4: Examine if you practice self-compassion \"Write a Letter to a Friend\" Activity \"Write a Letter to a Friend\" Activity Task: Write a letter to a friend who is going through a difficult time, providing support and words of encouragement. Task: Write a letter to a friend who is going through a difficult time, providing support and words of encouragement. Self-Reflection Exercise: Read the letter aloud to yourself and reflect on the following questions: Self-Reflection Exercise: Read the letter aloud to yourself and reflect on the following questions: 1. How did that message make you feel? 1. How did that message make you feel? 2. Do you use similar words of encouragement and support when you are going through a difficult time? If not, why? 2. Do you use similar words of encouragement and support when you are going through a difficult time? If not, why?",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_07",
+            "title": "5. Describe the three steps to cultivate compassion.",
+            "content": "5. Describe the three steps to cultivate compassion. 5. Describe the three steps to cultivate compassion. 5. Describe the three steps to cultivate compassion. Objective 5: Describe the three steps to cultivate compassion Objective 5: Describe the three steps to cultivate compassion Core Principle: It is often easier to be compassionate toward others than ourselves, but we cannot pour out of an empty  Core Principle: It is often easier to be compassionate toward others than ourselves, but we cannot pour out of an empty cup. The 3 Steps to Cultivate Self-Compassion: The 3 Steps to Cultivate Self-Compassion: 1. Remind yourself that you have value regardless of your external circumstances. 1. Remind yourself that you have value regardless of your external circumstances.",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_03",
+            "title": "6. Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations.",
+            "content": "6. Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations. 6. Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations. 6. Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations. Objective 6: Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations Objective 6: Analyze how suffering and happiness depend on our thoughts and emotions rather than external situations Impermanence of External Sources: External sources (wealth, relationships, new careers) do not lead to lasting happiness Impermanence of External Sources: External sources (wealth, relationships, new careers) do not lead to lasting happiness because they are impermanent and not under our sole control. Internal Qualities for Genuine Happiness: Shifting focus to internal qualities brings genuine, lasting happiness because Internal Qualities for Genuine Happiness: Shifting focus to internal qualities brings genuine, lasting happiness because internal states are under our direct control. Role of External Pursuits: External concerns (wealth, pleasure, praise, status) are not inherently bad, but we must eval Role of External Pursuits: External concerns (wealth, pleasure, praise, status) are not inherently bad, but we must evaluate how much of a role they should play in dictating our happiness. Suffering occurs when internal thoughts distort these pursuits into unrealistic expectations.",
+            "page": 11,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_04_04",
+            "title": "7. Practice tools to develop greater self-compassion.",
+            "content": "7. Practice tools to develop greater self-compassion. Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act a certain way, ask yourself: \"Is this an aspiration or an expectation?\" 7. Practice tools to develop greater self-compassion. 7. Practice tools to develop greater self-compassion. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 11 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 11 of 24 Objective 7: Practice tools to develop greater self-compassion Objective 7: Practice tools to develop greater self-compassion Tool 1: Unrealistic Expectations Reflection & Self-Talk Activity Tool 1: Unrealistic Expectations Reflection & Self-Talk Activity Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act a certain way, ask yourself: \"Is this an aspiration or an expectation?\" and note down your feelings. and note down your feelings. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 14 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 14 of 24 End-of-Activity Reflection Questions: End-of-Activity Reflection Questions: 1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 1. What are the sensations you felt in your body when you felt the pressure to achieve a certain goal? 2. Was that pressure external or internal? 2. Was that pressure external or internal? 3. Did you notice a shift when you reflected on whether your thought was an aspiration or an expectation? 3. Did you notice a shift when you reflected on whether your thought was an aspiration or an expectation? Tool 2: Realistic vs. Unrealistic Expectations Scenario Analysis Tool 2: Realistic vs. Unrealistic Expectations Scenario Analysis",
+            "page": 11,
+            "items": [
+              {
+                "item_id": "node_0279",
+                "skill_id": "skill_04",
+                "objective_id": "obj_04_04",
+                "type": "practice",
+                "interaction_type": null,
+                "title": "Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act",
+                "content": "Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act a certain way, ask yourself: \"Is this an aspiration or an expectation?\"",
+                "page": 14,
+                "source": {
+                  "document": "SEEK Learning",
+                  "page": 14,
+                  "block_index": 27,
+                  "item_index": 0,
+                  "text": "Tracking Instruction: Over the next week, observe your self-talk. Whenever you feel pressure to achieve something or act a certain way, ask yourself: \"Is this an aspiration or an expectation?\""
+                }
+              }
+            ],
+            "required_item_ids": [
+              "node_0279"
+            ],
+            "validation": {
+              "actionable_item_count": 1,
+              "missing_actionable_content": false
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_05",
+        "title": "Skill 5: Impartiality and Common Humanity",
+        "page": 15,
+        "objectives": [
+          {
+            "objective_id": "obj_05_03",
+            "title": "1. Define Bias.",
+            "content": "1. Define Bias. 1. Define Bias. 1. Define Bias. Objective 1: Define Bias Objective 1: Define Bias Evolutionary Purpose of Categorization: It is natural for us to have biases, even when unaware of them. Biases help us q Evolutionary Purpose of Categorization: It is natural for us to have biases, even when unaware of them. Biases help us quickly understand and navigate the world by categorizing people and things based on our experiences, biology, and culture (e.g., instantly recognizing a growling animal as dangerous). In-Group vs. Out-Group Division: Categorizing becomes harmful when we view social categories as fixed and unchanging—div In-Group vs. Out-Group Division: Categorizing becomes harmful when we view social categories as fixed and unchanging—dividing people into \"those who are like me\" ( in-group) and \"those who are not like me\" ( out-group). \"those who are not like me\" ( out-group). In-Group Bias & Essentialism: In-group bias is a thinking trap that leads to stereotypes and the belief that certain gro In-Group Bias & Essentialism: In-group bias is a thinking trap that leads to stereotypes and the belief that certain groups possess a fixed, unchanging nature (essentialism), which can dehumanize out-groups and justify discrimination, unfair treatment, or violence. Stereotype: A fixed, oversimplified idea or image about a type of person or group (based on nationality, religion, gende Stereotype: A fixed, oversimplified idea or image about a type of person or group (based on nationality, religion, gender, race, or age). Stereotypes can appear positive (e.g., \"Families in Country Z are great hosts\") or negative, yet both reduce individuals to rigid labels and can lead to prejudice. Country Z are great hosts\") or negative, yet both reduce individuals to rigid labels and can lead to prejudice. Prejudice: A negative attitude, judgment, or feeling directed toward someone or a group without knowing them personally— Prejudice: A negative attitude, judgment, or feeling directed toward someone or a group without knowing them personally—judging everyone in that group the same way and preventing meaningful relationships and learning.",
+            "page": 15,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_05_01",
+            "title": "2. Identify what all human beings have in common.",
+            "content": "2. Identify what all human beings have in common. 2. Identify what all human beings have in common. 2. Identify what all human beings have in common. Objective 2: Identify what all human beings have in common Objective 2: Identify what all human beings have in common Universal Human Aspirations: Beneath surface differences in background, appearance, nationality, or beliefs, all human b Universal Human Aspirations: Beneath surface differences in background, appearance, nationality, or beliefs, all human beings share fundamental experiences—most notably our universal desire for happiness and our shared wish to be free from suffering. Shared Vulnerability & Imperfection: Every human being experiences stress, emotions, mistakes, and the need for safety,  Shared Vulnerability & Imperfection: Every human being experiences stress, emotions, mistakes, and the need for safety, belonging, and respect. Recognizing these commonalities dismantles \"us vs. them\" thinking.",
+            "page": 15,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_05_02",
+            "title": "3. Explain impartiality and common humanity.",
+            "content": "3. Explain impartiality and common humanity. 3. Explain impartiality and common humanity. 3. Explain impartiality and common humanity. Objective 3: Explain impartiality and common humanity Objective 3: Explain impartiality and common humanity Definition of Common Humanity: Common humanity means focusing on what all people share in common—our universal longing f Definition of Common Humanity: Common humanity means focusing on what all people share in common—our universal longing for happiness and freedom from suffering—rather than fixating on divisive labels. Definition of Impartiality: Impartiality is reducing the strong biases that cause us to favor one group over another. It Definition of Impartiality: Impartiality is reducing the strong biases that cause us to favor one group over another. It does not mean stopping care for our loved ones or treating everyone identically; rather, it means valuing and appreciating people outside our usual circles (strangers or different groups) by recognizing our shared humanity. The Sun Metaphor: Think of the sun: it shines its light on everyone without favoring one person or group, yet it natural The Sun Metaphor: Think of the sun: it shines its light on everyone without favoring one person or group, yet it naturally shines warmer and brighter on those who are closer. Similarly, we naturally feel closer to family and friends, but impartiality broadens our kindness and respect so we recognize that everyone deserves happiness equally. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 16 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 16 of 24",
+            "page": 15,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_05_04",
+            "title": "4. Identify explicit and implicit bias and techniques to weaken them.",
+            "content": "4. Identify explicit and implicit bias and techniques to weaken them. 4. Identify explicit and implicit bias and techniques to weaken them. 4. Identify explicit and implicit bias and techniques to weaken them. Objective 4: Identify explicit and implicit bias and techniques to weaken them Objective 4: Identify explicit and implicit bias and techniques to weaken them Explicit vs. Implicit Bias: Explicit vs. Implicit Bias: Explicit Bias: Conscious attitudes, beliefs, or stereotypes we hold about a group that we are aware of and may openly ex Explicit Bias: Conscious attitudes, beliefs, or stereotypes we hold about a group that we are aware of and may openly express. Implicit Bias: Automatic, unconscious associations and snap judgments triggered without our deliberate awareness, shaped Implicit Bias: Automatic, unconscious associations and snap judgments triggered without our deliberate awareness, shaped by culture, media, and past conditioning. Techniques to Weaken Biases: Techniques to Weaken Biases: Mindful Pause & Awareness: Catching snap judgments in real time before acting on stereotypes or prejudice. Mindful Pause & Awareness: Catching snap judgments in real time before acting on stereotypes or prejudice. Challenging Essentialism: Reminding ourselves that group categories are surface labels, not fixed definitions of any ind Challenging Essentialism: Reminding ourselves that group categories are surface labels, not fixed definitions of any individual's character. Common Humanity Reflection: Intentionally recalling that strangers and out-group members share the exact same hopes, fea Common Humanity Reflection: Intentionally recalling that strangers and out-group members share the exact same hopes, fears, and human dignity as our loved ones.",
+            "page": 15,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_05_05",
+            "title": "5. Practice tools to cultivate impartiality.",
+            "content": "5. Practice tools to cultivate impartiality. 5. Practice tools to cultivate impartiality. 5. Practice tools to cultivate impartiality. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 15 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 15 of 24 Objective 5: Practice tools to cultivate impartiality Objective 5: Practice tools to cultivate impartiality \"Who Are You?\" Identity Mind Map Activity \"Who Are You?\" Identity Mind Map Activity Step-by-Step Instructions: Step-by-Step Instructions: 1. Take a piece of paper and a pen and write \"Who Are You\" in the center. 1. Take a piece of paper and a pen and write \"Who Are You\" in the center. 2. Start a 90-second timer and create a mind map around the question with all words that come to mind. 2. Start a 90-second timer and create a mind map around the question with all words that come to mind. 3. Once the timer ends, pause for a few minutes to review your responses. 3. Once the timer ends, pause for a few minutes to review your responses. 4. Restart the 90-second timer and repeat the mind map activity without using any labels or repeating any words used in  4. Restart the 90-second timer and repeat the mind map activity without using any labels or repeating any words used in the first round. Guided Reflection Questions: Guided Reflection Questions: 1. What insights emerged for you during this activity? 1. What insights emerged for you during this activity? 2. What were the differences in your answers between the two rounds? 2. What were the differences in your answers between the two rounds? 3. What does this activity reveal about our identities? 3. What does this activity reveal about our identities? 4. How many identities do you think we have? 4. How many identities do you think we have? 5. How many of our identities are seen by someone when they first meet us? 5. How many of our identities are seen by someone when they first meet us? 6. What might this activity show us about relying on surface labels? 6. What might this activity show us about relying on surface labels?",
+            "page": 15,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_06",
+        "title": "Skill 6: Forgiveness and Gratitude",
+        "page": 17,
+        "objectives": [
+          {
+            "objective_id": "obj_06_01",
+            "title": "1. Define forgiveness.",
+            "content": "1. Define forgiveness. 1. Define forgiveness. 1. Define forgiveness. Objective 1: Define forgiveness Objective 1: Define forgiveness Core Definition: Forgiveness means letting go of anger and resentment toward someone who has hurt us and replacing those Core Definition: Forgiveness means letting go of anger and resentment toward someone who has hurt us and replacing those negative feelings with more positive, peaceful, and helpful ones. What Forgiveness Is NOT: Forgiving someone does not mean forgetting what they did, accepting harmful behavior, or saying What Forgiveness Is NOT: Forgiving someone does not mean forgetting what they did, accepting harmful behavior, or saying it was okay. Forgiveness as Strength: Forgiveness is not a sign of weakness; it demonstrates inner strength. Forgiveness as Strength: Forgiveness is not a sign of weakness; it demonstrates inner strength. By forgiving, we free ourselves from the ongoing burden of anger and resentment, creating room for peace and emotional w By forgiving, we free ourselves from the ongoing burden of anger and resentment, creating room for peace and emotional well-being. Objective 2 & Objective 3: Strategies to practice forgiveness and thinking traps they overcome Objective 2 & Objective 3: Strategies to practice forgiveness and thinking traps they overcome Each strategy for cultivating forgiveness directly counters a specific cognitive thinking trap: Each strategy for cultivating forgiveness directly counters a specific cognitive thinking trap: 1. Strategy 1: Understand Causes and Conditions 1. Strategy 1: Understand Causes and Conditions",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_06_02",
+            "title": "2. List strategies to practice forgiveness.",
+            "content": "2. List strategies to practice forgiveness. 2. List strategies to practice forgiveness. 2. List strategies to practice forgiveness. 2. List all the specific things you have received from this person. 2. List all the specific things you have received from this person.",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_06_05",
+            "title": "3. Identify thinking traps to forgiveness.",
+            "content": "3. Identify thinking traps to forgiveness. 3. Identify thinking traps to forgiveness. 3. Identify thinking traps to forgiveness. 3. List all the specific things you have given this person in return. 3. List all the specific things you have given this person in return.",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_06_03",
+            "title": "4. Define gratitude.",
+            "content": "4. Define gratitude. 4. Define gratitude. 4. Define gratitude. Objective 4: Define gratitude Objective 4: Define gratitude Core Definition: Gratitude is the recognition of the benefits one receives from others—whether from one or more people,  Core Definition: Gratitude is the recognition of the benefits one receives from others—whether from one or more people, aspects of nature, or life itself. Gratitude as Emotion vs. Trait: Gratitude as Emotion vs. Trait: As an Emotion: A momentary feeling of thankfulness and appreciation in response to a benefit received. As an Emotion: A momentary feeling of thankfulness and appreciation in response to a benefit received. As a Trait: A person's enduring disposition toward noticing and appreciating good things more easily and frequently. As a Trait: A person's enduring disposition toward noticing and appreciating good things more easily and frequently. 4. List anything you did that may have caused trouble for this person. (Important: Do not list any troubles they caused  4. List anything you did that may have caused trouble for this person. (Important: Do not list any troubles they caused you, as our minds naturally lean toward negativity bias.) Reflection & Grounding Questions: Reflection & Grounding Questions: 1. What thoughts, emotions, and sensations arise in your body and mind from doing this practice? 1. What thoughts, emotions, and sensations arise in your body and mind from doing this practice? 2. End by bringing to mind a supportive resource or focusing on bodily contact with a chair or floor to notice neutral o 2. End by bringing to mind a supportive resource or focusing on bodily contact with a chair or floor to notice neutral or pleasant sensations. 3. Did you gain any insights from this practice? 3. Did you gain any insights from this practice?",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_06_06",
+            "title": "5. List strategies to cultivate gratitude.",
+            "content": "5. List strategies to cultivate gratitude. 5. List strategies to cultivate gratitude. 5. List strategies to cultivate gratitude. Objective 5: List strategies to cultivate gratitude Objective 5: List strategies to cultivate gratitude 1. Focus on What One Has Received: Intentionally appreciate the everyday support, kindness, and care offered by friends, 1. Focus on What One Has Received: Intentionally appreciate the everyday support, kindness, and care offered by friends, family, and loved ones that we often take for granted. 2. Focus on What Others Have Not Done: Cultivate thankfulness for harms avoided because others act responsibly (e.g., dr 2. Focus on What Others Have Not Done: Cultivate thankfulness for harms avoided because others act responsibly (e.g., drivers following road rules safely to prevent accidents). 3. Focus on What One Has Learned Through the Experience: Recognize valuable lessons, self-understanding, and resilience  3. Focus on What One Has Learned Through the Experience: Recognize valuable lessons, self-understanding, and resilience (\"post-traumatic growth\") gained from painful or difficult life events. 4. Engage in Naikan Practice: A structured Japanese introspective practice (\"looking inside\") 4. Engage in Naikan Practice: A structured Japanese introspective practice (\"looking inside\") centered on three reflective questions about an important person in your life. centered on three reflective questions about an important person in your life. 5. Recognize Interdependence: Counter the thinking trap of believing we are completely selfsufficient by acknowledging t 5. Recognize Interdependence: Counter the thinking trap of believing we are completely selfsufficient by acknowledging the countless farmers, drivers, workers, and community members whose efforts sustain our daily lives.",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_06_04",
+            "title": "6. Apply the tools to practice forgiveness and gratitude.",
+            "content": "6. Apply the tools to practice forgiveness and gratitude. 6. Apply the tools to practice forgiveness and gratitude. 6. Apply the tools to practice forgiveness and gratitude. Objective 6: Apply the tools to practice forgiveness and gratitude Objective 6: Apply the tools to practice forgiveness and gratitude Tool 1: Forgiveness Reflection Activity Tool 1: Forgiveness Reflection Activity Instructions: Pick one non-traumatic incident from your past where you feel someone wronged you. Write about the event a Instructions: Pick one non-traumatic incident from your past where you feel someone wronged you. Write about the event and apply one of the three forgiveness strategies (Causes & Conditions, Common Humanity, or Gratitude) to explore how it shifts your view. Common Humanity, or Gratitude) to explore how it shifts your view. Reflection Questions: Reflection Questions: 1. How did you feel while reliving that event? 1. How did you feel while reliving that event? 2. Do you think any of these strategies will help you? 2. Do you think any of these strategies will help you? 3. Did your perspective shift after you attempted to practice forgiveness? 3. Did your perspective shift after you attempted to practice forgiveness? UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 19 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 19 of 24 Tool 2: The Naikan Introspection Practice Tool 2: The Naikan Introspection Practice Step-by-Step Instructions: Step-by-Step Instructions: 1. Bring to mind someone important in your life (if known for more than a year, choose a specific time period, such as t 1. Bring to mind someone important in your life (if known for more than a year, choose a specific time period, such as the first year you knew them).",
+            "page": 18,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_07",
+        "title": "Skill 7: Empathic Concern",
+        "page": 20,
+        "objectives": [
+          {
+            "objective_id": "obj_07_01",
+            "title": "1. Define Empathy and differentiate it from sympathy.",
+            "content": "1. Define Empathy and differentiate it from sympathy. 1. Define Empathy and differentiate it from sympathy. 1. Define Empathy and differentiate it from sympathy. Objective 1: Define Empathy and differentiate it from sympathy Objective 1: Define Empathy and differentiate it from sympathy Definition of Empathy: Empathy is the ability to understand and share the feelings, thoughts, and motivations of someone Definition of Empathy: Empathy is the ability to understand and share the feelings, thoughts, and motivations of someone else. Evolutionary Roots (Emotional Contagion): Empathy builds upon emotional contagion — Evolutionary Roots (Emotional Contagion): Empathy builds upon emotional contagion — the automatic spread of emotions and behaviors through facial expressions, tone of voice, and body language (such as yaw the automatic spread of emotions and behaviors through facial expressions, tone of voice, and body language (such as yawning when others yawn or sensing danger when someone runs). Empathy vs. Sympathy: While sympathy involves feeling pity or sorrow for someone from a distance, empathy involves activ Empathy vs. Sympathy: While sympathy involves feeling pity or sorrow for someone from a distance, empathy involves actively connecting with another person's emotional experience or stepping into their perspective to genuinely understand what they are going through. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 20 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 20 of 24 1. Practice Gratitude: Appreciate the good things in your own life first; when grounded in gratitude, it becomes easier  1. Practice Gratitude: Appreciate the good things in your own life first; when grounded in gratitude, it becomes easier to celebrate a friend's promotion and recognize the unseen hard work behind their achievement.",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_07_02",
+            "title": "2. Identify the two types of empathy: affective and cognitive empathy.",
+            "content": "2. Identify the two types of empathy: affective and cognitive empathy. 2. Identify the two types of empathy: affective and cognitive empathy. 2. Identify the two types of empathy: affective and cognitive empathy. Objective 2: Identify the two types of empathy: affective and cognitive empathy Objective 2: Identify the two types of empathy: affective and cognitive empathy 1. Affective Empathy: Emotionally connecting with and sharing someone else's feelings directly 1. Affective Empathy: Emotionally connecting with and sharing someone else's feelings directly (e.g., feeling sad when a friend is grieving, or feeling happy when a loved one celebrates good news). (e.g., feeling sad when a friend is grieving, or feeling happy when a loved one celebrates good news). 2. Cognitive Empathy: Using thinking and perspective-taking skills (\"putting yourself in someone else's shoes\") to under 2. Cognitive Empathy: Using thinking and perspective-taking skills (\"putting yourself in someone else's shoes\") to understand what another person is experiencing, even without personally feeling their exact emotion (e.g., understanding a coworker's deadline stress by imagining yourself in their position). 2. Reflect on Interdependence: Recognize that we are interconnected—when a colleague wins an award, their success brings 2. Reflect on Interdependence: Recognize that we are interconnected—when a colleague wins an award, their success brings recognition and opportunities to the entire team and community.",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_07_03",
+            "title": "3. Identify thinking traps against empathy.",
+            "content": "3. Identify thinking traps against empathy. 3. Identify thinking traps against empathy. 3. Identify thinking traps against empathy. Objective 3: Identify thinking traps against empathy (and strategies to overcome them) Objective 3: Identify thinking traps against empathy (and strategies to overcome them) 1. In-Group Bias: 1. In-Group Bias: Trap: Feeling deep empathy for friends or family (\"in-group\") while feeling indifferent toward strangers or people seen  Trap: Feeling deep empathy for friends or family (\"in-group\") while feeling indifferent toward strangers or people seen as different. Counter-Strategy (Remember Our Common Humanity): Practice seeing everyone— Counter-Strategy (Remember Our Common Humanity): Practice seeing everyone— including strangers—as part of the same human family sharing basic needs and feelings. including strangers—as part of the same human family sharing basic needs and feelings. 2. One-Over-Many Effect: 2. One-Over-Many Effect: Trap: Feeling a strong urge to help a single identifiable child or person in need, while feeling emotionally numb as the Trap: Feeling a strong urge to help a single identifiable child or person in need, while feeling emotionally numb as the number of people suffering grows larger. Counter-Strategy (Use Cognitive Empathy): Use reasoned perspective-taking to recognize that helping many people in need  Counter-Strategy (Use Cognitive Empathy): Use reasoned perspective-taking to recognize that helping many people in need is just as vital as helping one person, without becoming emotionally paralyzed. 3. Empathic Distress: 3. Empathic Distress: Trap: Becoming so overwhelmed by others' suffering that it leads to hopelessness, burnout, and emotional shutdown. Trap: Becoming so overwhelmed by others' suffering that it leads to hopelessness, burnout, and emotional shutdown. Counter-Strategy (Cultivate Self-Compassion): Care for your own emotional needs and resilience so you can continue suppo Counter-Strategy (Cultivate Self-Compassion): Care for your own emotional needs and resilience so you can continue supporting others sustainably. 4. Jealousy / Envy: 4. Jealousy / Envy: Trap: Viewing someone else's success or promotion as taking away from your own worth or happiness. Trap: Viewing someone else's success or promotion as taking away from your own worth or happiness. Counter-Strategy (Practice Sympathetic Joy): Genuinely celebrate others' achievements and good fortune rather than compa Counter-Strategy (Practice Sympathetic Joy): Genuinely celebrate others' achievements and good fortune rather than comparing yourself to them. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 21 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 21 of 24 Objective 4 & Objective 5: Recognize Empathic Concern and reduce Empathic Distress Objective 4 & Objective 5: Recognize Empathic Concern and reduce Empathic Distress Empathic Distress: Occurs when we become overwhelmed by someone else's pain, focusing inward on our own emotional overlo Empathic Distress: Occurs when we become overwhelmed by someone else's pain, focusing inward on our own emotional overload—leading to exhaustion, numbness, and inaction. Significance of Empathic Concern: Unlike empathic distress, empathic concern is genuinely caring for the needs of others Significance of Empathic Concern: Unlike empathic distress, empathic concern is genuinely caring for the needs of others while remaining emotionally regulated and balanced. It transforms passive overwhelm into constructive compassion and helpful action. Strategies to Reduce Empathic Distress: Strategies to Reduce Empathic Distress: 3. Practice Tools for Emotional Regulation: Whenever a wave of envy arises, pause and use tracking to notice where the s 3. Practice Tools for Emotional Regulation: Whenever a wave of envy arises, pause and use tracking to notice where the sensation sits in your body, followed by grounding or resourcing to return to your resilient zone.",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_07_05",
+            "title": "4. Recognize the significance of Empathic Concern.",
+            "content": "4. Recognize the significance of Empathic Concern. 4. Recognize the significance of Empathic Concern. 4. Recognize the significance of Empathic Concern.",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_07_06",
+            "title": "5. Explain empathic distress and the strategies to reduce it.",
+            "content": "5. Explain empathic distress and the strategies to reduce it. 5. Explain empathic distress and the strategies to reduce it. 5. Explain empathic distress and the strategies to reduce it.",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_07_04",
+            "title": "6. Apply strategies to cultivate sympathetic joy.",
+            "content": "6. Apply strategies to cultivate sympathetic joy. 6. Apply strategies to cultivate sympathetic joy. 6. Apply strategies to cultivate sympathetic joy. Objective 6: Apply strategies to cultivate sympathetic joy Objective 6: Apply strategies to cultivate sympathetic joy Sympathetic joy is the ability to feel genuine happiness for another person's good fortune or success. Three practical s Sympathetic joy is the ability to feel genuine happiness for another person's good fortune or success. Three practical strategies cultivate sympathetic joy:",
+            "page": 20,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      },
+      {
+        "chapter_id": "skill_08",
+        "title": "Skill 8: Compassion",
+        "page": 22,
+        "objectives": [
+          {
+            "objective_id": "obj_08_01",
+            "title": "1. Define compassion.",
+            "content": "1. Define compassion. 1. Define compassion. 1. Define compassion. Objective 1: Define compassion Objective 1: Define compassion Core Definition in SEEK: Compassion is defined as the wish to ease the suffering of another, rooted in care for their we Core Definition in SEEK: Compassion is defined as the wish to ease the suffering of another, rooted in care for their well-being and a degree of self-confidence. Action-Oriented Care: Compassion goes beyond simply noticing pain; it unites genuine concern for others with the inner c Action-Oriented Care: Compassion goes beyond simply noticing pain; it unites genuine concern for others with the inner confidence needed to help constructively.",
+            "page": 22,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_08_05",
+            "title": "2. Identify thinking traps to compassion.",
+            "content": "2. Identify thinking traps to compassion. 2. Identify thinking traps to compassion. 2. Identify thinking traps to compassion. Objective 2: Identify thinking traps to compassion Objective 2: Identify thinking traps to compassion 1. Compassion as Weakness: Mistakenly believing that being compassionate means being a 1. Compassion as Weakness: Mistakenly believing that being compassionate means being a \"pushover\" or \"doormat\" who lets others take advantage of you. \"pushover\" or \"doormat\" who lets others take advantage of you. 2. Not Seeing Common Humanity: Assuming people who appear cheerful have no problems, thereby overlooking hidden emotiona 2. Not Seeing Common Humanity: Assuming people who appear cheerful have no problems, thereby overlooking hidden emotional pain, financial worries, or health struggles. 3. In-Group Bias: Extending compassion readily to friends and loved ones while ignoring the struggles of strangers or pe 3. In-Group Bias: Extending compassion readily to friends and loved ones while ignoring the struggles of strangers or people we dislike. 4. Powerlessness: Believing our actions cannot make a difference in the face of large-scale disasters (such as earthquak 4. Powerlessness: Believing our actions cannot make a difference in the face of large-scale disasters (such as earthquakes or floods), leading to helplessness and apathy.",
+            "page": 22,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_08_02",
+            "title": "3. Recognize that compassion is not a weakness.",
+            "content": "3. Recognize that compassion is not a weakness. 3. Recognize that compassion is not a weakness. 3. Recognize that compassion is not a weakness. Objective 3: Recognize that compassion is not a weakness Objective 3: Recognize that compassion is not a weakness Compassion as Strength & Healthy Boundaries: Compassion does not mean sacrificing your own well-being or always saying \" Compassion as Strength & Healthy Boundaries: Compassion does not mean sacrificing your own well-being or always saying \"yes\" to unreasonable demands. True compassion involves standing firm against unfairness and setting healthy, sustainable boundaries so you can support others effectively. Compassion Outside Our In-Group: Extending care to strangers—such as helping someone carry a heavy load—affirms that eve Compassion Outside Our In-Group: Extending care to strangers—such as helping someone carry a heavy load—affirms that every human being has inherent dignity regardless of personal connection. Compassion as a Motivation Paired with Critical Inquiry: Compassion provides the inner drive to help, while critical inq Compassion as a Motivation Paired with Critical Inquiry: Compassion provides the inner drive to help, while critical inquiry and logical understanding guide us to choose the wisest, most supportive action in each situation.",
+            "page": 22,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_08_03",
+            "title": "4. Explain the three necessary components of compassion.",
+            "content": "4. Explain the three necessary components of compassion. 4. Explain the three necessary components of compassion. 4. Explain the three necessary components of compassion. Objective 4: Explain the three necessary components of compassion Objective 4: Explain the three necessary components of compassion 1. Noticing Suffering: Recognizing both obvious outward distress (crying, physical injury) and subtle, hidden signs of s 1. Noticing Suffering: Recognizing both obvious outward distress (crying, physical injury) and subtle, hidden signs of suffering (such as a coworker becoming unusually withdrawn or distracted under stress). 2. Empathic Concern: Feeling genuine care and recognizing that every person—even a stranger 2. Empathic Concern: Feeling genuine care and recognizing that every person—even a stranger —deserves kindness and support. —deserves kindness and support. 3. A Sense of Agency: Having confidence in our ability to act and make a positive difference— 3. A Sense of Agency: Having confidence in our ability to act and make a positive difference— even through small actions like listening attentively or helping with daily chores—preventing empathic distress and apat even through small actions like listening attentively or helping with daily chores—preventing empathic distress and apathy. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 23 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 23 of 24",
+            "page": 22,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          },
+          {
+            "objective_id": "obj_08_04",
+            "title": "5. Demonstrate techniques to practice compassion to different groups.",
+            "content": "5. Demonstrate techniques to practice compassion to different groups. 5. Demonstrate techniques to practice compassion to different groups. 5. Demonstrate techniques to practice compassion to different groups. UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 22 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 22 of 24 Objective 5: Demonstrate techniques to practice compassion to different groups Objective 5: Demonstrate techniques to practice compassion to different groups The Three Levels of Compassion The Three Levels of Compassion 1. Wishing Compassion: Noticing that others are suffering (e.g., hearing about floods in another city) and sincerely wis 1. Wishing Compassion: Noticing that others are suffering (e.g., hearing about floods in another city) and sincerely wishing them safety and relief, without taking personal responsibility for direct action. 2. Aspiring Compassion: Experiencing greater urgency and willingness to take small, practical steps to ease suffering—su 2. Aspiring Compassion: Experiencing greater urgency and willingness to take small, practical steps to ease suffering—such as donating to a relief fund or raising awareness responsibly. 3. Engaged Compassion: Feeling deep urgency and taking active personal responsibility to do everything within your capac 3. Engaged Compassion: Feeling deep urgency and taking active personal responsibility to do everything within your capacity to help—such as collecting relief materials, volunteering with local organizations, or assisting recovery efforts. Sustainable Practice & Self-Reflection Sustainable Practice & Self-Reflection Balancing Scope with Self-Compassion: It is impossible to practice Engaged Compassion for every crisis in the world. Gro Balancing Scope with Self-Compassion: It is impossible to practice Engaged Compassion for every crisis in the world. Grounding compassion in self-compassion and realistic expectations allows you to practice Engaged Compassion for select causes while holding Wishing or Aspiring Compassion for others without burnout. Compassion for others without burnout. Reflection Prompt: Reflect on a time when you needed to be compassionate toward others while also considering your own n Reflection Prompt: Reflect on a time when you needed to be compassionate toward others while also considering your own needs. How did you establish boundaries to balance the two? UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 24 of 24 UNESCO MGIEP — SEEK Learning Curriculum Study Guide (Skills 1–8) Page 24 of 24",
+            "page": 22,
+            "items": [],
+            "required_item_ids": [],
+            "validation": {
+              "actionable_item_count": 0,
+              "missing_actionable_content": true
+            }
+          }
+        ],
+        "unassigned_items": []
+      }
+    ],
+    "summary": {
+      "chapter_count": 8,
+      "objective_count": 46,
+      "actionable_item_count": 1
+    }
+  }
+]
