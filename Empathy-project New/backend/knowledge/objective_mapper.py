@@ -26,8 +26,31 @@ CANONICAL_OBJECTIVE_IDS = {
     "skill_04": {1: "obj_04_01", 2: "obj_04_02", 3: "obj_04_05",
                  4: "obj_04_06", 5: "obj_04_07", 6: "obj_04_03",
                  7: "obj_04_04"},
-    "skill_07": {1: "obj_07_01", 2: "obj_07_02",
-                 3: "obj_07_03", 4: "obj_07_04"},
+    # PDF objective number -> canonical id. Existing ids are reused for the
+    # semantically matching content_skills objective; extra PDF objectives
+    # get the supplementary ids (_05/_06) registered in agents/state.py.
+    "skill_05": {1: "obj_05_03",   # Define bias
+                 2: "obj_05_01",   # What all humans have in common
+                 3: "obj_05_02",   # Impartiality and common humanity
+                 4: "obj_05_04",   # Explicit/implicit bias, weakening it
+                 5: "obj_05_05"},  # Tools to cultivate impartiality
+    "skill_06": {1: "obj_06_01",   # Define forgiveness
+                 2: "obj_06_02",   # Strategies to practice forgiveness
+                 3: "obj_06_05",   # Thinking traps to forgiveness
+                 4: "obj_06_03",   # Define gratitude
+                 5: "obj_06_06",   # Strategies to cultivate gratitude
+                 6: "obj_06_04"},  # Apply tools (incl. Naikan practice)
+    "skill_07": {1: "obj_07_01",   # Define empathy vs sympathy
+                 2: "obj_07_02",   # Affective and cognitive empathy
+                 3: "obj_07_03",   # Thinking traps against empathy
+                 4: "obj_07_05",   # Significance of empathic concern
+                 5: "obj_07_06",   # Empathic distress strategies
+                 6: "obj_07_04"},  # Sympathetic joy
+    "skill_08": {1: "obj_08_01",   # Define compassion
+                 2: "obj_08_05",   # Thinking traps to compassion
+                 3: "obj_08_02",   # Compassion is not a weakness
+                 4: "obj_08_03",   # Three components of compassion
+                 5: "obj_08_04"},  # Practice compassion to different groups
 }
 def _tokens(value: str) -> set[str]:
     return {
@@ -83,6 +106,13 @@ def _skill_id_for_node(node, nodes_by_id, skills):
 def _pdf_objective_number(node):
     """Extract objective number from explicit or numbered PDF objectives."""
     text = str(node.get("title", "") or node.get("content", ""))
+    match_comb = re.search(
+        r"\bobjective\s+(\d+)\s*(?:&|and)\s*objective\s+(\d+)\b",
+        text,
+        re.IGNORECASE,
+    )
+    if match_comb:
+        return int(match_comb.group(1))
     match = re.search(r"\bobjective\s+(\d+)\b", text, re.IGNORECASE)
     if not match:
         match = re.match(r"\s*(\d+)[.)]\s+", text)

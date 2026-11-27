@@ -257,6 +257,10 @@ def _parse_response(
                     f"Gemini activity metadata '{field}' does not match "
                     "the controller-selected activity."
                 )
+        for extra_field in ("scenario", "instructions", "options", "best_answer", "feedback", "duration"):
+            if selected_activity.get(extra_field) is not None and extra_field not in activity:
+                activity[extra_field] = selected_activity[extra_field]
+        steps[2]["activity"] = activity
     elif activity is not None:
         raise ValueError(
             "The activity step must use null activity metadata when no "
@@ -408,10 +412,14 @@ def _valid_activity_metadata(activity):
         interaction_type = (
             "reflective" if activity.get("type") == "reflection" else "practical"
         )
-    return {
+    meta = {
         **{field: activity[field] for field in fields},
         "interaction_type": interaction_type,
     }
+    for extra_field in ("scenario", "instructions", "options", "best_answer", "feedback", "duration"):
+        if activity.get(extra_field) is not None:
+            meta[extra_field] = activity[extra_field]
+    return meta
 
 
 def _mentions_urgent_physical_symptom(question: str) -> bool:
@@ -426,6 +434,34 @@ def _mentions_urgent_physical_symptom(question: str) -> bool:
         "cannot breathe",
     )
     return any(phrase in normalized for phrase in urgent_phrases)
+
+
+METADATA_CONTENT_PATTERNS = [
+    re.compile(r"Page\s+\d+\s+of\s+\d+", re.IGNORECASE),
+    re.compile(r"Curriculum\s+Study\s+Guide\s*\(Skills\s+\d+[–-]\d+\)", re.IGNORECASE),
+    re.compile(r"DEVELOPMENT\s+SEEK\s+Learning\s+Curriculum\s+Study\s+Guide", re.IGNORECASE),
+    re.compile(r"MAHATMA\s+GANDHI\s+INSTITUTE\s+OF\s+EDUCATION\s+FOR\s+PEACE", re.IGNORECASE),
+    re.compile(r"Objective-by-Objective\s+Structured\s+Notes\s+Across\s+All\s+8\s+Skills", re.IGNORECASE),
+    re.compile(r"^\s*UNESCO\s+MGIEP\s*[—–-]\s*SEEK\s+Learning\s+Curriculum\s*$", re.IGNORECASE),
+]
+
+
+def _is_valid_curriculum_text(text) -> bool:
+    """Validate that text is genuine educational curriculum content and not document metadata."""
+    if not text or not isinstance(text, str):
+        return False
+    cleaned = re.sub(r"\s+", " ", text).strip()
+    if len(cleaned) < 10:
+        return False
+    if any(pat.search(cleaned) for pat in METADATA_CONTENT_PATTERNS):
+        return False
+    try:
+        from parser.metadata_extractor import is_document_metadata
+        if is_document_metadata(cleaned):
+            return False
+    except ImportError:
+        pass
+    return True
 
 
 def _fallback_suggested_questions(learning_context: dict) -> list[str]:
@@ -443,9 +479,17 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
     )
     if not isinstance(relevant_content, list):
         relevant_content = []
+    valid_relevant_content = [
+        item for item in relevant_content
+        if isinstance(item, dict)
+        and (
+            _is_valid_curriculum_text(item.get("content"))
+            or _is_valid_curriculum_text(item.get("title"))
+        )
+    ]
     approved_text = " ".join(
         str(item.get("content") or "")
-        for item in relevant_content
+        for item in valid_relevant_content
         if isinstance(item, dict)
     ).casefold()
     if "affective" in approved_text and "cognitive" in approved_text:
@@ -457,7 +501,7 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
         ]
 
     topics = []
-    for item in relevant_content:
+    for item in valid_relevant_content:
         if not isinstance(item, dict):
             continue
         title = re.sub(r"\s+", " ", str(item.get("title") or "").strip())
@@ -472,7 +516,7 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
             topic = title
         if len(topic) > 90:
             topic = topic[:90].rsplit(" ", 1)[0].rstrip(" ,;:")
-        if topic and topic.casefold() not in {value.casefold() for value in topics}:
+        if topic and _is_valid_curriculum_text(topic) and topic.casefold() not in {value.casefold() for value in topics}:
             topics.append(topic)
         if len(topics) == 2:
             break
@@ -483,7 +527,7 @@ def _fallback_suggested_questions(learning_context: dict) -> list[str]:
             " ",
             str(objective.get("title") or "").strip(),
         )
-        if objective_title:
+        if objective_title and _is_valid_curriculum_text(objective_title):
             return [
                 f"What does {objective_title} mean?",
                 f"Why is {objective_title} important?",
@@ -551,14 +595,22 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
     question_content = _deduplicate_content(
         learning_context.get("question_relevant_content") or []
     )
+    # Filter to approved curriculum content chunks (strictly excluding document metadata, running headers, cover titles)
+    valid_question_content = [
+        item for item in question_content
+        if isinstance(item, dict)
+        and (
+            _is_valid_curriculum_text(item.get("content"))
+            or _is_valid_curriculum_text(item.get("title"))
+        )
+    ]
     related_topic = next(
         (
             str(item.get("content") or item.get("title") or "").strip()
-            for item in question_content
-            if isinstance(item, dict)
-            and (
-                isinstance(item.get("title"), str) and item["title"].strip()
-                or isinstance(item.get("content"), str) and item["content"].strip()
+            for item in valid_question_content
+            if (
+                isinstance(item.get("content"), str) and _is_valid_curriculum_text(item["content"])
+                or isinstance(item.get("title"), str) and _is_valid_curriculum_text(item["title"])
             )
         ),
         "",
@@ -610,6 +662,9 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             )
         else:
             activity_content = _strip_internal_activity_labels(raw_activity_content)
+            scenario = selected_activity.get("scenario")
+            if scenario and scenario not in activity_content:
+                activity_content = f"{activity_content}\n\nSituation:\n{scenario}" if activity_content else scenario
         if not activity_content:
             activity_content = (
                 f"The activity “{activity['title']}” was selected, but its "
@@ -618,13 +673,13 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
     else:
         activity_content = "No activity was selected for this response."
 
-    if question_content:
+    if valid_question_content and _is_valid_curriculum_text(valid_question_content[0].get("content")):
         objective_step_content = _compact_text(
-            str(question_content[0].get("content") or "").strip()
+            str(valid_question_content[0].get("content") or "").strip()
         )
-    elif objective_content:
+    elif objective_content and _is_valid_curriculum_text(objective_content):
         objective_step_content = _compact_text(objective_content)
-    elif objective_title:
+    elif objective_title and _is_valid_curriculum_text(objective_title):
         objective_step_content = f"Approved learning objective: {objective_title}."
     else:
         objective_step_content = (
@@ -633,7 +688,7 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
 
     taught_text = " ".join(
         str(item.get("content") or "")
-        for item in question_content
+        for item in valid_question_content
         if isinstance(item, dict)
     ).casefold()
     if "beneficial mental state" in taught_text:
@@ -657,18 +712,24 @@ def _fallback_response(learning_context: dict, answer_style: str = "short") -> d
             "feelings, while cognitive empathy involves understanding their "
             "perspective."
         )
+    elif "empathy" in taught_text or (objective_title and "empathy" in str(objective_title).casefold()):
+        practice_question = (
+            "True or false: Empathy involves the ability to understand and share the feelings of another person."
+        )
     else:
         taught_statement = _compact_text(
-            str(question_content[0].get("content") or "")
-            if question_content
+            str(valid_question_content[0].get("content") or "")
+            if valid_question_content
             else ""
         )
         taught_statement = taught_statement.split(".")[0].strip()
-        practice_question = (
-            f"True or false: {taught_statement}."
-            if taught_statement
-            else "True or false: This concept is described in the lesson."
-        )
+        if taught_statement and _is_valid_curriculum_text(taught_statement):
+            practice_question = f"True or false: {taught_statement}."
+        elif objective_title and _is_valid_curriculum_text(objective_title):
+            clean_obj_title = objective_title.rstrip(" .?!:")
+            practice_question = f"True or false: Understanding '{clean_obj_title}' is an important part of this learning skill."
+        else:
+            practice_question = "True or false: This concept is described in the lesson."
 
     return {
         "answer": answer,
@@ -714,12 +775,12 @@ def generate_educational_response(
     question_relevant_content = _deduplicate_content(
         learning_context.get("question_relevant_content") or []
     )
-    if not any(
-        isinstance(item, dict)
-        and isinstance(item.get("content"), str)
-        and item["content"].strip()
-        for item in question_relevant_content
-    ):
+    valid_chunks = [
+        item for item in question_relevant_content
+        if isinstance(item, dict)
+        and _is_valid_curriculum_text(item.get("content"))
+    ]
+    if not valid_chunks:
         print("Relevant approved SEEK content is unavailable; using safe fallback.")
         return _fallback_response(learning_context, answer_style)
 
@@ -805,11 +866,21 @@ def generate_educational_response(
         "suggestion_relevant_content": prompt["suggestion_relevant_content"],
     })
 
+    timeout_ms = int(os.getenv("GEMINI_TIMEOUT_MS", "15000"))
+    max_deadline = float(os.getenv("GEMINI_TOTAL_DEADLINE_SECONDS", "25.0"))
+    start_time = time.monotonic()
+
     client = None
     for attempt in range(3):
+        if time.monotonic() - start_time >= max_deadline:
+            print("Gemini request deadline exceeded; using fallback response.")
+            return _fallback_response(learning_context, answer_style)
         try:
             if client is None:
-                client = genai.Client(api_key=api_key)
+                client = genai.Client(
+                    api_key=api_key,
+                    http_options=types.HttpOptions(timeout=timeout_ms),
+                )
             response = client.models.generate_content(
                 model=model_name,
                 contents=json.dumps(prompt, ensure_ascii=False),
@@ -847,6 +918,9 @@ def generate_educational_response(
 
             if attempt < 2:
                 wait_time = 2 ** attempt
+                if time.monotonic() - start_time + wait_time >= max_deadline:
+                    print("Gemini deadline exceeded before retry; using fallback response.")
+                    return _fallback_response(learning_context, answer_style)
                 print(f"Retrying Gemini request in {wait_time} seconds.")
                 time.sleep(wait_time)
             else:
@@ -860,11 +934,27 @@ def generate_educational_response(
             print("Gemini client error; using fallback response.")
             return _fallback_response(learning_context, answer_style)
 
+        except (TimeoutError, ConnectionError) as e:
+            print(f"Gemini network/timeout error - attempt {attempt + 1}/3: {e}")
+            if attempt < 2:
+                wait_time = 1 + attempt
+                if time.monotonic() - start_time + wait_time >= max_deadline:
+                    print("Gemini deadline exceeded before retry; using fallback response.")
+                    return _fallback_response(learning_context, answer_style)
+                print(f"Retrying in {wait_time} seconds...")
+                time.sleep(wait_time)
+            else:
+                print("Gemini timed out after retries; using fallback response.")
+                return _fallback_response(learning_context, answer_style)
+
         except (json.JSONDecodeError, ValueError) as e:
             print(f"Gemini response validation failed - attempt {attempt + 1}/3.")
 
             if attempt < 2:
                 wait_time = 1 + attempt
+                if time.monotonic() - start_time + wait_time >= max_deadline:
+                    print("Gemini deadline exceeded before retry; using fallback response.")
+                    return _fallback_response(learning_context, answer_style)
                 print(f"Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
             else:

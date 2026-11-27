@@ -18,7 +18,5 @@ def test_curriculum_uses_canonical_seek_ids():
 def test_validation_reports_missing_actionable_content_without_inventing_it():
     report = validate_curriculum(ROOT / "output")
 
-    assert len(report["progress_structure"]["objectives_without_actionable_items"]) == 23
-    assert report["content_skills"]["out_of_scope_skill_ids"] == [
-        "skill_05", "skill_06", "skill_07", "skill_08"
-    ]
+    assert len(report["progress_structure"]["objectives_without_actionable_items"]) == 45
+    assert report["content_skills"]["out_of_scope_skill_ids"] == []

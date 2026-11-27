@@ -1,5 +1,6 @@
 import os
 import logging
+import hashlib
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 from pathlib import Path
@@ -23,6 +24,61 @@ JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 JWT_ALGORITHM = "HS256"
 logger = logging.getLogger(__name__)
+
+INSECURE_JWT_SECRETS = {
+    "fallback-secret-key-change-in-production",
+    "secret",
+    "changeme",
+    "your-secret-key",
+    "default",
+    "test",
+    "admin",
+    "password",
+    "123456",
+    "jwt_secret",
+}
+
+
+def is_production_mode() -> bool:
+    env = (os.getenv("FLASK_ENV") or os.getenv("APP_ENV") or os.getenv("ENVIRONMENT") or "").lower()
+    return env in {"production", "prod"}
+
+
+def validate_jwt_secret(secret: str | None = None, is_production: bool | None = None) -> str:
+    """Validate that JWT_SECRET_KEY is configured securely, particularly in production."""
+    if is_production is None:
+        is_production = is_production_mode()
+
+    if secret is None:
+        secret = os.getenv("JWT_SECRET_KEY")
+
+    if is_production:
+        if not secret or not secret.strip():
+            raise RuntimeError("CRITICAL: JWT_SECRET_KEY is not configured in production environment.")
+        clean = secret.strip()
+        if clean.lower() in INSECURE_JWT_SECRETS:
+            raise RuntimeError(f"CRITICAL: JWT_SECRET_KEY uses a known insecure default '{clean}'.")
+        if len(clean) < 32:
+            raise RuntimeError(f"CRITICAL: JWT_SECRET_KEY must be at least 32 characters in production (got {len(clean)}).")
+        return clean
+
+    # Development / testing fallback
+    if not secret or not secret.strip():
+        logger.warning("JWT_SECRET_KEY is not configured. Using development secret.")
+        return "dev-insecure-secret-key-do-not-use-in-production-12345"
+
+    return secret.strip()
+
+
+def get_jwt_secret() -> str:
+    """Get the active JWT secret, validating against environment configuration."""
+    global JWT_SECRET_KEY
+    val = JWT_SECRET_KEY or os.getenv("JWT_SECRET_KEY")
+    if is_production_mode():
+        return validate_jwt_secret(val, is_production=True)
+    if val:
+        return val
+    return validate_jwt_secret(val, is_production=False)
 
 
 VALID_GENDERS = {"Male", "Female", "Prefer not to say"}
@@ -48,12 +104,11 @@ class UserStore:
         self._connect()
 
     def _connect(self):
-        self.client = MongoClient(
-            self.mongo_uri,
-            serverSelectionTimeoutMS=5000,
-        )
-
         try:
+            self.client = MongoClient(
+                self.mongo_uri,
+                serverSelectionTimeoutMS=5000,
+            )
             self.client.admin.command("ping")
             self.db = self.client[self.database_name]
             self.users = self.db["users"]
@@ -80,10 +135,69 @@ class UserStore:
                 )
                 if not compatible:
                     self.users.create_index(keys, **options)
+
+            if self.db is not None:
+                revoked_coll = self.db["revoked_tokens"]
+                rev_indexes = revoked_coll.index_information()
+                if not any(tuple(idx.get("key", [])) == (("expires_at", 1),) for idx in rev_indexes.values()):
+                    revoked_coll.create_index([("expires_at", 1)], expireAfterSeconds=0, name="idx_revoked_tokens_ttl")
+                if not any(tuple(idx.get("key", [])) == (("token_hash", 1),) for idx in rev_indexes.values()):
+                    revoked_coll.create_index([("token_hash", 1)], unique=True, name="uq_revoked_token_hash")
+
             self.is_available = True
         except PyMongoError as error:
             self.is_available = False
             logger.warning("MongoDB unavailable for authentication: %s", type(error).__name__)
+
+    def revoke_token(self, token: str, exp_timestamp: float | int | None = None) -> bool:
+        """Revoke a JWT token by recording its SHA256 hash."""
+        token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        expires_at = (
+            datetime.fromtimestamp(exp_timestamp, tz=timezone.utc)
+            if exp_timestamp
+            else datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRY_HOURS)
+        )
+        if not self.is_available or self.db is None:
+            if not hasattr(self, "_revoked_tokens_memory"):
+                self._revoked_tokens_memory = set()
+            self._revoked_tokens_memory.add(token_hash)
+            return True
+
+        try:
+            revoked_coll = self.db["revoked_tokens"]
+            revoked_coll.update_one(
+                {"token_hash": token_hash},
+                {
+                    "$set": {
+                        "token_hash": token_hash,
+                        "revoked_at": datetime.now(timezone.utc),
+                        "expires_at": expires_at,
+                    }
+                },
+                upsert=True,
+            )
+            return True
+        except PyMongoError as error:
+            logger.warning("Failed to record revoked token in MongoDB: %s", error)
+            if not hasattr(self, "_revoked_tokens_memory"):
+                self._revoked_tokens_memory = set()
+            self._revoked_tokens_memory.add(token_hash)
+            return True
+
+    def is_token_revoked(self, token: str) -> bool:
+        """Check if a token hash exists in the revoked_tokens store."""
+        token_hash = hashlib.sha256(token.encode("utf-8")).hexdigest()
+        if hasattr(self, "_revoked_tokens_memory") and token_hash in self._revoked_tokens_memory:
+            return True
+
+        if not self.is_available or self.db is None:
+            return False
+
+        try:
+            revoked_coll = self.db["revoked_tokens"]
+            return revoked_coll.find_one({"token_hash": token_hash}) is not None
+        except PyMongoError:
+            return False
 
     def _require_database(self):
         if not self.is_available:
@@ -187,7 +301,8 @@ def get_user_store():
 
 
 def create_access_token(student):
-    if not JWT_SECRET_KEY:
+    secret = get_jwt_secret()
+    if not secret:
         raise RuntimeError("JWT_SECRET_KEY is not configured in the environment.")
 
     now = datetime.now(timezone.utc)
@@ -204,7 +319,7 @@ def create_access_token(student):
 
     return jwt.encode(
         payload,
-        JWT_SECRET_KEY,
+        secret,
         algorithm=JWT_ALGORITHM,
     )
 
@@ -221,15 +336,23 @@ def require_auth(view_function):
 
         token = auth_header.split(" ", 1)[1].strip()
 
-        if not JWT_SECRET_KEY:
+        secret = get_jwt_secret()
+        if not secret:
             return jsonify({
                 "error": "Authentication service is unavailable."
             }), 503
 
+        # Check if token has been revoked
+        user_store = get_user_store()
+        if hasattr(user_store, "is_token_revoked") and user_store.is_token_revoked(token):
+            return jsonify({
+                "error": "Token has been revoked. Please log in again."
+            }), 401
+
         try:
             payload = jwt.decode(
                 token,
-                JWT_SECRET_KEY,
+                secret,
                 algorithms=[JWT_ALGORITHM],
             )
 
@@ -261,6 +384,21 @@ def require_auth(view_function):
         return view_function(*args, **kwargs)
 
     return wrapped
+
+
+def revoke_current_token() -> bool:
+    """Revoke the JWT token from the Authorization header of the current request."""
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        return False
+    token = auth_header.split(" ", 1)[1].strip()
+    try:
+        secret = get_jwt_secret()
+        payload = jwt.decode(token, secret, algorithms=[JWT_ALGORITHM], options={"verify_exp": False})
+        exp = payload.get("exp")
+        return get_user_store().revoke_token(token, exp)
+    except Exception:
+        return get_user_store().revoke_token(token)
 
 
 def require_role(*allowed_roles):
